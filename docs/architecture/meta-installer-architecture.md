@@ -334,30 +334,3 @@ trap cleanup_on_error ERR INT TERM
 * **Service Safety:** If Tier 6 fails to compile, existing Tier 3 services are not restarted with mismatched library versions.
 ```
 
----
-
-### Complete in Part 2
-- `sentinel-stack/docs/architecture/meta-installer-architecture.md`
-- `sentinel-stack/docs/architecture/topological-compilation-dag.md`
-- `sentinel-stack/docs/architecture/dependency-graph-formalization.md`
-- `sentinel-stack/docs/architecture/system-layout-and-paths.md`
-- `sentinel-stack/docs/architecture/air-gapped-installation-model.md`
-- `sentinel-stack/docs/architecture/atomic-rollback-safeguards.md`
-
-All 6 Systems Engineering & DAG Design files for `sentinel-stack` are now generated.
-
----
-
-### Files to be Generated in Part 3
-
-The next phase covers **The 6-Phase Linear Pipeline** (`installation-phases/` - 7 files):
-
-1. `installation-phases/pipeline-overview.md` (Chronological pipeline execution: Phase 0 through Phase 5)
-2. `installation-phases/phase-0-system-validation.md` (`00_check_system.sh`: Probing OS, kernel, RAM, and mounting bpffs)
-3. `installation-phases/phase-1-dependency-resolution.md` (`01_install_dependencies.sh`: Compilers, gRPC, and Python venv)
-4. `installation-phases/phase-2-repository-synchronization.md` (`02_clone_repositories.sh`: Local rsync vs. shallow git clone)
-5. `installation-phases/phase-3-topological-compilation.md` (`03_build_all_tiers.sh`: Sequential CMake/make build execution)
-6. `installation-phases/phase-4-systemd-daemonization.md` (`04_setup_systemd.sh`: Unit generation, capabilities, and startup)
-7. `installation-phases/phase-5-smoke-testing.md` (`05_verify_installation.sh`: Automated health check assertions)
-
-Confirm when you are ready to proceed with Part 3.
