@@ -1,18 +1,43 @@
-# Non-Interactive Execution
+---
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+### File: `sentinel-stack/docs/dependency-management/non-interactive-execution.md`
 
+```markdown
+# Non-Interactive Automation: Eliminating Prompts
 
-DEBIAN_FRONTEND=noninteractive and Dpkg force-confdef options.
-
-## Rule
-
-No installer step may ever wait on stdin.
-
-## Proof
-
-CI runs with stdin closed to enforce it.
+To support automated cloud-init provisioning, PXE boot installations, and CI/CD pipelines, `sentinel-stack` suppresses all interactive debconf dialogs.
 
 ---
 
-*Part of the sentinel-stack documentation set. See mkdocs.yml for navigation.*
+## 1. Environment Variable Overrides
+
+Phase 1 exports environment variables to force non-interactive execution:
+
+```bash
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a # Suppresses Ubuntu 24.04/26.04 needrestart dialogs
+```
+
+---
+
+## 2. Dpkg Configuration Options
+
+Every `apt-get` invocation uses forced configuration options:
+
+```bash
+APT_OPTS=(
+    -y
+    -o Dpkg::Options::="--force-confdef"
+    -o Dpkg::Options::="--force-confold"
+    -o Dpkg::Options::="--force-confmiss"
+)
+
+apt-get install "${APT_OPTS[@]}" <package_list>
+```
+
+### Option Rationale:
+* **`--force-confdef`:** Instructs dpkg to resolve configuration file conflicts using the package maintainer's default choice without prompting.
+* **`--force-confold`:** Preserves existing local configuration files if an existing file has been modified.
+* **`NEEDRESTART_MODE=a`:** Suppresses the `needrestart` terminal menu that pauses script execution on modern Ubuntu releases.
+```
+
