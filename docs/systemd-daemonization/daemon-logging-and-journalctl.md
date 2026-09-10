@@ -1,23 +1,51 @@
-# Daemon Logging & journalctl
+---
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+### File: `sentinel-stack/docs/systemd-daemonization/daemon-logging-and-journalctl.md`
 
+```markdown
+# Centralized Daemon Logging & `journalctl` Filtering
 
-Centralized logging, journalctl filtering, and log rotation.
+`sentinel-stack` integrates service logging directly with the systemd journal (`systemd-journald`), providing centralized log rotation, structured filtering, and rate limiting.
 
-## Filter
+---
 
-Per-unit, per-priority queries documented with examples.
+## 1. Querying Real-Time Service Logs
 
-## Rotate
-
-Size-capped journals; compliance logs ship separately.
-
+### 1. Follow Live Logs Across Both Daemons:
 ```bash
-$ journalctl -u sentinel-nexus -p warning --since -1h
-$ journalctl -u blackbox-sentinel -f
+journalctl -u sentinel -u sentinel-nexus -f
+```
+
+### 2. Filter for Active In-Kernel Drops:
+```bash
+journalctl -u sentinel -g "XDP_DROP" -n 50 --no-pager
+```
+
+### 3. Filter by Log Priority (Errors and Critical Only):
+```bash
+journalctl -u sentinel-nexus -p err..emerg -n 25
 ```
 
 ---
 
-*Part of the sentinel-stack documentation set. See mkdocs.yml for navigation.*
+## 2. Automated Log Rotation (`/etc/logrotate.d/sentinel`)
+
+For secondary log files stored in `/var/log/sentinel/`, `sentinel-stack` deploys a logrotate manifest:
+
+```text
+/var/log/sentinel/*.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 root root
+    sharedscripts
+    postrotate
+        systemctl reload sentinel > /dev/null 2>&1 || true
+    endscript
+}
+```
+```
+
