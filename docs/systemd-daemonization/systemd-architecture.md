@@ -314,31 +314,3 @@ For secondary log files stored in `/var/log/sentinel/`, `sentinel-stack` deploys
 ```
 ```
 
----
-
-### Complete in Part 6
-- `sentinel-stack/docs/systemd-daemonization/systemd-architecture.md`
-- `sentinel-stack/docs/systemd-daemonization/sentinel-nexus-service.md`
-- `sentinel-stack/docs/systemd-daemonization/blackbox-sentinel-service.md`
-- `sentinel-stack/docs/systemd-daemonization/linux-capabilities-management.md`
-- `sentinel-stack/docs/systemd-daemonization/real-time-process-scheduling.md`
-- `sentinel-stack/docs/systemd-daemonization/daemon-logging-and-journalctl.md`
-
-All 6 Systemd Daemonization documentation files are now generated.
-
----
-
-### Files to be Generated in Part 7
-
-The next phase covers **Post-Build Automated Quality Gates & Smoke Tests** (`verification-and-smoke-tests/` - 8 files):
-
-1. `verification-and-smoke-tests/verification-suite-overview.md` (`05_verify_installation.sh` test matrix and exit codes)
-2. `verification-and-smoke-tests/tier-1-libxinfer-check.md` (Verifying `libxinfer.so` in dynamic linker cache)
-3. `verification-and-smoke-tests/tier-2-libblackbox-check.md` (Verifying `libblackbox.so` and `xdp_filter.o` bytecode)
-4. `verification-and-smoke-tests/tier-3-sentinel-check.md` (Testing `sentinel` daemon binary execution and version)
-5. `verification-and-smoke-tests/tier-4-forge-cli-check.md` (Validating `forge-cli` wrapper, venv, and PyTorch)
-6. `verification-and-smoke-tests/tier-5-sentinel-lab-check.md` (Testing `sentinel_lab` binary and SLAB socket hooks)
-7. `verification-and-smoke-tests/tier-6-nexus-ctl-check.md` (Testing `sentinel-nexus` daemon and `nexus-ctl` CLI)
-8. `verification-and-smoke-tests/automated-ci-cd-integration.md` (Running verification in GitHub Actions / GitLab CI)
-
-Confirm when you are ready to proceed with Part 7.
