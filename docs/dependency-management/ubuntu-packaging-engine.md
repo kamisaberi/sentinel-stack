@@ -296,31 +296,3 @@ apt-get install "${APT_OPTS[@]}" <package_list>
 * **`NEEDRESTART_MODE=a`:** Suppresses the `needrestart` terminal menu that pauses script execution on modern Ubuntu releases.
 ```
 
----
-
-### Complete in Part 4
-- `sentinel-stack/docs/dependency-management/ubuntu-packaging-engine.md`
-- `sentinel-stack/docs/dependency-management/t64-package-resolution.md`
-- `sentinel-stack/docs/dependency-management/pep-668-python-virtual-env.md`
-- `sentinel-stack/docs/dependency-management/ebpf-compiler-toolchains.md`
-- `sentinel-stack/docs/dependency-management/openvino-tensorrt-prerequisites.md`
-- `sentinel-stack/docs/dependency-management/non-interactive-execution.md`
-
-All 6 Dependency Management files for `sentinel-stack` are now generated.
-
----
-
-### Files to be Generated in Part 5
-
-The next phase covers **Tier-by-Tier Build Mechanics** (`compilation-dag-tiers/` - 8 files):
-
-1. `compilation-dag-tiers/building-tier-1-xinfer.md` (Compiling `libxinfer.so` & installing headers to `/usr/local/include`)
-2. `compilation-dag-tiers/building-tier-2-blackbox.md` (Compiling `xdp_filter.o` via Clang BPF & building `libblackbox.so`)
-3. `compilation-dag-tiers/building-tier-3-sentinel.md` (Linking 26 subsystems, 30 plugins & `sentinel` daemon binary)
-4. `compilation-dag-tiers/building-tier-4-forge.md` (Installing PyTorch in venv & creating `/usr/local/bin/forge-cli`)
-5. `compilation-dag-tiers/building-tier-5-lab.md` (Compiling `sentinel_lab` binary & SLAB research testbed)
-6. `compilation-dag-tiers/building-tier-6-nexus.md` (Compiling `sentinel-nexus`, `nexus-ctl`, and deploying web SPA)
-7. `compilation-dag-tiers/dynamic-linker-cache-ldconfig.md` (Managing `/etc/ld.so.cache` updates after each tier build)
-8. `compilation-dag-tiers/parallel-job-scaling-ram.md` (Dynamic compiler thread capping: `make -j2` vs. `nproc`)
-
-Confirm when you are ready to proceed with Part 5.
