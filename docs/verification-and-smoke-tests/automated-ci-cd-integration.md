@@ -1,18 +1,45 @@
-# Automated CI/CD Integration
+---
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+### File: `sentinel-stack/docs/verification-and-smoke-tests/automated-ci-cd-integration.md`
 
+```markdown
+# Automated Continuous Integration (CI/CD Pipeline)
 
-Running sentinel-stack verification in GitHub Actions / GitLab CI.
-
-## Jobs
-
-Matrix across supported Ubuntu releases.
-
-## Gates
-
-Red verification blocks the release tag.
+`sentinel-stack` can be executed within GitHub Actions or GitLab CI runners to validate builds and dependency graphs on every commit.
 
 ---
 
-*Part of the sentinel-stack documentation set. See mkdocs.yml for navigation.*
+## 1. GitHub Actions Workflow (`.github/workflows/stack_ci.yml`)
+
+```yaml
+name: Sentinel-Stack CI Quality Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Execute Sentinel-Stack 1-Click Installer
+        run: |
+          sudo ./install.sh
+
+      - name: Run Automated Post-Installation Smoke Tests
+        run: |
+          sudo make verify
+
+      - name: Audit Dynamic Library Bundling
+        run: |
+          test -d /opt/sentinel-matrix/shared/lib && ls -lh /opt/sentinel-matrix/shared/lib
+```
+```
+
