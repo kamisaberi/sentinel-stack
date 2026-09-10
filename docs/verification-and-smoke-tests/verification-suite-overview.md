@@ -322,30 +322,3 @@ jobs:
 ```
 ```
 
----
-
-### Complete in Part 7
-- `sentinel-stack/docs/verification-and-smoke-tests/verification-suite-overview.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/tier-1-libxinfer-check.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/tier-2-libblackbox-check.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/tier-3-sentinel-check.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/tier-4-forge-cli-check.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/tier-5-sentinel-lab-check.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/tier-6-nexus-ctl-check.md`
-- `sentinel-stack/docs/verification-and-smoke-tests/automated-ci-cd-integration.md`
-
-All 8 Post-Build Quality Gate documentation files are now generated.
-
----
-
-### Files to be Generated in Part 8
-
-The next phase covers the **Bridge to `sentinel-matrix`** (`bridge-to-sentinel-matrix/` - 5 files):
-
-1. `bridge-to-sentinel-matrix/matrix-bridge-architecture.md` (Packaging compiled host binaries for Docker containerization)
-2. `bridge-to-sentinel-matrix/harvesting-host-binaries.md` (Copying `sentinel-nexus`, `sentinel`, and `nexus-ctl` to `shared/bin/`)
-3. `bridge-to-sentinel-matrix/dynamic-library-extraction-ldd.md` (Auto-harvesting `libabsl`, `libre2`, and `libgrpc` into `shared/lib/`)
-4. `bridge-to-sentinel-matrix/proto-and-web-asset-handover.md` (Synchronizing `.proto` files and web SPA assets into `sentinel-matrix`)
-5. `bridge-to-sentinel-matrix/vmware-docker-mesh-handshake.md` (One-touch handover from host compilation to `make up` launch)
-
-Confirm when you are ready to proceed with Part 8.
