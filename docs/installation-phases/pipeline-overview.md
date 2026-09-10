@@ -575,30 +575,3 @@ fi
 ```
 ```
 
----
-
-### Complete in Part 3
-- `sentinel-stack/docs/installation-phases/pipeline-overview.md`
-- `sentinel-stack/docs/installation-phases/phase-0-system-validation.md`
-- `sentinel-stack/docs/installation-phases/phase-1-dependency-resolution.md`
-- `sentinel-stack/docs/installation-phases/phase-2-repository-synchronization.md`
-- `sentinel-stack/docs/installation-phases/phase-3-topological-compilation.md`
-- `sentinel-stack/docs/installation-phases/phase-4-systemd-daemonization.md`
-- `sentinel-stack/docs/installation-phases/phase-5-smoke-testing.md`
-
-All 7 Installation Phase documentation files are now generated.
-
----
-
-### Files to be Generated in Part 4
-
-The next phase covers **Dependency Management & OS Toolchain Resolution** (`dependency-management/` - 6 files):
-
-1. `dependency-management/ubuntu-packaging-engine.md` (Non-interactive APT flags and automated mirror selection)
-2. `dependency-management/t64-package-resolution.md` (Managing `libprotobuf-dev` and `libgrpc++-dev` 64-bit `time_t` packages)
-3. `dependency-management/pep-668-python-virtual-env.md` (Isolated environment at `/opt/sentinel-stack/venv`)
-4. `dependency-management/ebpf-compiler-toolchains.md` (Clang, LLVM, `libelf-dev`, and kernel header alignment)
-5. `dependency-management/openvino-tensorrt-prerequisites.md` (Detecting Intel GPU/NPU drivers and CUDA toolkits)
-6. `dependency-management/non-interactive-execution.md` (`DEBIAN_FRONTEND=noninteractive` and Dpkg force options)
-
-Confirm when you are ready to proceed with Part 4.
