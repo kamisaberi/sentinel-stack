@@ -384,31 +384,3 @@ echo "export PARALLEL_JOBS=${PARALLEL_JOBS}" > /opt/sentinel-stack/.build_env
 ```
 ```
 
----
-
-### Complete in Part 5
-- `sentinel-stack/docs/compilation-dag-tiers/building-tier-1-xinfer.md`
-- `sentinel-stack/docs/compilation-dag-tiers/building-tier-2-blackbox.md`
-- `sentinel-stack/docs/compilation-dag-tiers/building-tier-3-sentinel.md`
-- `sentinel-stack/docs/compilation-dag-tiers/building-tier-4-forge.md`
-- `sentinel-stack/docs/compilation-dag-tiers/building-tier-5-lab.md`
-- `sentinel-stack/docs/compilation-dag-tiers/building-tier-6-nexus.md`
-- `sentinel-stack/docs/compilation-dag-tiers/dynamic-linker-cache-ldconfig.md`
-- `sentinel-stack/docs/compilation-dag-tiers/parallel-job-scaling-ram.md`
-
-All 8 Compilation DAG Tier documentation files are now generated.
-
----
-
-### Files to be Generated in Part 6
-
-The next phase covers **Systemd Daemonization & Linux Service Hardening** (`systemd-daemonization/` - 6 files):
-
-1. `systemd-daemonization/systemd-architecture.md` (Lifecycle management, auto-restart circuits, and dependencies)
-2. `systemd-daemonization/sentinel-nexus-service.md` (Configuring `sentinel-nexus.service`: WorkingDir, ports, ulimits)
-3. `systemd-daemonization/blackbox-sentinel-service.md` (Configuring `sentinel.service`: Real-time priorities)
-4. `systemd-daemonization/linux-capabilities-management.md` (Granting `CAP_NET_ADMIN`, `CAP_BPF` without full root)
-5. `systemd-daemonization/real-time-process-scheduling.md` (Real-time round-robin scheduling: `SCHED_RR`, priority 98, nice -20)
-6. `systemd-daemonization/daemon-logging-and-journalctl.md` (Centralized logging, journalctl filtering, and log rotation)
-
-Confirm when you are ready to proceed with Part 6.
