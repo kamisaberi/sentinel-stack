@@ -1,0 +1,56 @@
+version: "1.0.0"
+
+repositories:
+  tier1_xinfer:
+    name: "xinfer-essential"
+    url: "https://github.com/kamisaberi/xinfer.git"
+    branch: "main"
+    build_type: "cmake"
+    cmake_flags: "-DXINFER_ENABLE_OPENVINO=ON -DXINFER_BUILD_EXAMPLES=ON"
+    local_path: "/home/kami/xinfer-essential"
+
+  tier2_blackbox:
+    name: "blackbox-essential"
+    url: "https://github.com/kamisaberi/blackbox.git"
+    branch: "main"
+    build_type: "bpf_and_cmake"
+    cmake_flags: "-DBLACKBOX_BUILD_TESTS=ON"
+    local_path: "/home/kami/blackbox-essential"
+
+  tier3_sentinel:
+    name: "blackbox-sentinel"
+    url: "https://github.com/kamisaberi/blackbox-sentinel.git"
+    branch: "main"
+    build_type: "cmake"
+    cmake_flags: ""
+    local_path: "/home/kami/blackbox-sentinel"
+
+  tier4_forge:
+    name: "xinfer-forge"
+    url: "https://github.com/kamisaberi/xinfer-forge.git"
+    branch: "main"
+    build_type: "python_venv"
+    local_path: "/home/kami/blackbox-sentinel/xinfer-forge"
+
+  tier5_lab:
+    name: "sentinel-lab"
+    url: "https://github.com/kamisaberi/sentinel-lab.git"
+    branch: "main"
+    build_type: "bpf_and_cmake"
+    cmake_flags: "-DENABLE_OPENVINO=ON -DBUILD_TESTS=ON"
+    local_path: "/home/kami/sentinel-lab"
+
+  tier6_nexus:
+    name: "sentinel-nexus"
+    url: "https://github.com/kamisaberi/sentinel-nexus.git"
+    branch: "main"
+    build_type: "cmake"
+    cmake_flags: ""
+    local_path: "/home/kami/sentinel-nexus"
+
+paths:
+  install_bin: "/usr/local/bin"
+  install_lib: "/usr/local/lib"
+  install_include: "/usr/local/include"
+  config_dir: "/etc/sentinel"
+  shared_data: "/var/lib/sentinel-nexus"
