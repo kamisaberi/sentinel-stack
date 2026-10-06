@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/systemd-daemonization/sentinel-nexus-service.md`
-
-```markdown
 # Production Unit Configuration: `sentinel-nexus.service`
 
 The `sentinel-nexus.service` unit manages the Tier 6 central fleet command hub, binding gRPC port **50051**, HTTPS port **9443**, and SSE port **9444**.
@@ -66,6 +61,5 @@ sudo systemctl status sentinel-nexus.service
 
 # Reload configuration without restarting process
 sudo systemctl reload sentinel-nexus.service
-```
 ```
 

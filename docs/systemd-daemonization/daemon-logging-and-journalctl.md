@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/systemd-daemonization/daemon-logging-and-journalctl.md`
-
-```markdown
 # Centralized Daemon Logging & `journalctl` Filtering
 
 `sentinel-stack` integrates service logging directly with the systemd journal (`systemd-journald`), providing centralized log rotation, structured filtering, and rate limiting.
@@ -46,6 +41,5 @@ For secondary log files stored in `/var/log/sentinel/`, `sentinel-stack` deploys
         systemctl reload sentinel > /dev/null 2>&1 || true
     endscript
 }
-```
 ```
 

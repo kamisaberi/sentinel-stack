@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/systemd-daemonization/real-time-process-scheduling.md`
-
-```markdown
 # Real-Time Process Scheduling (`SCHED_RR` Priority 98)
 
 To enforce the **$< 0.84\,\mu\text{s}$ mitigation SLA**, the `sentinel` daemon must not be delayed by the Linux Completely Fair Scheduler (CFS) when other background processes (such as log rotation or cron jobs) execute.
@@ -38,6 +33,5 @@ chrt -p $(pgrep sentinel)
 ```text
 pid 14022's current scheduling policy: SCHED_RR
 pid 14022's current scheduling priority: 98
-```
 ```
 

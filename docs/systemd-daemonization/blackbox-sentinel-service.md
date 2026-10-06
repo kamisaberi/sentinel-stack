@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/systemd-daemonization/blackbox-sentinel-service.md`
-
-```markdown
 # Production Unit Configuration: `sentinel.service`
 
 The `sentinel.service` unit manages the Tier 3 edge appliance daemon (`sentinel`), enforcing in-kernel eBPF packet mitigation directly on network device driver rings.
@@ -67,6 +62,5 @@ sudo systemctl enable --now sentinel.service
 
 # Inspect active status and in-kernel eBPF attachment
 sudo systemctl status sentinel.service
-```
 ```
 

@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/systemd-daemonization/linux-capabilities-management.md`
-
-```markdown
 # Granular Linux Capabilities Management
 
 Running security daemons as unrestricted `root` violates the principle of least privilege. `sentinel-stack` restricts process execution using **Linux POSIX Capabilities**, granting only the exact kernel privileges required for packet filtering and hardware attestation.
@@ -31,5 +26,4 @@ AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW CAP_BPF CAP_SYS_RESOURCE
 ```
 
 This configuration ensures that worker threads spawned by the C++ engine retain the necessary network and BPF privileges without granting full superuser permissions.
-```
 

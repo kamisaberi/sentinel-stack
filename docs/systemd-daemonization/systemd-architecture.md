@@ -1,12 +1,3 @@
-### Part 6: Systemd Daemonization & Linux Service Hardening (`systemd-daemonization/*`)
-
-This section contains 6 technical specifications and configuration guides detailing production Linux service daemonization in `sentinel-stack`: lifecycle management, hardened unit files for `sentinel-nexus` and `blackbox-sentinel`, granular POSIX capabilities, real-time round-robin scheduling (`SCHED_RR`), and centralized journalctl logging.
-
----
-
-### File: `sentinel-stack/docs/systemd-daemonization/systemd-architecture.md`
-
-```markdown
 # Linux Systemd Service Architecture & Lifecycle Management
 
 In mission-critical industrial, healthcare, and defense deployments, the daemons comprising the Aryorithm ecosystem (`sentinel-nexus` and `sentinel`) must run continuously as hardened background system services managed by the Linux system and service manager (`systemd`).
@@ -40,5 +31,4 @@ In mission-critical industrial, healthcare, and defense deployments, the daemons
 * **Crash Recovery Circuit:** Configured with `Restart=always` and `RestartSec=3s`. If an unhandled fatal condition occurs, systemd relaunches the process automatically within 3 seconds.
 * **Rapid Restart Throttling:** Includes `StartLimitIntervalSec=60s` and `StartLimitBurst=5` to prevent tight crash-loop spinning if configuration files are missing.
 * **Graceful Teardown Signaling:** Dispatches `SIGTERM` on shutdown, triggering internal signal traps that execute instant **0ms graceful deregistration** before process termination.
-```
 
