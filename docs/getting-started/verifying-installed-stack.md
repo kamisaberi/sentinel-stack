@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/getting-started/verifying-installed-stack.md`
-
-```markdown
 # Verifying the Installed Stack (`sudo make verify`)
 
 After running `install.sh`, execute the automated verification test suite to ensure that all shared libraries, in-kernel BPF filters, executables, and network listeners are healthy.
@@ -44,6 +39,5 @@ sudo ./scripts/05_verify_installation.sh
 ================================================================================
 Status: ALL QUALITY GATES PASSED (11/11). System is operational.
 ================================================================================
-```
 ```
 

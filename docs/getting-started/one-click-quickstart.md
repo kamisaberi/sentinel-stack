@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/getting-started/one-click-quickstart.md`
-
-```markdown
 # 1-Click Quickstart: `sudo ./install.sh`
 
 This guide walks you through executing the automated single-command installation of the entire 6-tier Aryorithm ecosystem.
@@ -53,6 +48,5 @@ All 6 Tiers Installed  : /usr/local/lib and /usr/local/bin
 Systemd Daemons Active : sentinel-nexus.service, sentinel.service
 Web Command Center     : https://localhost:9443
 ================================================================================
-```
 ```
 

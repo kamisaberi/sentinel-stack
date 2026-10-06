@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/getting-started/system-requirements.md`
-
-```markdown
 # System Requirements & Prerequisites
 
 Review the operating system baselines, hardware resource recommendations, and user privileges before executing `install.sh`.
@@ -38,5 +33,4 @@ Compilation of deep C++20 templates and eBPF bytecode requires adequate RAM:
 
 * **Superuser Privileges:** `sudo ./install.sh` is required to install system packages via APT, mount `/sys/fs/bpf`, write shared libraries to `/usr/local/lib/`, and register systemd service units.
 * **Internet Access:** Initial installation requires outbound HTTP/HTTPS access to Ubuntu package mirrors and GitHub. (For offline deployments, refer to `architecture/air-gapped-installation-model.md`).
-```
 

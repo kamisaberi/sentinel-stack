@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/getting-started/post-install-next-steps.md`
-
-```markdown
 # Post-Installation Next Steps
 
 Once `sentinel-stack` completes installation and smoke tests verify nominal status, explore the three management interfaces:
@@ -47,6 +42,5 @@ Because `sentinel-stack` harvested host binaries and libraries into `sentinel-ma
 cd sentinel-matrix
 make up
 make tui
-```
 ```
 

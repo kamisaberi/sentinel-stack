@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/getting-started/architecture-at-a-glance.md`
-
-```markdown
 # Architecture at a Glance
 
 The diagram below details the filesystem layout, compilation dependencies, and daemonization hooks provisioned by `sentinel-stack`.
@@ -40,6 +35,5 @@ The diagram below details the filesystem layout, compilation dependencies, and d
  │  │ sentinel-matrix/shared/{bin, lib, models, certs}/                                 │  │
  │  └────────────────────────────────────────────────────────────────────────────────────┘  │
  └──────────────────────────────────────────────────────────────────────────────────────────┘
-```
 ```
 

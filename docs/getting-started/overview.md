@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/getting-started/overview.md`
-
-```markdown
 # Meta-Builder Architecture: Automating the 6-Tier Ecosystem
 
 Building, linking, and configuring a 6-tier cyber-physical security ecosystem from scratch typically requires executing dozens of disparate build steps: compiling eBPF bytecode with Clang BPF targets, generating gRPC Protobuf stubs, resolving shared library paths in `/etc/ld.so.conf.d/`, isolating Python machine learning environments, and authoring real-time systemd service units.
@@ -45,5 +40,4 @@ Building, linking, and configuring a 6-tier cyber-physical security ecosystem fr
 * **Topological Sequentiality:** Ensures `libxinfer.so` exists before `libblackbox.so` compiles, and both shared libraries are indexed in `ldconfig` before `blackbox-sentinel` links.
 * **Isolated Machine Learning Runtime:** Builds `/opt/sentinel-stack/venv` to run PyTorch and `forge-cli` without contaminating host operating system Python packages.
 * **Matrix Handover:** Automatically copies compiled binaries and dependencies into `sentinel-matrix/shared/lib/`, allowing immediate transition into digital twin simulation.
-```
 
