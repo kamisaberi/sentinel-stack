@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/tier-4-forge-cli-check.md`
-
-```markdown
 # Tier 4 Assertion Check: `xinfer-forge` (`forge-cli`)
 
 Verifies that the isolated Python virtual environment (`/opt/sentinel-stack/venv`) executes properly and that `forge-cli` runs without PEP 668 restrictions.
@@ -35,5 +30,4 @@ assert x.shape == (1, 32)
 
 If the virtual environment is corrupted:
 * Re-provision `/opt/sentinel-stack/venv` via `scripts/01_install_dependencies.sh`.
-```
 

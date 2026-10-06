@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/automated-ci-cd-integration.md`
-
-```markdown
 # Automated Continuous Integration (CI/CD Pipeline)
 
 `sentinel-stack` can be executed within GitHub Actions or GitLab CI runners to validate builds and dependency graphs on every commit.
@@ -40,6 +35,5 @@ jobs:
       - name: Audit Dynamic Library Bundling
         run: |
           test -d /opt/sentinel-matrix/shared/lib && ls -lh /opt/sentinel-matrix/shared/lib
-```
 ```
 

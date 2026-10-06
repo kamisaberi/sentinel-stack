@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/tier-6-nexus-ctl-check.md`
-
-```markdown
 # Tier 6 Assertion Check: `sentinel-nexus` & `nexus-ctl`
 
 Verifies that the central command daemon and operations CLI execute, bind network listener ports, and authenticate commands.
@@ -36,5 +31,4 @@ ss -tulpn | grep -q ":9444" || exit 1
 
 If port 50051 or 9443 is not listening:
 * Check systemd service logs: `journalctl -u sentinel-nexus -n 50 --no-pager`.
-```
 

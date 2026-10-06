@@ -1,7 +1,3 @@
-
-### File: `sentinel-stack/docs/index.md`
-
-```markdown
 # Sentinel-Stack (`sentinel-stack`)
 
 **1-Click Topological DAG Meta-Installer & Master Deployment Orchestrator**  
@@ -70,5 +66,4 @@ Upon build completion, `sentinel-stack` deploys hardened systemd service units w
 3. **PEP 668 & `t64` Compliance:** Bypasses Ubuntu 24.04/26.04 `externally-managed-environment` restrictions using an isolated virtual environment at `/opt/sentinel-stack/venv`, resolving all 64-bit time `t64` package names.
 4. **Dynamic RAM Throttling:** Calculates host memory per CPU core, dynamically throttling compiler parallelism (e.g., `make -j2` under $< 8\text{ GB}$ RAM) to prevent internal compiler Out-of-Memory (OOM) fatal crashes.
 5. **Turn-Key Cyber-Range Bridge:** Harvests host-compiled binaries and dynamic libraries (`libabsl`, `libre2`, `libgrpc++`) directly into `sentinel-matrix/shared/lib/` for zero-friction digital twin execution.
-```
 

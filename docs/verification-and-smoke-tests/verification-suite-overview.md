@@ -1,12 +1,3 @@
-### Part 7: Post-Build Automated Quality Gates & Smoke Tests (`verification-and-smoke-tests/*`)
-
-This section contains 8 technical verification guides and automated smoke-testing specifications for `sentinel-stack`: the post-build test matrix, assertions across all six runtime tiers, and CI/CD workflow automation.
-
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/verification-suite-overview.md`
-
-```markdown
 # Verification Suite Overview & Smoke-Testing Matrix
 
 Phase 5 of the installer executes `scripts/05_verify_installation.sh`, an automated quality gate that runs 11 non-destructive smoke-test assertions across all six compiled runtime tiers.
@@ -47,5 +38,4 @@ sudo /opt/sentinel-stack/scripts/05_verify_installation.sh
 
 * `0`: **All 11 quality gates passed.** System is operational.
 * `1`: **One or more assertions failed.** Details are logged to `/var/log/sentinel_install.log`.
-```
 

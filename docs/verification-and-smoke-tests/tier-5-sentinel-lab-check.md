@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/tier-5-sentinel-lab-check.md`
-
-```markdown
 # Tier 5 Assertion Check: `sentinel-lab` (`sentinel_lab`)
 
 Verifies that the SLAB benchmark research testbed compiles, executes, and locates its dataset conversion tools.
@@ -28,5 +23,4 @@ test -f /opt/sentinel-stack/src/lab/tools/csv_to_slab.py || exit 1
 
 If `sentinel_lab` fails to build:
 * Check CMake configuration options in `/opt/sentinel-stack/src/lab/build/CMakeCache.txt`.
-```
 

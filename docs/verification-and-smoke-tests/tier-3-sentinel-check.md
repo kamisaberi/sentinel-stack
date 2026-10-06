@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/tier-3-sentinel-check.md`
-
-```markdown
 # Tier 3 Assertion Check: `blackbox-sentinel` (`sentinel` daemon)
 
 Verifies that the edge appliance daemon compiles, links against Tier 1 and Tier 2, and discovers dynamic protocol plugins.
@@ -34,5 +29,4 @@ fi
 If `sentinel --version` fails with a missing library error:
 * Check library search paths using `ldd /usr/local/bin/sentinel`.
 * Confirm that `libxinfer.so` and `libblackbox.so` reside in `/usr/local/lib`.
-```
 

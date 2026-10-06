@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/tier-1-libxinfer-check.md`
-
-```markdown
 # Tier 1 Assertion Check: `libxinfer.so`
 
 Verifies that the foundational AI inference engine is compiled, installed in `/usr/local/lib/`, indexed in `/etc/ld.so.cache`, and exports public API symbols.
@@ -35,5 +30,4 @@ If `libxinfer.so` is missing from `ldconfig`:
    ```bash
    sudo ldconfig
    ```
-```
 

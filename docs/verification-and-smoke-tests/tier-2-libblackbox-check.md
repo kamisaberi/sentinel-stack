@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/verification-and-smoke-tests/tier-2-libblackbox-check.md`
-
-```markdown
 # Tier 2 Assertion Check: `libblackbox.so` & `xdp_filter.o`
 
 Verifies that the active mitigation core (`libblackbox.so`) and the in-kernel eBPF bytecode filter (`xdp_filter.o`) are valid and discoverable.
@@ -36,5 +31,4 @@ If `xdp_filter.o` lacks the `.BTF` section:
   cd /opt/sentinel-stack/src/blackbox/bpf && ./build_bpf.sh
   sudo cp xdp_filter.o /usr/local/lib/bpf/
   ```
-```
 
