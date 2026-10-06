@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/missing-kernel-headers.md`
-
-```markdown
 # Debugging Missing Linux Kernel Headers during eBPF Compilation
 
 Phase 3 compiles the in-kernel eBPF filter (`blackbox/bpf/xdp_filter.c`). If the host system's kernel development headers do not match the running kernel release (`uname -r`), compilation halts.
@@ -57,5 +52,4 @@ sudo apt-get install -y linux-headers-$(uname -r)
 ```
 
 Verify that `/usr/src/linux-headers-$(uname -r)` exists, then restart installation: `sudo ./install.sh`.
-```
 

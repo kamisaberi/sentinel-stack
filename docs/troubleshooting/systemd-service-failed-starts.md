@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/systemd-service-failed-starts.md`
-
-```markdown
 # Diagnosing Systemd Service Launch Failures (`status=203/EXEC`, `status=1`)
 
 If `sentinel-nexus.service` or `sentinel.service` fails to start during Phase 4, inspect the systemd exit code to pinpoint the root cause.
@@ -63,6 +58,5 @@ Ensure the service user has permission to access the TPM 2.0 Resource Manager:
 ```bash
 sudo usermod -aG tss root
 sudo chmod 660 /dev/tpmrm0
-```
 ```
 

@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/python-externally-managed-errors.md`
-
-```markdown
 # Resolving Python PEP 668 `externally-managed-environment` Errors
 
 On modern Linux operating systems (Ubuntu 24.04 LTS, Ubuntu 26.04 Devel, Debian 12), attempting to install Python packages globally via `pip` fails with a system protection block.
@@ -40,6 +35,5 @@ sudo /opt/sentinel-stack/venv/bin/pip install <package_name>
 
 # Running forge-cli directly:
 /usr/local/bin/forge-cli --help
-```
 ```
 

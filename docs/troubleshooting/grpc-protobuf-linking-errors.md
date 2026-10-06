@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/grpc-protobuf-linking-errors.md`
-
-```markdown
 # Resolving gRPC & Protocol Buffers Linking Errors
 
 When building Tier 6 (`sentinel-nexus`), the linker resolves symbols across `libgrpc++`, `libprotobuf`, and Abseil. If system libraries are mismatched or multiple Protobuf versions coexist, linking fails.
@@ -56,5 +51,4 @@ pkg-config --modversion protobuf
 ```
 
 Both outputs must report identical major version baselines. Re-run `./install.sh`.
-```
 

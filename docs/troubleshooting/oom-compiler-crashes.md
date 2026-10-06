@@ -1,12 +1,3 @@
-### Part 11: Troubleshooting & Help Desk System (`troubleshooting/*`)
-
-This final section covers troubleshooting compiler out-of-memory crashes, kernel header mismatches during eBPF compilation, gRPC/Protobuf dynamic linking errors, Python PEP 668 virtual environment resolution, systemd service launch failures, dynamic linker cache indexing, technical FAQs, and enterprise support escalation protocols for `sentinel-stack`.
-
----
-
-### File: `sentinel-stack/docs/troubleshooting/oom-compiler-crashes.md`
-
-```markdown
 # Resolving Compiler Out-of-Memory (OOM) Fatal Crashes
 
 When compiling large C++20 template libraries (such as `blackbox-sentinel`'s 26 subsystems or `sentinel-nexus`'s gRPC stubs), compilers (`clang++-16` or `g++-12`) allocate significant memory per translation unit during intermediate representation (IR) optimization passes.
@@ -73,5 +64,4 @@ free -h
 ```
 
 Re-run the installation: `sudo ./install.sh`.
-```
 

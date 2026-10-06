@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/faq.md`
-
-```markdown
 # Technical Frequently Asked Questions (FAQ)
 
 ---
@@ -32,6 +27,5 @@ Download the pre-seeded bundle (`sentinel-stack-airgapped.tar.gz`) on an interne
 
 ```bash
 sudo ./install.sh --offline
-```
 ```
 

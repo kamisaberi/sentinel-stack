@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/dynamic-linker-library-not-found.md`
-
-```markdown
 # Resolving Dynamic Linker Errors: `cannot open shared object file`
 
 When executing installed binaries (`sentinel`, `sentinel-nexus`, or `nexus-ctl`), the dynamic linker may fail to locate newly compiled shared libraries in `/usr/local/lib`.
@@ -50,6 +45,5 @@ Confirm that the dynamic linker resolves all required libraries:
 ```bash
 ldd /usr/local/bin/sentinel
 # All dependencies should report absolute paths (e.g. => /usr/local/lib/libxinfer.so.1)
-```
 ```
 

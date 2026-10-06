@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/troubleshooting/support.md`
-
-```markdown
 # Enterprise Support SLAs, Issue Escalation & Bug Reporting
 
 ---
@@ -44,5 +39,4 @@ For technical inquiries and enterprise SLA contracts:
 If you identify a security bypass, privilege escalation flaw, or memory corruption vulnerability in `sentinel-stack`:
 * Send an encrypted PGP message to **`security@aryorithm.com`**.
 * We acknowledge disclosures within **48 hours** and provide CVE assignment, risk remediation, and backported security patches according to coordinated disclosure guidelines.
-```
 
