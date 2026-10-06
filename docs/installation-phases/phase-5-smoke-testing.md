@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/installation-phases/phase-5-smoke-testing.md`
-
-```markdown
 # Phase 5: Automated Smoke Testing (`05_verify_installation.sh`)
 
 Phase 5 executes an automated post-installation quality gate. It verifies that shared libraries are discoverable, binaries execute with proper version outputs, and network listener ports are active.
@@ -57,6 +52,5 @@ else
     echo "[-] QUALITY GATE FAILURE: One or more assertions failed!" >&2
     exit 1
 fi
-```
 ```
 

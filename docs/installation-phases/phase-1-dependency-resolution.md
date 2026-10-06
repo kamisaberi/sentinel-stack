@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/installation-phases/phase-1-dependency-resolution.md`
-
-```markdown
 # Phase 1: Dependency Resolution & Packaging (`01_install_dependencies.sh`)
 
 Phase 1 resolves all native compilers, build systems, 64-bit `t64` libraries, and kernel development headers via APT, and provisions the isolated Python virtual environment at `/opt/sentinel-stack/venv`.
@@ -83,5 +78,4 @@ echo "[+] Phase 1 Complete: All OS toolchains and virtual environment provisione
 
 * **PEP 668 Compliance:** Python packages are never installed globally using `sudo pip install`; everything is isolated within `/opt/sentinel-stack/venv`.
 * **Non-Interactive Execution:** APT flags bypass all interactive dialogs.
-```
 

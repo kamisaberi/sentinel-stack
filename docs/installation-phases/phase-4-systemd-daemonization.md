@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/installation-phases/phase-4-systemd-daemonization.md`
-
-```markdown
 # Phase 4: Systemd Service Daemonization (`04_setup_systemd.sh`)
 
 Phase 4 generates, installs, and starts production Linux systemd service units for `sentinel-nexus` and `blackbox-sentinel`, configuring **Real-Time Round-Robin scheduling (`SCHED_RR`)** and fine-grained POSIX capabilities.
@@ -75,6 +70,5 @@ systemctl enable sentinel-nexus.service
 systemctl enable sentinel.service
 
 echo "[+] Phase 4 Complete: Systemd services configured and registered."
-```
 ```
 

@@ -1,12 +1,3 @@
-### Part 3: The 6-Phase Linear Pipeline (`installation-phases/*`)
-
-This section contains 7 technical implementation guides detailing the chronological execution phases of `sentinel-stack`: the master pipeline overview, system validation (`00_check_system.sh`), dependency resolution (`01_install_dependencies.sh`), repository synchronization (`02_clone_repositories.sh`), topological compilation (`03_build_all_tiers.sh`), systemd daemonization (`04_setup_systemd.sh`), and post-install smoke testing (`05_verify_installation.sh`).
-
----
-
-### File: `sentinel-stack/docs/installation-phases/pipeline-overview.md`
-
-```markdown
 # Chronological Pipeline Execution: Phase 0 to Phase 5
 
 The master orchestration script (`install.sh`) executes a linear, 6-phase pipeline. Each phase is implemented as a standalone POSIX script in `scripts/`, enforcing strict error trapping and logging to `/var/log/sentinel_install.log`.
@@ -93,6 +84,5 @@ echo ""
 echo "================================================================================"
 echo "          INSTALLATION COMPLETE — ALL 6 TIERS SUCCESSFULLY DEPLOYED             "
 echo "================================================================================"
-```
 ```
 

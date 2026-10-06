@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/installation-phases/phase-3-topological-compilation.md`
-
-```markdown
 # Phase 3: Topological DAG Compilation (`03_build_all_tiers.sh`)
 
 Phase 3 is the compilation engine of `sentinel-stack`. It compiles all six runtime tiers in strict topological order ($T_1 \to T_6$), updating `/etc/ld.so.cache` after each tier build to satisfy linker dependencies.
@@ -103,6 +98,5 @@ if [ -d "/opt/sentinel-matrix" ]; then
 fi
 
 echo "[+] Phase 3 Complete: All 6 tiers compiled and installed system-wide."
-```
 ```
 

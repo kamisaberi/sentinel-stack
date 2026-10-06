@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/installation-phases/phase-0-system-validation.md`
-
-```markdown
 # Phase 0: System & Hardware Validation (`00_check_system.sh`)
 
 Phase 0 interrogates the host operating system, probes the Linux kernel for eBPF features, calculates physical RAM to tune compiler parallelism, and ensures the BPF virtual filesystem (`bpffs`) is mounted.
@@ -74,5 +69,4 @@ echo "[+] System sizing verified: ${TOTAL_RAM_GB}GB RAM, ${CPU_CORES} Cores -> B
 * **Superuser Privileges:** Aborts immediately if `$EUID` is non-zero.
 * **Kernel Baseline:** Enforces Kernel $\ge 5.15$ (Kernel 6.8+ recommended for modern BTF CO-RE support).
 * **RAM Throttling:** Caches `$PARALLEL_JOBS` into an environment configuration file consumed by Phase 3.
-```
 

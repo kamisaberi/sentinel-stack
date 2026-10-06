@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/installation-phases/phase-2-repository-synchronization.md`
-
-```markdown
 # Phase 2: Repository Synchronization (`02_clone_repositories.sh`)
 
 Phase 2 locates the source trees for all six runtime tiers. It supports both developer local directory discovery (using `rsync`) and fresh shallow Git cloning.
@@ -60,5 +55,4 @@ echo "[+] Phase 2 Complete: All source code trees synchronized."
 
 * **Submodule Population:** Ensures nested Git submodules (such as hardware header shims) are populated.
 * **Developer Priority:** Local working copies take priority over remote clones, allowing developers to test local uncommitted changes instantly.
-```
 
