@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/operations-and-makefile/monitoring-daemons-status.md`
-
-```markdown
 # Monitoring Daemon Health & Socket Listeners (`sudo make status`)
 
 The `make status` target checks service health, process CPU/RAM consumption, and active network socket listeners.
@@ -48,6 +43,5 @@ sudo make status
 ------------------------------ IN-KERNEL eBPF HOOK -----------------------------
  [OK] Interface: eth0     Program ID: 142 (xdp_filter.o)  Mode: DRIVER (<0.84µs)
 ================================================================================
-```
 ```
 

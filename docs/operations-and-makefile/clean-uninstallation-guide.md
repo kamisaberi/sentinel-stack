@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/operations-and-makefile/clean-uninstallation-guide.md`
-
-```markdown
 # Clean Uninstallation & System Purge Guide
 
 If an appliance is being decommissioned or repurposed, `sentinel-stack` provides a clean uninstallation target that stops all services, removes installed binaries, shared libraries, headers, and restores default OS dynamic linker states.
@@ -51,6 +46,5 @@ By default, `make uninstall` preserves configuration files in `/etc/sentinel/` a
 
 ```bash
 sudo make purge-all
-```
 ```
 

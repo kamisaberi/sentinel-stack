@@ -1,12 +1,3 @@
-### Part 10: Operations & Maintenance (`operations-and-makefile/*`)
-
-This section contains 5 operational reference manuals and maintenance guides for `sentinel-stack`: the root Makefile reference, updating installed tiers, inspecting service health, executing clean uninstalls, and backing up configuration and state databases.
-
----
-
-### File: `sentinel-stack/docs/operations-and-makefile/makefile-reference.md`
-
-```markdown
 # Makefile Target Reference & Operations Cheat Sheet
 
 The `sentinel-stack` root `Makefile` provides standardized targets for building, updating, monitoring, and maintaining the 6-tier runtime ecosystem.
@@ -39,5 +30,4 @@ make help
 ### Cleanup & Uninstallation
 * **`sudo make clean`**: Deletes temporary build directories (`build/`) across all source trees.
 * **`sudo make uninstall`**: Halts systemd services, removes installed binaries, shared libraries, headers, and unlinks systemd units.
-```
 

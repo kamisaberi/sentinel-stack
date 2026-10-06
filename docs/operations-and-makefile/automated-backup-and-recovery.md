@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/operations-and-makefile/automated-backup-and-recovery.md`
-
-```markdown
 # Automated Configuration & State Backup
 
 To prepare for hardware replacements or disaster recovery, `sentinel-stack` provides an automated backup target that packages runtime manifests, PKI certificates, and state journals into an encrypted tarball.
@@ -43,5 +38,4 @@ sudo tar -xzf /path/to/sentinel_backup_*.tar.gz -C /
 
 # 3. Reload services
 sudo systemctl restart sentinel-nexus sentinel
-```
 ```

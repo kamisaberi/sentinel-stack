@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/operations-and-makefile/updating-installed-tiers.md`
-
-```markdown
 # Updating Installed Tiers & Incremental Recompilation
 
 When new commits or security patches are merged into any of the ecosystem repositories, `sentinel-stack` allows administrators to pull updates and perform incremental recompilations without reinstalling OS dependencies.
@@ -49,6 +44,5 @@ If you only modified code in a specific tier (e.g., `blackbox-sentinel`), rebuil
 
 ```bash
 sudo ./scripts/03_build_all_tiers.sh --tier sentinel
-```
 ```
 
