@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/bridge-to-sentinel-matrix/vmware-docker-mesh-handshake.md`
-
-```markdown
 # One-Touch Handover: Host Compilation to Mesh Launch
 
 The ultimate goal of `sentinel-stack` is to enable immediate testing inside the `sentinel-matrix` digital twin mesh with a **one-touch handover**.
@@ -56,5 +51,4 @@ shared/lib:
 ```
 
 The cyber-range is ready to launch via `make up`.
-```
 

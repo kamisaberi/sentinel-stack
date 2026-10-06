@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/bridge-to-sentinel-matrix/dynamic-library-extraction-ldd.md`
-
-```markdown
 # Dynamic Library Extraction via `ldd` (`shared/lib/`)
 
 Binaries compiled on the host link against complex external libraries (e.g., `libabsl_synchronization.so.20260107`, `libre2.so.11`, `libgrpc++.so.1.62`, `libprotobuf.so.32`). Installing full developer packages in every Docker container image increases image sizes by over $2\text{ GB}$.
@@ -56,6 +51,5 @@ ldd /usr/local/bin/sentinel-nexus /usr/local/bin/sentinel 2>/dev/null | \
     done
 
 echo "[+] Library extraction complete: $(ls -1 "${DEST_LIB}" | wc -l) shared objects staged."
-```
 ```
 

@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/bridge-to-sentinel-matrix/harvesting-host-binaries.md`
-
-```markdown
 # Harvesting Host-Compiled Executables (`shared/bin/`)
 
 Phase 3 of `sentinel-stack` automates harvesting compiled production binaries from `/usr/local/bin` directly into the `sentinel-matrix/shared/bin/` staging area.
@@ -59,6 +54,5 @@ In `sentinel-matrix/docker/Dockerfile.node`, the harvested executable is mapped 
 COPY shared/bin/sentinel /usr/local/bin/sentinel
 RUN chmod +x /usr/local/bin/sentinel
 ENTRYPOINT ["/usr/local/bin/sentinel"]
-```
 ```
 

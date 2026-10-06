@@ -1,12 +1,3 @@
-### Part 8: Bridge to `sentinel-matrix` (`bridge-to-sentinel-matrix/*`)
-
-This section contains 5 technical integration guides detailing the automated bridge between `sentinel-stack` and `sentinel-matrix`: the bridge architecture, harvesting host-compiled binaries into container mounts, resolving dynamic libraries via `ldd`, synchronizing protobuf schemas and web assets, and executing the one-touch simulation mesh handover.
-
----
-
-### File: `sentinel-stack/docs/bridge-to-sentinel-matrix/matrix-bridge-architecture.md`
-
-```markdown
 # Bridge Architecture: Host Compilation to Cyber-Range Handover
 
 `sentinel-stack` links bare-metal compilation and containerized digital twin simulation. Rather than requiring developers to recompile the entire C++20 codebase inside Docker containers (which multiplies build times and consumes gigabytes of redundant container cache), `sentinel-stack` uses an automated **Binary & Dependency Bridge**.
@@ -48,5 +39,4 @@ This section contains 5 technical integration guides detailing the automated bri
 1. **GLIBC 2.43 Forward Compatibility:** Because binaries compiled on Ubuntu 26.04 link against `GLIBC 2.43`, the bridge pairs these binaries with `sentinel-matrix` containers based on `ubuntu:devel`, preventing dynamic linker aborts.
 2. **Zero In-Container Compilation:** Containers start instantly without running `cmake` or `ninja` internally.
 3. **Atomic Synchronization:** Binaries are synced using atomic file operations, ensuring partially linked objects are never staged to container mount paths.
-```
 

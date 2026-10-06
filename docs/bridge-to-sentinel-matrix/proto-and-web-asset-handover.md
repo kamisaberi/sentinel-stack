@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/bridge-to-sentinel-matrix/proto-and-web-asset-handover.md`
-
-```markdown
 # Protobuf Schemas & Web Asset Handover
 
 In addition to compiled binaries, `sentinel-matrix` requires access to the latest Protocol Buffer specifications (`.proto`) and the embedded Single-Page Application (SPA) web assets.
@@ -44,6 +39,5 @@ if [ -d "${SRC_NEXUS}" ] && [ -d "${MATRIX_SHARED}" ]; then
 
     echo "[+] Web and protobuf assets synchronized successfully."
 fi
-```
 ```
 
