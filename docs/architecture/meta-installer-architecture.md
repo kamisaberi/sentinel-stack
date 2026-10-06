@@ -1,12 +1,3 @@
-### Part 2: Systems Engineering & DAG Design (`architecture/*`)
-
-This section contains 6 architectural specifications detailing the systems engineering principles behind `sentinel-stack`: the meta-installer architecture, the topological compilation DAG, symbol resolution formalization, filesystem layout, the air-gapped installation model, and atomic rollback safeguards.
-
----
-
-### File: `sentinel-stack/docs/architecture/meta-installer-architecture.md`
-
-```markdown
 # Meta-Installer Architecture & Systems Design
 
 `sentinel-stack` operates as a non-interactive, topological meta-installer designed to provision the entire Aryorithm 6-tier runtime ecosystem on bare-metal systems, virtual appliances, or edge gateways.
@@ -60,5 +51,4 @@ Rather than maintaining a monolithic, fragile thousand-line shell script, `senti
   set -euo pipefail
   ```
   Any individual compilation error, missing header, or failed command immediately halts execution.
-```
 

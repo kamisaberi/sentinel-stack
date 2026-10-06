@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/architecture/system-layout-and-paths.md`
-
-```markdown
 # System-Wide Filesystem Layout & Installation Paths
 
 `sentinel-stack` adheres strictly to the Linux **Filesystem Hierarchy Standard (FHS)**, placing shared libraries, binaries, configuration manifests, and data stores into predictable system paths.
@@ -57,6 +52,5 @@ The installer registers `/usr/local/lib` in the dynamic linker configuration:
 # /etc/ld.so.conf.d/sentinel.conf
 /usr/local/lib
 /usr/local/lib/sentinel-plugins
-```
 ```
 

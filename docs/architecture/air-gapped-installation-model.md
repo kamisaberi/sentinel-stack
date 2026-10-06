@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/architecture/air-gapped-installation-model.md`
-
-```markdown
 # Air-Gapped Installation & Offline Source Pre-Seeding
 
 In classified defense installations and air-gapped industrial facilities, the target server has zero internet access to GitHub repositories or public Ubuntu package mirrors.
@@ -35,5 +30,4 @@ When executed with `--offline`:
 * **Phase 1 (Dependencies):** Bypasses `apt-get update` and installs packages directly from a local `.deb` archive directory (`/opt/sentinel-stack/debs/*.deb`) using `dpkg -i`.
 * **Phase 2 (Repositories):** Bypasses `git clone` and copies pre-seeded source trees directly from `/opt/sentinel-stack/src/` via `rsync`.
 * **Phase 4 (Python Venv):** Installs PyTorch and ONNX wheels using pip's `--no-index --find-links=/opt/sentinel-stack/wheels/` flags.
-```
 

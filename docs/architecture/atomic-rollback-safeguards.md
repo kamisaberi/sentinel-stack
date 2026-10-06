@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/architecture/atomic-rollback-safeguards.md`
-
-```markdown
 # Atomic Rollback Safeguards & Failure Containment
 
 If compilation fails mid-stream (e.g., compiler OOM or missing dependency), leaving partially installed shared libraries in `/usr/local/lib` can break future builds or leave the host in an un-bootable state.
@@ -51,5 +46,4 @@ trap cleanup_on_error ERR INT TERM
 
 * **Isolated Build Trees:** All compilation executes inside segregated build subdirectories (`build/`). Partial compilation objects (`.o`) never touch `/usr/local/` until the target passes all link tests.
 * **Service Safety:** If Tier 6 fails to compile, existing Tier 3 services are not restarted with mismatched library versions.
-```
 

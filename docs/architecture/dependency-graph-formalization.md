@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/architecture/dependency-graph-formalization.md`
-
-```markdown
 # Dependency Graph Formalization: Symbol Resolution
 
 To understand why linear topological ordering is strictly enforced, this document examines the C++ dynamic symbol table dependencies across the shared objects.
@@ -39,6 +34,5 @@ Without running `ldconfig` sequentially between tiers, compiling Tier 3 will fai
 ```text
 /usr/bin/ld: cannot find -lxinfer: No such file or directory
 /usr/bin/ld: cannot find -lblackbox: No such file or directory
-```
 ```
 

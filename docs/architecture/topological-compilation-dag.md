@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/architecture/topological-compilation-dag.md`
-
-```markdown
 # The Topological Compilation Directed Acyclic Graph (DAG)
 
 Because each tier in the Aryorithm ecosystem links directly against the headers and shared objects of lower-level tiers, compiling out of order results in fatal dynamic linker errors.
@@ -68,5 +63,4 @@ $$\mathcal{T} = \langle T_1 \longrightarrow T_2 \longrightarrow T_3 \longrightar
 4. **$T_4$ (`xinfer-forge`):** Continual active learning engine (`forge-cli`). Consumes $T_1$ ONNX specifications.
 5. **$T_5$ (`sentinel-lab`):** Open academic benchmark testbed (`sentinel_lab`). Links to $T_1$ and $T_2$.
 6. **$T_6$ (`sentinel-nexus`):** Central command plane (`sentinel-nexus`). Coordinates $T_3$, $T_4$, and $T_5$.
-```
 
