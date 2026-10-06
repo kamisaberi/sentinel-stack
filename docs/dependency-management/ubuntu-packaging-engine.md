@@ -1,12 +1,3 @@
-### Part 4: Dependency Management & OS Toolchain Resolution (`dependency-management/*`)
-
-This section contains 6 technical implementation guides detailing how `sentinel-stack` resolves Ubuntu 24.04 and 26.04 package management challenges: non-interactive APT operations, 64-bit `time_t` (`t64`) transition libraries, PEP 668 Python environment isolation, eBPF toolchain alignment, silicon accelerator driver discovery, and debconf dialog suppression.
-
----
-
-### File: `sentinel-stack/docs/dependency-management/ubuntu-packaging-engine.md`
-
-```markdown
 # Ubuntu Packaging Engine & Automated Dependency Resolution
 
 `sentinel-stack` operates a package management wrapper within `scripts/01_install_dependencies.sh` designed to resolve system libraries, compilers, and development headers across **Ubuntu 24.04 LTS (Noble Numbat)** and **Ubuntu 26.04 (Devel)**.
@@ -52,5 +43,4 @@ wait_for_apt_lock() {
 ```
 
 This prevents installation aborts on newly initialized edge virtual machines.
-```
 

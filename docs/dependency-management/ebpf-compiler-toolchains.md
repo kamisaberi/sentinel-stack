@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/dependency-management/ebpf-compiler-toolchains.md`
-
-```markdown
 # eBPF Compiler Toolchains & Kernel Header Alignment
 
 Compiling in-kernel eBPF packet mitigation filters (`xdp_filter.o`) requires strict alignment between the host Clang/LLVM toolchain and the active kernel's internal header structures.
@@ -51,6 +46,5 @@ if [ ! -d "/usr/src/linux-headers-$(uname -r)" ]; then
         exit 1
     }
 fi
-```
 ```
 

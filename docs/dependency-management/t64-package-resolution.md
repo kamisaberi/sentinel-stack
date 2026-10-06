@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/dependency-management/t64-package-resolution.md`
-
-```markdown
 # Managing Ubuntu 24.04/26.04 64-bit `time_t` (`t64`) Transitions
 
 Ubuntu 24.04 (Noble Numbat) and Ubuntu 26.04 introduced the widespread **`t64` architecture transition** to address the year-2038 problem (Y2038) on 32-bit platforms, renaming hundreds of core shared library packages (e.g., `libprotobuf-dev` and `libgrpc++-dev` dependencies).
@@ -38,5 +33,4 @@ apt-get install -y \
 ```
 
 This decoupling ensures that whether `sentinel-stack` executes on Ubuntu 22.04 LTS, Ubuntu 24.04 LTS, or Ubuntu 26.04 Devel, APT resolves the correct architecture symbols without manual user intervention.
-```
 

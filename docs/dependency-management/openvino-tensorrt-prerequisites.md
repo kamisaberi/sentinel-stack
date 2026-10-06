@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/dependency-management/openvino-tensorrt-prerequisites.md`
-
-```markdown
 # Hardware Acceleration Discovery: Intel OpenVINO & NVIDIA CUDA
 
 `sentinel-stack` probes the host for hardware AI accelerators (Intel NPUs, NVIDIA GPUs) during Phase 1, configuring compilation feature flags dynamically.
@@ -44,5 +39,4 @@ When an NVIDIA GPU (RTX A4000, Jetson Orin) is detected:
 * Probes for `nvcc` and CUDA Runtime `>= 12.0`.
 * Configures CMake to locate `libnvinfer.so` and `libcudart.so`.
 * If CUDA drivers are absent, falls back to CPU SIMD mode without interrupting compilation.
-```
 

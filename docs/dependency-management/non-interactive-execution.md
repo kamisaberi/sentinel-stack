@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/dependency-management/non-interactive-execution.md`
-
-```markdown
 # Non-Interactive Automation: Eliminating Prompts
 
 To support automated cloud-init provisioning, PXE boot installations, and CI/CD pipelines, `sentinel-stack` suppresses all interactive debconf dialogs.
@@ -39,5 +34,4 @@ apt-get install "${APT_OPTS[@]}" <package_list>
 * **`--force-confdef`:** Instructs dpkg to resolve configuration file conflicts using the package maintainer's default choice without prompting.
 * **`--force-confold`:** Preserves existing local configuration files if an existing file has been modified.
 * **`NEEDRESTART_MODE=a`:** Suppresses the `needrestart` terminal menu that pauses script execution on modern Ubuntu releases.
-```
 

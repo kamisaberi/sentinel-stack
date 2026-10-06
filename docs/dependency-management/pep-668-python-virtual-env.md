@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/dependency-management/pep-668-python-virtual-env.md`
-
-```markdown
 # PEP 668 Compliance: Isolated `/opt/sentinel-stack/venv`
 
 Modern Linux distributions enforce **Python Enhancement Proposal 668 (PEP 668)**, which prevents `pip` from installing packages into the system-wide global Python environment (`externally-managed-environment`).
@@ -48,6 +43,5 @@ To allow non-root users and systemd units to call `forge-cli` without activating
 #!/usr/bin/env bash
 # /usr/local/bin/forge-cli
 exec /opt/sentinel-stack/venv/bin/python3 -m forge.cli "$@"
-```
 ```
 
