@@ -1,12 +1,3 @@
-### Part 5: Tier-by-Tier Build Mechanics (`compilation-dag-tiers/*`)
-
-This section contains 8 technical implementation guides detailing the exact compilation commands, linker flags, dynamic library caches, and memory-throttled compilation steps across all six tiers in the Aryorithm ecosystem.
-
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/building-tier-1-xinfer.md`
-
-```markdown
 # Tier 1 Build Mechanics: `xinfer-essential` (`libxinfer.so`)
 
 `xinfer-essential` is the foundational inference runtime in the topological DAG. It must be compiled and installed system-wide first so downstream tiers can locate its C++20 headers and link against `libxinfer.so`.
@@ -54,6 +45,5 @@ Confirm that `libxinfer.so` is registered in `/etc/ld.so.cache`:
 ```bash
 ldconfig -p | grep libxinfer
 # Output: libxinfer.so.1 (libc6,x86-64) => /usr/local/lib/libxinfer.so.1
-```
 ```
 

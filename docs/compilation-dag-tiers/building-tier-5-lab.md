@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/building-tier-5-lab.md`
-
-```markdown
 # Tier 5 Build Mechanics: `sentinel-lab` (`sentinel_lab`)
 
 `sentinel-lab` provides the SLAB protocol benchmarking engine and raw socket testbed. It links against `libxinfer.so` and `libblackbox.so`.
@@ -36,6 +31,5 @@ ninja install
 
 ```bash
 test -x /usr/local/bin/sentinel_lab && echo "[+] sentinel_lab binary verified"
-```
 ```
 

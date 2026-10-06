@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/dynamic-linker-cache-ldconfig.md`
-
-```markdown
 # Dynamic Linker Cache Refreshes (`ldconfig`)
 
 In Linux, newly installed shared libraries in `/usr/local/lib` are invisible to downstream compiler link steps until the system dynamic linker cache (`/etc/ld.so.cache`) is refreshed.
@@ -39,5 +34,4 @@ Phase 1 registers `/usr/local/lib` and the plugin directory in `/etc/ld.so.conf.
 ```
 
 This guarantees that both the host operating system and container runtimes resolve Aryorithm shared libraries without requiring manual `LD_LIBRARY_PATH` exports.
-```
 

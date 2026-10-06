@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/parallel-job-scaling-ram.md`
-
-```markdown
 # Parallel Compilation Scaling & RAM Sizing (`make -j`)
 
 Compiling deep C++20 template metaprogramming libraries (such as gRPC stubs, OpenVINO tensor headers, and eBPF wrappers) consumes significant memory during compiler optimization passes. Executing `make -j$(nproc)` on memory-constrained systems causes internal compiler Out-of-Memory (OOM) fatal crashes (`signal 9: Killed`).
@@ -43,6 +38,5 @@ else
 fi
 
 echo "export PARALLEL_JOBS=${PARALLEL_JOBS}" > /opt/sentinel-stack/.build_env
-```
 ```
 

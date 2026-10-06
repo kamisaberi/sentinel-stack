@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/building-tier-4-forge.md`
-
-```markdown
 # Tier 4 Build Mechanics: `xinfer-forge` (`forge-cli`)
 
 `xinfer-forge` is the continual active learning daemon. To comply with PEP 668, it is installed inside `/opt/sentinel-stack/venv` and symlinked to `/usr/local/bin/forge-cli`.
@@ -31,6 +26,5 @@ Verify that `forge-cli` executes properly using the virtual environment's Python
 ```bash
 forge-cli --version
 # Expected Output: xinfer-forge version 2.4.0 (Aryorithm Continual AI Engine)
-```
 ```
 

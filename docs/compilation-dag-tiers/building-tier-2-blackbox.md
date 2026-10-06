@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/building-tier-2-blackbox.md`
-
-```markdown
 # Tier 2 Build Mechanics: `blackbox-essential` (`libblackbox.so`)
 
 `blackbox-essential` requires compiling two distinct targets:
@@ -60,6 +55,5 @@ ldconfig
 # Verify shared library and eBPF bytecode
 ldconfig -p | grep libblackbox
 test -f /usr/local/lib/bpf/xdp_filter.o && echo "[+] xdp_filter.o verified"
-```
 ```
 

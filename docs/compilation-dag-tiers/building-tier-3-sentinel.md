@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/building-tier-3-sentinel.md`
-
-```markdown
 # Tier 3 Build Mechanics: `blackbox-sentinel` (`sentinel` daemon)
 
 `blackbox-sentinel` is the commercial edge XDR appliance daemon. It links directly against **Tier 1 (`-lxinfer`)** and **Tier 2 (`-lblackbox`)**, compiling 26 native C++20 subsystems and 30 dynamic industrial protocol dissector plugins.
@@ -46,6 +41,5 @@ ldconfig
 ```bash
 /usr/local/bin/sentinel --version
 # Expected Output: sentinel version 2.4.0 (Aryorithm Technologies B.V.)
-```
 ```
 

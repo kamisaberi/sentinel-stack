@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/compilation-dag-tiers/building-tier-6-nexus.md`
-
-```markdown
 # Tier 6 Build Mechanics: `sentinel-nexus` (`sentinel-nexus` & `nexus-ctl`)
 
 `sentinel-nexus` is the master fleet command plane. It links against gRPC, Protocol Buffers, OpenSSL, and internal data structures, compiling the command daemon, operations CLI, and embedded web UI.
@@ -38,6 +33,5 @@ ldconfig
 ```bash
 nexus-ctl --version
 # Expected Output: nexus-ctl version 2.4.0 (Aryorithm Fleet Command CLI)
-```
 ```
 
