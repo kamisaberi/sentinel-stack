@@ -1,12 +1,3 @@
-### Part 9: Configuration & Stack Customization (`configuration-and-customization/*`)
-
-This section contains 4 technical configuration guides detailing how to customize and extend `sentinel-stack`: the master `stack.yaml` specification, overriding filesystem installation prefixes, pinning Git branches and release tags, and configuring custom CMake compilation and optimization flags.
-
----
-
-### File: `sentinel-stack/docs/configuration-and-customization/stack-yaml-specification.md`
-
-```markdown
 # Master Stack Configuration Manifest (`configs/stack.yaml`)
 
 `sentinel-stack` reads its default compilation flags, repository branches, filesystem prefixes, and systemd options from `configs/stack.yaml`. This file allows operators to tailor the build process for specific enterprise environments or embedded platforms.
@@ -102,6 +93,5 @@ Override the default manifest at launch using the `--config` flag:
 
 ```bash
 sudo ./install.sh --config /path/to/custom_stack.yaml
-```
 ```
 

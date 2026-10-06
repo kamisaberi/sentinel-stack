@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/configuration-and-customization/configuring-git-branches-and-tags.md`
-
-```markdown
 # Pinning Production Releases: Git Branches & Semantic Tags
 
 By default, `sentinel-stack` tracks the `main` branch across all component repositories. For regulated production deployments, pin each tier to immutable semantic release tags (e.g., `v1.0.0` or `v2.4.0`).
@@ -51,5 +46,4 @@ git checkout -q "${TAG_OR_BRANCH}"
 ```
 
 This ensures that builds are reproducible across physical servers and virtual environments.
-```
 

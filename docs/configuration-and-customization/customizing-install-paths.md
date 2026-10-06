@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/configuration-and-customization/customizing-install-paths.md`
-
-```markdown
 # Customizing System Installation Prefixes (`/usr/local` vs. `/opt`)
 
 While `sentinel-stack` defaults to standard FHS paths (`/usr/local/bin`, `/usr/local/lib`), enterprise distributions or immutable root environments often require relocating the stack into a self-contained directory (e.g., `/opt/aryorithm/`).
@@ -35,5 +30,4 @@ When `install_prefix` is modified, the installer updates several system configur
    export PATH="/opt/aryorithm/bin:${PATH}"
    ```
 4. **Systemd Service Paths:** Updates `ExecStart` directives to reference `/opt/aryorithm/bin/sentinel-nexus` and `/opt/aryorithm/bin/sentinel`.
-```
 

@@ -1,8 +1,3 @@
----
-
-### File: `sentinel-stack/docs/configuration-and-customization/customizing-cmake-build-flags.md`
-
-```markdown
 # Customizing Compiler Optimization Flags (`-O3`, `-march=native`, `-flto`)
 
 `sentinel-stack` allows performance engineers to inject custom compiler and linker flags into downstream CMake projects to maximize throughput on specific edge hardware architectures.
@@ -46,4 +41,3 @@ build_options:
 ```
 
 The installer injects these flags across all CMake configure steps automatically.
-```
