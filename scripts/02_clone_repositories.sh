@@ -39,10 +39,19 @@ for NAME in "${!REPOS[@]}"; do
     fi
 done
 
-# Sync xinfer-forge directory into workspace
-if [ -d "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge" ]; then
+# Sync xinfer-forge directory into workspace (Checks root /home/kami/ first)
+if [ -d "${WORKSPACE_DIR}/xinfer-forge" ]; then
+    echo "[*] Synchronizing: xinfer-forge from ${WORKSPACE_DIR}/xinfer-forge..."
     mkdir -p "${TARGET_DIR}/xinfer-forge"
-    rsync -a --delete --exclude 'models' "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
+    rsync -a --delete --exclude 'models' --exclude 'checkpoints' "${WORKSPACE_DIR}/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
+elif [ -d "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge" ]; then
+    echo "[*] Synchronizing: xinfer-forge from ${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge..."
+    mkdir -p "${TARGET_DIR}/xinfer-forge"
+    rsync -a --delete --exclude 'models' --exclude 'checkpoints' "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
+elif [ ! -d "${TARGET_DIR}/xinfer-forge" ]; then
+    echo "[*] Cloning xinfer-forge from GitHub..."
+    git clone --depth 1 "https://github.com/kamisaberi/xinfer-forge.git" "${TARGET_DIR}/xinfer-forge" || true
 fi
+
 
 echo "[+] Phase 2 synchronization complete."
