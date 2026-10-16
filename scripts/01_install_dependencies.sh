@@ -8,14 +8,21 @@ export DEBIAN_FRONTEND=noninteractive
 # Update package repositories
 apt-get update -y
 
-# 1. Core Compilers, Build Systems, and Kernel Tools
+# 1. Core Compilers, Build Systems, and Kernel Tools (Added bpftool, lld, libxdp, luajit)
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
     build-essential \
     cmake \
     clang \
     llvm \
+    lld \
+    bpftool \
+    libbpf-dev \
+    libxdp-dev \
+    libluajit-5.1-dev \
+    luajit \
     libelf-dev \
     libssl-dev \
+    libsqlite3-dev \
     linux-headers-generic \
     pkg-config \
     git \
@@ -54,7 +61,7 @@ if [ ! -d "${VENV_DIR}" ]; then
     python3 -m venv "${VENV_DIR}"
 fi
 
-# Activate and upgrade pip inside isolated environment
+# Upgrade pip inside isolated environment
 "${VENV_DIR}/bin/pip" install --upgrade pip setuptools wheel
 
 # Install required Python packages for Forge, Protobuf, and TUI dashboards
