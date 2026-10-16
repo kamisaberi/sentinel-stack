@@ -24,7 +24,7 @@ TasksMax=4096
 WantedBy=multi-user.target
 EOF
 
-# 2. Blackbox Sentinel Edge Daemon Unit
+# 2. Blackbox Sentinel Edge Daemon Unit (With eBPF & AF_XDP Real-Time Scheduling)
 cat << 'EOF' > /etc/systemd/system/blackbox-sentinel.service
 [Unit]
 Description=Blackbox Sentinel - Autonomous Edge XDR Engine (Tier 3)
@@ -35,12 +35,15 @@ Wants=network.target
 Type=simple
 User=root
 WorkingDirectory=/etc/sentinel
-ExecStart=/usr/local/bin/sentinel /etc/sentinel/sentinel.yaml
+ExecStart=/usr/local/bin/sentinel --routes /etc/sentinel/model_routes.yaml
 Restart=always
 RestartSec=5s
 LimitNOFILE=65536
+LimitMEMLOCK=infinity
 TasksMax=4096
-AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN CAP_BPF
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=50
+AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN CAP_BPF CAP_SYS_RESOURCE CAP_NET_RAW
 
 [Install]
 WantedBy=multi-user.target
