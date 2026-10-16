@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== [PHASE 3] Compiling and Installing All 6 Tiers ==="
+echo "=== [PHASE 3] Compiling and Installing All Tiers & Toolchains ==="
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 SRC_DIR="${ROOT_DIR}/src"
 
-# Determine safe compilation parallelism
 MEM_TOTAL_MB=$(free -m | awk '/^Mem:/{print $2}')
 if [ "${MEM_TOTAL_MB}" -lt 4000 ]; then
     JOBS=2
@@ -29,26 +28,42 @@ ldconfig
 echo "[+] Tier 1 (libxinfer.so) installed to /usr/local/lib."
 
 # ------------------------------------------------------------------------------
-# TIER 2: blackbox-essential (libblackbox.so & xdp_filter.o)
+# TIER 2: blackbox-essential (libblackbox.so, eBPF CO-RE & AF_XDP)
 # ------------------------------------------------------------------------------
-echo -e "\n\033[36m[*] Building Tier 2: blackbox-essential (libblackbox.so & eBPF)...\033[0m"
+echo -e "\n\033[36m[*] Building Tier 2: blackbox-essential (libblackbox.so & eBPF CO-RE)...\033[0m"
 cd "${SRC_DIR}/blackbox-essential"
-if [ -f "bpf/build_bpf.sh" ]; then
-    chmod +x bpf/build_bpf.sh
-    ./bpf/build_bpf.sh
+
+# Compile eBPF CO-RE bytecode (xdp_drop.o)
+if [ -f "scripts/build_ebpf.sh" ]; then
+    chmod +x scripts/build_ebpf.sh
+    ./scripts/build_ebpf.sh
+elif [ -f "build_ebpf.sh" ]; then
+    chmod +x build_ebpf.sh
+    ./build_ebpf.sh
 fi
+
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DBLACKBOX_BUILD_TESTS=OFF
 make -j"${JOBS}"
 make install
 ldconfig
-echo "[+] Tier 2 (libblackbox.so) installed to /usr/local/lib."
+echo "[+] Tier 2 (libblackbox.so & AF_XDP) installed to /usr/local/lib."
 
 # ------------------------------------------------------------------------------
-# TIER 3: blackbox-sentinel (sentinel daemon)
+# TIER 3: blackbox-sentinel (sentinel daemon, sentinel-ctl & sentinel-spkg)
 # ------------------------------------------------------------------------------
-echo -e "\n\033[36m[*] Building Tier 3: blackbox-sentinel daemon...\033[0m"
+echo -e "\n\033[36m[*] Building Tier 3: blackbox-sentinel daemon & toolchains...\033[0m"
 cd "${SRC_DIR}/blackbox-sentinel"
+
+# Build embedded Wasm3 static library if missing
+if [ ! -f "third_party/wasm3/build/source/libm3.a" ] && [ -d "third_party/wasm3" ]; then
+    echo "[*] Compiling embedded third_party/wasm3..."
+    cd third_party/wasm3
+    mkdir -p build && cd build
+    cmake .. -DBUILD_WASI=none -DCMAKE_BUILD_TYPE=Release
+    make -j"${JOBS}" m3
+    cd "${SRC_DIR}/blackbox-sentinel"
+fi
 
 # Ensure proto directory is synchronized from nexus
 if [ -d "${SRC_DIR}/sentinel-nexus/proto" ]; then
@@ -59,12 +74,30 @@ fi
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j"${JOBS}"
-make install || cp sentinel /usr/local/bin/sentinel
-mkdir -p /etc/sentinel /etc/sentinel/models
+make install
+
+# Install CLI binaries to system path
+cp sentinel /usr/local/bin/sentinel 2>/dev/null || true
+if [ -f "sentinel-ctl" ]; then cp sentinel-ctl /usr/local/bin/sentinel-ctl; fi
+if [ -f "sentinel-spkg" ]; then cp sentinel-spkg /usr/local/bin/sentinel-spkg; fi
+
+# Deploy default configurations and models
+mkdir -p /etc/sentinel/models /etc/sentinel/plugins.d /etc/sentinel/rules.d /etc/sentinel/wasm.d
 if [ -f "../configs/sentinel.yaml" ]; then
     cp -u ../configs/sentinel.yaml /etc/sentinel/sentinel.yaml
 fi
-echo "[+] Tier 3 (sentinel) installed to /usr/local/bin."
+if [ -f "../configs/model_routes.yaml" ]; then
+    cp -u ../configs/model_routes.yaml /etc/sentinel/model_routes.yaml
+fi
+
+# Run initial extension sync
+cd "${SRC_DIR}/blackbox-sentinel"
+if [ -f "tools/sync_extensions.sh" ]; then
+    chmod +x tools/sync_extensions.sh
+    ./tools/sync_extensions.sh 2>/dev/null || true
+fi
+
+echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-spkg) installed to /usr/local/bin."
 
 # ------------------------------------------------------------------------------
 # TIER 4: xinfer-forge (Continuous Retraining Daemon)
@@ -73,10 +106,8 @@ echo -e "\n\033[36m[*] Setting up Tier 4: xinfer-forge CLI & runtime...\033[0m"
 VENV_DIR="/opt/sentinel-stack/venv"
 FORGE_DIR="${SRC_DIR}/xinfer-forge"
 
-# Install PyTorch CPU into virtual environment
 "${VENV_DIR}/bin/pip" install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
-# Create global wrapper script for forge-cli
 cat << EOF > /usr/local/bin/forge-cli
 #!/usr/bin/env bash
 source "${VENV_DIR}/bin/activate"
@@ -102,7 +133,7 @@ make install || cp sentinel_lab /usr/local/bin/sentinel_lab
 echo "[+] Tier 5 (sentinel_lab) installed to /usr/local/bin."
 
 # ------------------------------------------------------------------------------
-# TIER 6: sentinel-nexus (Command Plane & Web Console)
+# TIER 6: sentinel-nexus (Command Plane & 1440px Web Console)
 # ------------------------------------------------------------------------------
 echo -e "\n\033[36m[*] Building Tier 6: sentinel-nexus & nexus-ctl...\033[0m"
 cd "${SRC_DIR}/sentinel-nexus"
@@ -114,7 +145,6 @@ make install || {
     cp nexus-ctl /usr/local/bin/nexus-ctl
 }
 
-# Deploy Web Command Center assets and persistent storage
 mkdir -p /opt/sentinel-nexus/web /opt/sentinel-nexus/models /var/lib/sentinel-nexus/forge_datasets
 if [ -d "../web" ]; then
     cp -r ../web/* /opt/sentinel-nexus/web/
@@ -125,4 +155,21 @@ if [ -f "../configs/nexus.yaml" ]; then
 fi
 
 echo "[+] Tier 6 (sentinel-nexus & nexus-ctl) installed to /usr/local/bin."
+
+# ------------------------------------------------------------------------------
+# SENTINEL-HUB: Pre-seed Core 8 Packages & Cache
+# ------------------------------------------------------------------------------
+if [ -d "${SRC_DIR}/sentinel-hub" ]; then
+    echo -e "\n\033[36m[*] Pre-seeding sentinel-hub packages into /var/cache/sentinel/...\033[0m"
+    cd "${SRC_DIR}/sentinel-hub"
+    if [ -f "scripts/build_all_spkg.sh" ]; then
+        chmod +x scripts/build_all_spkg.sh
+        ./scripts/build_all_spkg.sh 2>/dev/null || true
+    fi
+    mkdir -p /var/cache/sentinel/packages
+    if [ -d "dist" ]; then
+        cp -u dist/*.spkg /var/cache/sentinel/packages/ 2>/dev/null || true
+    fi
+fi
+
 echo "[+] Phase 3 compilation and installation successful."
