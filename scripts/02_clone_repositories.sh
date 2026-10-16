@@ -43,7 +43,7 @@ done
 if [ -d "${WORKSPACE_DIR}/xinfer-forge" ]; then
     echo "[*] Synchronizing: xinfer-forge from ${WORKSPACE_DIR}/xinfer-forge..."
     mkdir -p "${TARGET_DIR}/xinfer-forge"
-    rsync -a --delete --exclude 'models' --exclude 'checkpoints' "${WORKSPACE_DIR}/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
+    rsync -a --delete --exclude '/checkpoints' "${WORKSPACE_DIR}/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
 elif [ -d "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge" ]; then
     echo "[*] Synchronizing: xinfer-forge from ${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge..."
     mkdir -p "${TARGET_DIR}/xinfer-forge"
