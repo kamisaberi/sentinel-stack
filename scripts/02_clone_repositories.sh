@@ -13,6 +13,7 @@ declare -A REPOS=(
     ["blackbox-sentinel"]="https://github.com/kamisaberi/blackbox-sentinel.git"
     ["sentinel-lab"]="https://github.com/kamisaberi/sentinel-lab.git"
     ["sentinel-nexus"]="https://github.com/kamisaberi/sentinel-nexus.git"
+    ["sentinel-hub"]="https://github.com/kamisaberi/sentinel-hub.git"
 )
 
 for NAME in "${!REPOS[@]}"; do
