@@ -99,6 +99,8 @@ fi
 
 echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-spkg) installed to /usr/local/bin."
 
+
+
 # ------------------------------------------------------------------------------
 # TIER 4: xinfer-forge (Continuous Retraining Daemon)
 # ------------------------------------------------------------------------------
@@ -106,16 +108,22 @@ echo -e "\n\033[36m[*] Setting up Tier 4: xinfer-forge CLI & runtime...\033[0m"
 VENV_DIR="/opt/sentinel-stack/venv"
 FORGE_DIR="${SRC_DIR}/xinfer-forge"
 
+# Fallback to host workspace if SRC_DIR was not populated
+if [ ! -d "${FORGE_DIR}" ] && [ -d "/home/kami/xinfer-forge" ]; then
+    FORGE_DIR="/home/kami/xinfer-forge"
+fi
+
 "${VENV_DIR}/bin/pip" install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
 cat << EOF > /usr/local/bin/forge-cli
 #!/usr/bin/env bash
 source "${VENV_DIR}/bin/activate"
-export PYTHONPATH="${FORGE_DIR}:${FORGE_DIR}/forge:\${PYTHONPATH:-}"
-python3 -m forge.cli "\$@"
+export PYTHONPATH="${FORGE_DIR}:${FORGE_DIR}/src:${FORGE_DIR}/forge:\${PYTHONPATH:-}"
+"${VENV_DIR}/bin/python3" -m forge.cli "\$@"
 EOF
 chmod +x /usr/local/bin/forge-cli
 echo "[+] Tier 4 (forge-cli) installed to /usr/local/bin."
+
 
 # ------------------------------------------------------------------------------
 # TIER 5: sentinel-lab (Academic Benchmark Testbed)
