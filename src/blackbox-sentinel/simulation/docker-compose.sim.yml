@@ -1,0 +1,54 @@
+services:
+  # 1. Blackbox Sentinel Security Appliance Container
+  sentinel-appliance:
+    image: ubuntu:22.04
+    container_name: sentinel-appliance
+    privileged: true
+    network_mode: host
+    command: >
+      sh -c "apt-get update -qq && apt-get install -y -qq curl net-tools iptables &&
+             echo 'Sentinel Appliance Container Started' &&
+             sleep infinity"
+
+  # 2. Simulated External Linux Client Server (Forwarding Syslog)
+  sim-ubuntu-server:
+    image: ubuntu:22.04
+    container_name: sim-ubuntu-server
+    networks:
+      sentinel_sim_net:
+        ipv4_address: 172.28.0.10
+    command: >
+      sh -c "apt-get update -qq && apt-get install -y -qq rsyslog net-tools curl &&
+             echo '*.* @127.0.0.1:514' >> /etc/rsyslog.conf &&
+             rsyslogd &&
+             logger 'Simulated Client Server Online - Forwarding logs to Blackbox Sentinel' &&
+             sleep infinity"
+
+  # 3. Simulated External Industrial SCADA PLC (Modbus TCP)
+  sim-modbus-plc:
+    image: python:3.10-slim
+    container_name: sim-modbus-plc
+    networks:
+      sentinel_sim_net:
+        ipv4_address: 172.28.0.20
+    command: >
+      sh -c "pip install -q pymodbus &&
+             python3 -c 'from pymodbus.server import StartTcpServer; print(\"Modbus PLC Active on Port 502\"); StartTcpServer(context=None, address=(\"0.0.0.0\", 502))'"
+
+  # 4. Simulated External Attacker Machine
+  sim-attacker:
+    image: ubuntu:22.04
+    container_name: sim-attacker
+    networks:
+      sentinel_sim_net:
+        ipv4_address: 172.28.0.250
+    command: >
+      sh -c "apt-get update -qq && apt-get install -y -qq nmap curl netcat-openbsd &&
+             sleep infinity"
+
+networks:
+  sentinel_sim_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

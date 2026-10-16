@@ -1,0 +1,33 @@
+#pragma once
+#include "xinfer/backend.hpp"
+#include <unordered_map>
+
+#ifdef XINFER_ENABLE_QNN
+#include "QnnInterface.h"
+#include "QnnContext.h"
+#endif
+
+namespace xinfer {
+
+class QNNBackend : public Backend {
+public:
+    QNNBackend();
+    ~QNNBackend() override = default;
+
+    void load_model(const std::string& model_path) override;
+    void infer() override;
+
+    Tensor& get_input_tensor(const std::string& name) override;
+    Tensor& get_output_tensor(const std::string& name) override;
+    void set_stream(void* stream_ptr) override;
+
+private:
+#ifdef XINFER_ENABLE_QNN
+    Qnn_ContextHandle_t context_{nullptr};
+    Qnn_GraphHandle_t graph_{nullptr};
+    std::unordered_map<std::string, Tensor> input_tensors_;
+    std::unordered_map<std::string, Tensor> output_tensors_;
+#endif
+};
+
+} // namespace xinfer

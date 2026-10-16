@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blackbox Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Blackbox Autonomous Cyber-Physical Security</h1>
+        <div class="status-card">
+            <h2>System Status: <span id="status">ACTIVE</span></h2>
+            <p>eBPF Kernel Mitigation Engine: OPERATIONAL</p>
+            <p>Embedded AI Engine: xInfer Essential (libxinfer.so)</p>
+        </div>
+        <div class="events-card">
+            <h3>Live Threat Feed</h3>
+            <ul id="events-list">
+                <li>[SYSTEM] Blackbox Security Daemon Monitoring Traffic...</li>
+            </ul>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

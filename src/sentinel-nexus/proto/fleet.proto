@@ -1,0 +1,64 @@
+syntax = "proto3";
+package sentinel.nexus;
+
+import "common.proto";
+
+service FleetService {
+    rpc RegisterAppliance (RegistrationRequest) returns (RegistrationResponse);
+    rpc SendHeartbeat (HeartbeatRequest) returns (HeartbeatResponse);
+    rpc DeregisterAppliance (DeregistrationRequest) returns (ResponseStatus);
+}
+
+message SensorInfo {
+    string sensor_id = 1;                // e.g. "PLC-000C29A1-UNIT1"
+    string name = 2;                     // e.g. "Main Transformer Siemens S7-1500"
+    string type = 3;                     // "INDUSTRIAL_PLC", "SCADA_ACTUATOR", "OPTICAL_VISION", "MEDICAL_PACS"
+    string protocol = 4;                 // "MODBUS_TCP", "DNP3", "RTSP_H264", "DICOM_C_STORE"
+    string ip_address = 5;               // "192.168.1.10"
+    string status = 6;                   // "ACTIVE", "FAULT_NO_DATA", "DEGRADED"
+    float last_packet_seen_sec_ago = 7; // e.g. 0.4
+}
+
+message RegistrationRequest {
+    HardwareIdentity identity = 1;
+    string site_identifier = 2;
+    string software_version = 3;
+    bytes tpm_quote_signature = 4; 
+}
+
+message RegistrationResponse {
+    ResponseStatus status = 1;
+    string node_id = 2;
+    uint32 heartbeat_interval_seconds = 3;
+}
+
+message DeregistrationRequest {
+    string node_id = 1;
+    string reason = 2;
+}
+
+message DeviceMetrics {
+    float cpu_usage_pct = 1;
+    float ram_usage_mb = 2;
+    float npu_gpu_usage_pct = 3;
+    float npu_gpu_temp_celsius = 4;
+    uint64 packets_inspected = 5;
+    uint64 ebpf_packets_dropped = 6;
+    uint32 ring_buffer_fill_pct = 7;
+    float avg_mitigation_latency_us = 8;
+}
+
+message HeartbeatRequest {
+    string node_id = 1;
+    uint64 timestamp_ns = 2;
+    DeviceMetrics metrics = 3;
+    
+    // NEW: Sensors / PLCs / Cameras monitored by this Sentinel appliance
+    repeated SensorInfo sensors = 4;
+}
+
+message HeartbeatResponse {
+    bool acknowledged = 1;
+    bool config_drift_detected = 2;
+    bool model_update_available = 3;
+}

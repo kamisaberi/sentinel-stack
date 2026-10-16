@@ -1,0 +1,76 @@
+syntax = "proto3";
+package sentinel.nexus;
+
+service IntelligenceService {
+    // Bidirectional streaming: Edge sends zero-day triggers; Nexus fans out fleet-wide drops
+    rpc SyncCollectiveImmunity (stream ThreatIndicator) returns (stream FleetDefenseRule);
+
+    // Dynamic extension rule distribution (Hot-Reload Lua / Wasm / Native)
+    rpc DeployExtensionRule (DynamicExtensionRule) returns (DeployRuleResponse);
+}
+
+enum ThreatType {
+    THREAT_UNKNOWN = 0;
+    THREAT_BRUTE_FORCE = 1;
+    THREAT_C2_BEACON = 2;
+    THREAT_SCADA_ANOMALY = 3;
+    THREAT_PORT_SWEEP = 4;
+    THREAT_EXPLOIT_PAYLOAD = 5;
+}
+
+message FeatureAttribution {
+    uint32 feature_index = 1;
+    string feature_name = 2;           // e.g., "SCADA_Function_Code"
+    float contribution_percentage = 3; // e.g., 54.2 (%)
+    string observed_value = 4;         // e.g., "0x05 (Force Single Coil)"
+    string baseline_expected = 5;      // e.g., "0x03 (Read Holding Registers)"
+    string audit_summary = 6;          // e.g., "Unauthorized coil override attempting physical valve manipulation"
+}
+
+
+message ThreatIndicator {
+    string origin_node_id = 1;
+    string attacker_ip = 2;
+    uint32 port = 3;
+    ThreatType type = 4;
+    float confidence = 5;
+    uint64 timestamp_ns = 6;
+
+    // NEW: Explainability Feature Attribution Vector
+    repeated FeatureAttribution attributions = 7;
+}
+
+message FleetDefenseRule {
+    string rule_id = 1;
+    string target_ip = 2;       // Injected into eBPF blocked_ip_map
+    uint32 target_subnet_mask = 3;
+    uint64 expires_at_ns = 4;   // Ephemeral kernel block TTL
+    bool emergency_purge = 5;   // True if false positive unblock
+}
+
+// -----------------------------------------------------------------------------
+// EXTENSION SUBSYSTEM RULE BROADCAST CONTRACTS
+// -----------------------------------------------------------------------------
+
+enum ExtensionPayloadTier {
+    EXTENSION_TIER_NATIVE = 0;
+    EXTENSION_TIER_WASM   = 1;
+    EXTENSION_TIER_LUA    = 2;
+}
+
+message DynamicExtensionRule {
+    string               rule_id        = 1;
+    string               rule_name      = 2;
+    ExtensionPayloadTier tier           = 3;
+    bytes                payload        = 4; // Raw script (.lua) or binary (.wasm / .so)
+    bytes                signature      = 5; // 64-byte Ed25519 signature
+    uint64               timestamp_ns   = 6;
+    uint32               target_port    = 7;
+    string               author         = 8;
+}
+
+message DeployRuleResponse {
+    bool   success         = 1;
+    string message         = 2;
+    uint64 applied_time_ns = 3;
+}

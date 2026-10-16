@@ -1,0 +1,14 @@
+[Unit]
+Description=Blackbox Autonomous Cyber-Physical Security Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/blackbox --config /etc/blackbox/blackbox.json
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
