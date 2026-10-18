@@ -7,6 +7,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 SRC_DIR="${ROOT_DIR}/src"
 
+# Fallback to host workspace if SRC_DIR is not populated
+if [ ! -d "${SRC_DIR}/blackbox-sentinel" ] && [ -d "/home/kami/blackbox-sentinel" ]; then
+    SRC_DIR="/home/kami"
+fi
+
 MEM_TOTAL_MB=$(free -m | awk '/^Mem:/{print $2}')
 if [ "${MEM_TOTAL_MB}" -lt 4000 ]; then
     JOBS=2
@@ -47,7 +52,15 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DBLACKBOX_BUILD_TESTS=OFF
 make -j"${JOBS}"
 make install
 ldconfig
-echo "[+] Tier 2 (libblackbox.so & AF_XDP) installed to /usr/local/lib."
+
+mkdir -p /etc/sentinel/configs
+if [ -f "${SRC_DIR}/blackbox-essential/src/mitigation/xdp_drop.o" ]; then
+    cp -u "${SRC_DIR}/blackbox-essential/src/mitigation/xdp_drop.o" /etc/sentinel/
+fi
+if [ -f "${SRC_DIR}/blackbox-essential/configs/af_xdp_config.json" ]; then
+    cp -u "${SRC_DIR}/blackbox-essential/configs/af_xdp_config.json" /etc/sentinel/configs/
+fi
+echo "[+] Tier 2 (libblackbox.so, AF_XDP & xdp_drop.o) installed."
 
 # ------------------------------------------------------------------------------
 # TIER 3: blackbox-sentinel (sentinel daemon, sentinel-ctl & sentinel-spkg)
@@ -81,25 +94,14 @@ cp sentinel /usr/local/bin/sentinel 2>/dev/null || true
 if [ -f "sentinel-ctl" ]; then cp sentinel-ctl /usr/local/bin/sentinel-ctl; fi
 if [ -f "sentinel-spkg" ]; then cp sentinel-spkg /usr/local/bin/sentinel-spkg; fi
 
-# Deploy default configurations and models
-mkdir -p /etc/sentinel/models /etc/sentinel/plugins.d /etc/sentinel/rules.d /etc/sentinel/wasm.d
-if [ -f "../configs/sentinel.yaml" ]; then
-    cp -u ../configs/sentinel.yaml /etc/sentinel/sentinel.yaml
-fi
-if [ -f "../configs/model_routes.yaml" ]; then
-    cp -u ../configs/model_routes.yaml /etc/sentinel/model_routes.yaml
-fi
+# Deploy default configurations, sensors, and models
+mkdir -p /etc/sentinel/models /etc/sentinel/plugins.d /etc/sentinel/rules.d /etc/sentinel/configs
+if [ -f "../configs/sentinel.yaml" ]; then cp -u ../configs/sentinel.yaml /etc/sentinel/sentinel.yaml; fi
+if [ -f "../configs/model_routes.yaml" ]; then cp -u ../configs/model_routes.yaml /etc/sentinel/model_routes.yaml; fi
+if [ -f "../configs/sensors_config.yaml" ]; then cp -u ../configs/sensors_config.yaml /etc/sentinel/configs/; fi
+if [ -f "../configs/plugin_rules.yaml" ]; then cp -u ../configs/plugin_rules.yaml /etc/sentinel/configs/; fi
 
-# Run initial extension sync
-cd "${SRC_DIR}/blackbox-sentinel"
-if [ -f "tools/sync_extensions.sh" ]; then
-    chmod +x tools/sync_extensions.sh
-    ./tools/sync_extensions.sh 2>/dev/null || true
-fi
-
-echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-spkg) installed to /usr/local/bin."
-
-
+echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-spkg) installed."
 
 # ------------------------------------------------------------------------------
 # TIER 4: xinfer-forge (Continuous Retraining Daemon)
@@ -107,11 +109,6 @@ echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-spkg) installed to /usr/local
 echo -e "\n\033[36m[*] Setting up Tier 4: xinfer-forge CLI & runtime...\033[0m"
 VENV_DIR="/opt/sentinel-stack/venv"
 FORGE_DIR="${SRC_DIR}/xinfer-forge"
-
-# Fallback to host workspace if SRC_DIR was not populated
-if [ ! -d "${FORGE_DIR}" ] && [ -d "/home/kami/xinfer-forge" ]; then
-    FORGE_DIR="/home/kami/xinfer-forge"
-fi
 
 "${VENV_DIR}/bin/pip" install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
 
@@ -124,21 +121,31 @@ EOF
 chmod +x /usr/local/bin/forge-cli
 echo "[+] Tier 4 (forge-cli) installed to /usr/local/bin."
 
-
 # ------------------------------------------------------------------------------
-# TIER 5: sentinel-lab (Academic Benchmark Testbed)
+# TIER 5: sentinel-lab (Academic Benchmark Testbed & All 14 Research Modules)
 # ------------------------------------------------------------------------------
-echo -e "\n\033[36m[*] Building Tier 5: sentinel-lab...\033[0m"
+echo -e "\n\033[36m[*] Building Tier 5: sentinel-lab (14 Research Modules)...\033[0m"
 cd "${SRC_DIR}/sentinel-lab"
-if [ -f "bpf/build_bpf.sh" ]; then
-    chmod +x bpf/build_bpf.sh
-    ./bpf/build_bpf.sh
-fi
+
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release -DENABLE_OPENVINO=ON -DBUILD_TESTS=OFF
 make -j"${JOBS}"
 make install || cp sentinel_lab /usr/local/bin/sentinel_lab
-echo "[+] Tier 5 (sentinel_lab) installed to /usr/local/bin."
+
+# Install all 14 research JSON profiles to system config path
+mkdir -p /etc/sentinel/configs /var/cache/sentinel/configs /opt/sentinel-stack/harnesses
+if [ -d "${SRC_DIR}/sentinel-lab/configs" ]; then
+    cp -u "${SRC_DIR}/sentinel-lab/configs/"*.json /etc/sentinel/configs/ 2>/dev/null || true
+    cp -u "${SRC_DIR}/sentinel-lab/configs/"*.json /var/cache/sentinel/configs/ 2>/dev/null || true
+fi
+
+# Install Python research harnesses to /opt/sentinel-stack/harnesses/
+if [ -d "${SRC_DIR}/sentinel-lab/harness" ]; then
+    cp -r "${SRC_DIR}/sentinel-lab/harness/"* /opt/sentinel-stack/harnesses/
+    chmod +x /opt/sentinel-stack/harnesses/*.py 2>/dev/null || true
+fi
+
+echo "[+] Tier 5 (sentinel_lab & 14 Research Profiles) installed to /usr/local/bin."
 
 # ------------------------------------------------------------------------------
 # TIER 6: sentinel-nexus (Command Plane & 1440px Web Console)
@@ -154,15 +161,27 @@ make install || {
 }
 
 mkdir -p /opt/sentinel-nexus/web /opt/sentinel-nexus/models /var/lib/sentinel-nexus/forge_datasets
-if [ -d "../web" ]; then
-    cp -r ../web/* /opt/sentinel-nexus/web/
-fi
-if [ -f "../configs/nexus.yaml" ]; then
-    mkdir -p /opt/sentinel-nexus/configs
-    cp ../configs/nexus.yaml /opt/sentinel-nexus/configs/nexus.yaml
-fi
+if [ -d "../web" ]; then cp -r ../web/* /opt/sentinel-nexus/web/; fi
+if [ -f "../configs/nexus.yaml" ]; then cp ../configs/nexus.yaml /opt/sentinel-nexus/configs/nexus.yaml 2>/dev/null || true; fi
+if [ -f "../configs/nexus_server.conf" ]; then cp ../configs/nexus_server.conf /etc/sentinel/configs/ 2>/dev/null || true; fi
 
 echo "[+] Tier 6 (sentinel-nexus & nexus-ctl) installed to /usr/local/bin."
+
+# ------------------------------------------------------------------------------
+# TIER 7: sentinel-matrix (RK4 ODE Physics Mock PLC Twin)
+# ------------------------------------------------------------------------------
+echo -e "\n\033[36m[*] Building Tier 7: sentinel-matrix (mock_plc RK4 ODE Twin)...\033[0m"
+cd "${SRC_DIR}/sentinel-matrix"
+mkdir -p shared/bin configs
+if [ -f "mock_plc.c" ] && [ -f "src/plant_ode.c" ]; then
+    gcc -O3 -pthread -Iinclude mock_plc.c src/plant_ode.c -o shared/bin/mock_plc
+    cp shared/bin/mock_plc /usr/local/bin/mock_plc 2>/dev/null || true
+fi
+if [ -f "configs/plc_register_map.json" ]; then
+    cp configs/plc_register_map.json /etc/sentinel/configs/ 2>/dev/null || true
+fi
+
+echo "[+] Tier 7 (mock_plc) installed to /usr/local/bin."
 
 # ------------------------------------------------------------------------------
 # SENTINEL-HUB: Pre-seed Core 8 Packages & Cache
@@ -180,4 +199,4 @@ if [ -d "${SRC_DIR}/sentinel-hub" ]; then
     fi
 fi
 
-echo "[+] Phase 3 compilation and installation successful."
+echo "[+] Phase 3 compilation and installation successful across all 8 tiers."
