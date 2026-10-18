@@ -8,7 +8,7 @@ export DEBIAN_FRONTEND=noninteractive
 # Update package repositories
 apt-get update -y
 
-# 1. Core Compilers, Build Systems, and Kernel Tools (Added bpftool, lld, libxdp, luajit)
+# 1. Core Compilers, Build Systems, and Kernel Tools
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
     build-essential \
     cmake \
@@ -64,9 +64,10 @@ fi
 # Upgrade pip inside isolated environment
 "${VENV_DIR}/bin/pip" install --upgrade pip setuptools wheel
 
-# Install required Python packages for Forge, Protobuf, and TUI dashboards
+# Install required Python packages for Forge, Research Harnesses, Protobuf, and TUI
 "${VENV_DIR}/bin/pip" install --no-cache-dir \
     numpy \
+    scipy \
     pyyaml \
     requests \
     rich \
