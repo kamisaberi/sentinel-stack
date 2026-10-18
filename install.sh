@@ -28,32 +28,52 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+echo -e "${YELLOW}[*] Granting execution permissions to all pipeline scripts...${NC}"
+chmod +x "${SCRIPT_DIR}"/*.sh "${SCRIPT_DIR}"/scripts/*.sh 2>/dev/null || true
+
 echo -e "${YELLOW}[*] Starting automated 6-tier installation pipeline...${NC}\n"
 
 # Phase 0: System Validation
-bash "${SCRIPT_DIR}/scripts/00_check_system.sh"
+if [ -f "${SCRIPT_DIR}/scripts/00_check_system.sh" ]; then
+    bash "${SCRIPT_DIR}/scripts/00_check_system.sh"
+fi
 
 # Phase 1: Package Dependencies
-bash "${SCRIPT_DIR}/scripts/01_install_dependencies.sh"
+if [ -f "${SCRIPT_DIR}/scripts/01_install_dependencies.sh" ]; then
+    bash "${SCRIPT_DIR}/scripts/01_install_dependencies.sh"
+fi
 
 # Phase 2: Repository Synchronization
-bash "${SCRIPT_DIR}/scripts/02_clone_repositories.sh"
+if [ -f "${SCRIPT_DIR}/scripts/02_clone_repositories.sh" ]; then
+    bash "${SCRIPT_DIR}/scripts/02_clone_repositories.sh"
+fi
 
 # Phase 3: Topological Compilation & System Installation
-bash "${SCRIPT_DIR}/scripts/03_build_all_tiers.sh"
+if [ -f "${SCRIPT_DIR}/scripts/03_build_all_tiers.sh" ]; then
+    bash "${SCRIPT_DIR}/scripts/03_build_all_tiers.sh"
+fi
 
 # Phase 4: Service Deployment
-bash "${SCRIPT_DIR}/scripts/04_setup_systemd.sh"
+if [ -f "${SCRIPT_DIR}/scripts/04_setup_systemd.sh" ]; then
+    bash "${SCRIPT_DIR}/scripts/04_setup_systemd.sh"
+fi
 
 # Phase 5: Verification & Smoke Tests
-bash "${SCRIPT_DIR}/scripts/05_verify_installation.sh"
+if [ -f "${SCRIPT_DIR}/scripts/05_verify_installation.sh" ]; then
+    bash "${SCRIPT_DIR}/scripts/05_verify_installation.sh"
+fi
 
 echo -e "\n${GREEN}${BOLD}========================================================================${NC}"
 echo -e "${GREEN}${BOLD}  SENTINEL STACK: INSTALLATION & COMPILATION COMPLETE!${NC}"
 echo -e "${GREEN}${BOLD}========================================================================${NC}"
-echo -e "  • Web Command Center   : ${CYAN}http://localhost:9443${NC}"
-echo -e "  • Nexus Fleet gRPC     : ${CYAN}0.0.0.0:50051${NC}"
-echo -e "  • Operations CLI       : ${CYAN}nexus-ctl --help${NC}"
-echo -e "  • Edge XDR Daemon      : ${CYAN}systemctl status blackbox-sentinel${NC}"
-echo -e "  • Command Plane Daemon : ${CYAN}systemctl status sentinel-nexus${NC}"
+echo -e "  • Web Command Center    : ${CYAN}http://localhost:9443${NC}"
+echo -e "  • Nexus Fleet gRPC      : ${CYAN}0.0.0.0:50051${NC}"
+echo -e "  • Operations C2 CLI     : ${CYAN}nexus-ctl --help${NC}"
+echo -e "  • Appliance Manager CLI : ${CYAN}sentinel-ctl status${NC}"
+echo -e "  • Package Toolchain     : ${CYAN}sentinel-spkg --help${NC}"
+echo -e "  • Continuous AI CLI     : ${CYAN}forge-cli --help${NC}"
+echo -e "  • Research Testbed      : ${CYAN}sentinel_lab --help${NC}"
+echo -e "  • Digital Twin PLC      : ${CYAN}mock_plc -h${NC}"
+echo -e "  • Edge XDR Daemon       : ${CYAN}systemctl status blackbox-sentinel${NC}"
+echo -e "  • Command Plane Daemon  : ${CYAN}systemctl status sentinel-nexus${NC}"
 echo -e "${GREEN}${BOLD}========================================================================${NC}\n"
