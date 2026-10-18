@@ -15,8 +15,8 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Hardware Backend Toggles (Research Edition)
 option(ENABLE_OPENVINO "Enable Intel OpenVINO Backend (CPU/NPU)" ON)
-option(ENABLE_TENSORRT "Enable NVIDIA TensorRT Backend (GPU)"     OFF)
-option(BUILD_TESTS     "Build unit tests"                        OFF)
+option(ENABLE_TENSORRT "Enable NVIDIA TensorRT Backend (GPU)" OFF)
+option(BUILD_TESTS "Build unit tests" OFF)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -37,6 +37,21 @@ set(LAB_SOURCES
     src/benchmarker.cpp
     src/network_ingest.cpp
     src/rest_api.cpp
+    src/dimension_handshake.cpp
+    src/evt_engine.cpp
+    src/adversarial_engine.cpp
+    src/pmu_profiler.cpp
+    src/drift_profiler.cpp
+    src/hil_coupler.cpp
+    src/differential_fuzzer.cpp
+    src/fdia_engine.cpp
+    src/quant_profiler.cpp
+    src/pqc_profiler.cpp
+    src/stateful_fuzzer.cpp
+    src/sidechannel_correlator.cpp
+    src/cbf_verifier.cpp
+    src/federated_evaluator.cpp
+    src/patch_regression_engine.cpp
 )
 
 if(ENABLE_OPENVINO)
