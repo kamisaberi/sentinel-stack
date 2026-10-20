@@ -101,6 +101,7 @@ Domains & Commands:
 
 [10. Research Lab (14 Scientific Modules)]
   aryo lab daemon [options]                     Launch C++20 research evaluation daemon
+  aryo lab inspect-matrix [--nexus IP] [--plc IP] Real-time live tap & audit of running matrix grid
   aryo lab blast [-i iface] [-r eps] [-c cfg]   Wire-speed raw socket frame blaster
   aryo lab evasion [--evasion-mode] [--epsilon] Grammar-constrained adversarial mutator
   aryo lab drift [-c cfg]                       Continual learning task matrix evaluator
@@ -126,12 +127,9 @@ Domains & Commands:
 [13. Standalone Air-Gapped System Portability]
   aryo system export [output.aryopack]          Package complete ecosystem for offline USB transfer
   aryo system import <input.aryopack>           Restore complete operational ecosystem offline
-
-
 )" << std::endl;
 }
 
-// Forward execution to another binary without overhead
 [[noreturn]] static void forward_exec(const std::string &binary, const std::vector<std::string> &args)
 {
     std::vector<char *> c_args;
@@ -144,12 +142,10 @@ Domains & Commands:
 
     execvp(binary.c_str(), c_args.data());
 
-    // If execvp fails:
     std::cerr << "\033[1;31m[-] Error: Failed to execute '" << binary << "'. Ensure it is installed in /usr/local/bin.\033[0m\n";
     exit(1);
 }
 
-// Run a shell command returning exit code
 static int run_shell(const std::string &cmd)
 {
     return std::system(cmd.c_str());
@@ -177,7 +173,6 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    // Pass-through arguments slice
     std::vector<std::string> args;
     for (int i = 2; i < argc; ++i)
     {
@@ -388,14 +383,13 @@ int main(int argc, char *argv[])
     {
         if (args.empty())
         {
-            std::cerr << "[-] Error: Action required (daemon, blast, evasion, drift, hil, fuzzer, fdia, quant, pqc, stateful, sidechannel, cbf, federated, patch-regression)\n";
+            std::cerr << "[-] Error: Action required (daemon, inspect-matrix, blast, evasion, drift, hil, fuzzer, fdia, quant, pqc, stateful, sidechannel, cbf, federated, patch-regression)\n";
             return 1;
         }
         std::string act = args[0];
         std::string venv_py = "/opt/sentinel-stack/venv/bin/python3";
         std::string h_dir = "/opt/sentinel-stack/harnesses";
 
-        // Pass remaining flags
         std::string flag_str = "";
         for (size_t i = 1; i < args.size(); ++i)
             flag_str += " " + args[i];
@@ -404,6 +398,10 @@ int main(int argc, char *argv[])
         {
             std::vector<std::string> lab_args(args.begin() + 1, args.end());
             forward_exec("sentinel_lab", lab_args);
+        }
+        else if (act == "inspect-matrix")
+        {
+            return run_shell(venv_py + " " + h_dir + "/matrix_live_tap.py" + flag_str);
         }
         else if (act == "blast")
         {
