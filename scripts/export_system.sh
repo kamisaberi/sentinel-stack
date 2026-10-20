@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# ARYORITHM TECHNOLOGIES: AIR-GAPPED SYSTEM EXPORTER (.aryopack)
-# Bundles the entire operational ecosystem into an offline portable snapshot.
+# ARYORITHM TECHNOLOGIES: AIR-GAPPED SELF-EXTRACTING SYSTEM EXPORTER (.aryopack)
+# Creates a self-executing bootstrap installer that runs on completely clean machines.
 # ==============================================================================
 set -euo pipefail
 
@@ -17,7 +17,6 @@ STACK_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 WORKSPACE_ROOT="/home/kami"
 
 OUTPUT_NAME="${1:-sentinel_ecosystem_$(date +%Y%m%d_%H%M%S).aryopack}"
-# Ensure .aryopack extension
 if [[ "${OUTPUT_NAME}" != *.aryopack ]]; then
     OUTPUT_NAME="${OUTPUT_NAME}.aryopack"
 fi
@@ -32,7 +31,7 @@ trap cleanup EXIT
 
 echo -e "${CYAN}${BOLD}"
 echo "=========================================================================="
-echo "          ARYORITHM TECHNOLOGIES: AIR-GAPPED SYSTEM EXPORTER              "
+echo "    ARYORITHM TECHNOLOGIES: SELF-EXTRACTING AIR-GAPPED EXPORTER           "
 echo "=========================================================================="
 echo -e "${NC}"
 echo -e "${YELLOW}[*] Staging operational ecosystem into temporary snapshot...${NC}\n"
@@ -89,7 +88,6 @@ mkdir -p "${TEMP_STAGE_DIR}/configs"
 if [ -d "/etc/sentinel" ]; then
     cp -rp /etc/sentinel/* "${TEMP_STAGE_DIR}/configs/" 2>/dev/null || true
 fi
-# Ensure all project config roots are captured
 for p_cfg in "${WORKSPACE_ROOT}"/*/configs; do
     if [ -d "${p_cfg}" ]; then
         cp -rp "${p_cfg}"/* "${TEMP_STAGE_DIR}/configs/" 2>/dev/null || true
@@ -116,19 +114,17 @@ mkdir -p "${TEMP_STAGE_DIR}/docker"
 if command -v docker &>/dev/null; then
     ACTIVE_IMAGES=$(docker images --format '{{.Repository}}:{{.Tag}}' | grep -E 'matrix|sentinel' || true)
     if [ -n "${ACTIVE_IMAGES}" ]; then
-        echo "      --> Archiving Docker images: ${ACTIVE_IMAGES}"
-        docker save ${ACTIVE_IMAGES} | gzip > "${TEMP_STAGE_DIR}/docker/matrix_images.tar.gz"
+        docker save ${ACTIVE_IMAGES} | gzip > "${TEMP_STAGE_DIR}/docker/matrix_images.tar.gz" 2>/dev/null || true
     fi
 fi
 
-# 9. Embed Importer Script & Generate Manifest
-echo -e "  [9/9] Embedding automated importer & calculating SHA-256 manifest..."
+# 9. Embed Importer Script
 cp -p "${SCRIPT_DIR}/import_system.sh" "${TEMP_STAGE_DIR}/import_system.sh"
 chmod +x "${TEMP_STAGE_DIR}/import_system.sh"
 
 cat << EOF > "${TEMP_STAGE_DIR}/manifest.json"
 {
-  "bundle_format": "ARYOPACK_V1",
+  "bundle_format": "ARYOPACK_SELF_EXTRACTING_V1",
   "created_at_utc": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "generator": "sentinel-stack/export_system.sh",
   "system_kernel": "$(uname -r)",
@@ -136,15 +132,55 @@ cat << EOF > "${TEMP_STAGE_DIR}/manifest.json"
 }
 EOF
 
-# Build final compressed archive
-echo -e "\n${YELLOW}[*] Compressing into standalone archive: ${OUTPUT_NAME}...${NC}"
-tar -czf "${OUTPUT_NAME}" -C "${TEMP_STAGE_DIR}" .
+# Compress payload into temporary tarball
+TAR_PAYLOAD="/tmp/aryopack_payload_$$.tar.gz"
+tar -czf "${TAR_PAYLOAD}" -C "${TEMP_STAGE_DIR}" .
+
+# Create Self-Extracting Executable Header
+cat << "HEADER_EOF" > "${OUTPUT_NAME}"
+#!/usr/bin/env bash
+# ==============================================================================
+# ARYORITHM SELF-EXTRACTING AIR-GAPPED BOOTSTRAP INSTALLER
+# ==============================================================================
+set -euo pipefail
+
+if [ "$EUID" -ne 0 ]; then
+    echo -e "\033[31m[ERROR] Please execute as root: sudo $0\033[0m"
+    exit 1
+fi
+
+EXTRACT_DIR="/tmp/aryopack_install_$$"
+mkdir -p "${EXTRACT_DIR}"
+
+cleanup() {
+    rm -rf "${EXTRACT_DIR}"
+}
+trap cleanup EXIT
+
+echo -e "\033[36m\033[1m[*] Unpacking Sentinel self-extracting air-gapped bundle...\033[0m"
+
+# Locate line number where payload begins
+PAYLOAD_LINE=$(grep -a -n '^__PAYLOAD_START__$' "$0" | cut -d: -f1)
+tail -n +$((PAYLOAD_LINE + 1)) "$0" | tar -xzf - -C "${EXTRACT_DIR}"
+
+# Execute embedded importer
+bash "${EXTRACT_DIR}/import_system.sh"
+exit 0
+__PAYLOAD_START__
+HEADER_EOF
+
+# Append compressed tar archive to script header
+cat "${TAR_PAYLOAD}" >> "${OUTPUT_NAME}"
+rm -f "${TAR_PAYLOAD}"
+
+chmod +x "${OUTPUT_NAME}"
 
 TOTAL_SIZE_MB=$(du -m "${OUTPUT_NAME}" | cut -f1)
 echo -e "\n${GREEN}${BOLD}========================================================================${NC}"
-echo -e "${GREEN}${BOLD}  AIR-GAPPED EXPORT COMPLETE: ${OUTPUT_NAME} (${TOTAL_SIZE_MB} MB)${NC}"
+echo -e "${GREEN}${BOLD}  SELF-EXTRACTING BUNDLE CREATED: ${OUTPUT_NAME} (${TOTAL_SIZE_MB} MB)${NC}"
 echo -e "${GREEN}${BOLD}========================================================================${NC}"
-echo -e "  • Self-contained offline bundle ready for USB Sneakernet transfer."
-echo -e "  • To restore on any air-gapped target machine without internet:"
-echo -e "    ${CYAN}aryo system import ${OUTPUT_NAME}${NC}"
+echo -e "  • The output file is a self-executing standalone program."
+echo -e "  • On ANY fresh/clean machine without internet or aryo installed, just run:"
+echo -e "    ${CYAN}sudo ./${OUTPUT_NAME}${NC}"
+echo -e "  • It will unpack itself, install ${CYAN}aryo${NC}, restore all libraries, and start."
 echo -e "${GREEN}${BOLD}========================================================================${NC}\n"
