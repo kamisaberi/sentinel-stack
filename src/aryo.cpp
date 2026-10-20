@@ -122,6 +122,12 @@ Domains & Commands:
 
 [12. Cache & Offline Assets]
   aryo cache list|clean|export|import           Manage local content-addressable cache
+
+[13. Standalone Air-Gapped System Portability]
+  aryo system export [output.aryopack]          Package complete ecosystem for offline USB transfer
+  aryo system import <input.aryopack>           Restore complete operational ecosystem offline
+
+  
 )" << std::endl;
 }
 
