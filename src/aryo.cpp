@@ -127,7 +127,7 @@ Domains & Commands:
   aryo system export [output.aryopack]          Package complete ecosystem for offline USB transfer
   aryo system import <input.aryopack>           Restore complete operational ecosystem offline
 
-  
+
 )" << std::endl;
 }
 
@@ -498,6 +498,47 @@ int main(int argc, char *argv[])
         std::vector<std::string> c_args = {"cache"};
         c_args.insert(c_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", c_args);
+    }
+
+    // -------------------------------------------------------------------------
+    // [13. Standalone Air-Gapped System Portability (.aryopack)]
+    // -------------------------------------------------------------------------
+    if (domain == "system")
+    {
+        if (args.empty())
+        {
+            std::cerr << "[-] Error: Action required (export, import)\n";
+            return 1;
+        }
+        std::string act = args[0];
+        if (act == "export")
+        {
+            std::string out_file = (args.size() > 1) ? args[1] : "sentinel_ecosystem.aryopack";
+            return run_shell("sudo /home/kami/sentinel-stack/scripts/export_system.sh " + out_file);
+        }
+        else if (act == "import")
+        {
+            if (args.size() < 2)
+            {
+                std::cerr << "[-] Error: Archive path required. Usage: aryo system import <bundle.aryopack>\n";
+                return 1;
+            }
+            std::string in_file = args[1];
+            if (!fs::exists(in_file))
+            {
+                std::cerr << "[-] Error: Archive file not found: " << in_file << "\n";
+                return 1;
+            }
+            std::string tmp_extract = "/tmp/aryopack_import_" + std::to_string(getpid());
+            std::string cmd = "mkdir -p " + tmp_extract + " && tar -xzf " + in_file + " -C " + tmp_extract +
+                              " && sudo bash " + tmp_extract + "/import_system.sh && rm -rf " + tmp_extract;
+            return run_shell(cmd);
+        }
+        else
+        {
+            std::cerr << "[-] Error: Unknown system action '" << act << "'. Run 'aryo --help'.\n";
+            return 1;
+        }
     }
 
     std::cerr << "[-] Error: Unknown command 'aryo " << domain << "'. Run 'aryo --help' for usage.\n";
