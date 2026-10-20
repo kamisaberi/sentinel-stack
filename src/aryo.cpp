@@ -90,6 +90,8 @@ Domains & Commands:
 [7. Continual AI & Quantization]
   aryo forge run [--config <yaml>]              Execute continual fine-tuning cycle
   aryo forge quantize --model <m> --output <o>  Convert FP32 model to INT8 QDQ ONNX (< 20 us)
+  aryo forge finetune --base-model <m> --dataset <d> --output <o> Fine-tune model on new telemetry
+
 
 [8. SLAB Protocol Engine]
   aryo slab convert <in.csv> <out.slab> <dim>   Convert CSV to 0x534C4142 zero-copy binary
