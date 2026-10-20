@@ -63,6 +63,9 @@ check_artifact "Virtualenv: /opt/sentinel-stack/venv" "test -x /opt/sentinel-sta
 # 15. Web C2 Dashboard Assets
 check_artifact "Web Console: /opt/sentinel-nexus/web" "test -f /opt/sentinel-nexus/web/index.html"
 
+# 16. Unified Master CLI (aryo)
+check_artifact "Master CLI: aryo --help" "test -x /usr/local/bin/aryo && /usr/local/bin/aryo --help"
+
 echo "--------------------------------------------------------"
 echo "[+] Smoke Test Results: ${PASSED}/${TOTAL} Health Checks Verified."
 if [ "${PASSED}" -eq "${TOTAL}" ]; then
