@@ -249,4 +249,18 @@ if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     fi
 fi
 
+
+# ------------------------------------------------------------------------------
+# UNIFIED MASTER CLI: aryo
+# ------------------------------------------------------------------------------
+echo -e "\n\033[36m[*] Compiling and Installing Unified Master CLI: aryo...\033[0m"
+cd "${ROOT_DIR}"
+if [ -f "src/aryo.cpp" ]; then
+    g++ -std=c++20 -O3 src/aryo.cpp -o /usr/local/bin/aryo
+    chmod +x /usr/local/bin/aryo
+    echo "[+] Unified Master CLI (aryo) successfully installed to /usr/local/bin/aryo."
+fi
+
+
+
 echo "[+] Phase 3 compilation and installation successful across all 8 tiers."
