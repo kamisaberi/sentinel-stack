@@ -71,6 +71,9 @@ check_artifact "Master CLI: aryo --help" "test -x /usr/local/bin/aryo && /usr/lo
 # 17. Idea D: Autonomous Honeynet Vaccine Synthesis Engine
 check_artifact "Idea D: Honeynet Vaccine Synthesizer" "/usr/local/bin/sentinel-artifact --help | grep -q 'synthesize-vaccine'"
 
+# 18. Idea B: 5G/6G GTP-U & UPF Network Slicing Guard
+check_artifact "Idea B: 5G GTP-U Slice Guard" "/usr/local/bin/sentinel-ctl 5g status"
+
 echo "--------------------------------------------------------"
 echo "[+] Smoke Test Results: ${PASSED}/${TOTAL} Health Checks Verified."
 if [ "${PASSED}" -eq "${TOTAL}" ]; then
