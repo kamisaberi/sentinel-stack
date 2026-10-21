@@ -151,6 +151,10 @@ Domains & Commands:
   aryo sbom status                              Audit runtime process memory integrity & drift statistics
   aryo sbom test-drift                          Simulate fileless shellcode PROT_EXEC injection test drill
 
+[17. Orbital & Space-Based Telemetry Security Guard (CCSDS / STANAG)]
+  aryo space status                             Display space link telemetry, APID ACL & SLA status
+  aryo space ccsds                              Inspect and verify live CCSDS 133.0-B-2 space packets
+  aryo space blast-sim                          Replay synthetic LEO telemetry & TC injection attacks
 )" << std::endl;
 }
 
