@@ -6,7 +6,7 @@ echo "=== [PHASE 5] Executing 17-Point Ecosystem System Health Checks        ===
 echo "=========================================================================="
 
 PASSED=0
-TOTAL=20
+TOTAL=21
 
 check_artifact() {
     local TITLE="$1"
@@ -80,6 +80,8 @@ check_artifact "Idea C: Live-SBOM Memory Integrity" "/usr/local/bin/sentinel-ctl
 # 20. Idea E: Orbital & Space Telemetry Security Guard
 check_artifact "Idea E: Orbital Space Telemetry Guard" "/usr/local/bin/ccsds-guard status"
 
+# 21. Idea A: GenAI / LLM Prompt Injection Firewall (AI TRiSM)
+check_artifact "Idea A: AI TRiSM Prompt Firewall" "/usr/local/bin/sentinel-ctl trism status"
 
 echo "--------------------------------------------------------"
 echo "[+] Smoke Test Results: ${PASSED}/${TOTAL} Health Checks Verified."
