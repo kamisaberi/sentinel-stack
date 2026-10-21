@@ -144,6 +144,13 @@ Domains & Commands:
   aryo 5g enable [iface] [config.yaml]          Provision 3GPP slices into in-kernel eBPF driver
   aryo 5g blast-test [iface]                    Replay synthetic 5G GTP-U slice-hopping attack test
 
+
+[16. Live-SBOM Memory Integrity Engine]
+  aryo sbom generate                            Generate cryptographic Live-SBOM (/etc/sentinel/live_sbom.json)
+  aryo sbom enforce                             Activate in-kernel W^X enforcement and sub-µs SIGKILL defense
+  aryo sbom status                              Audit runtime process memory integrity & drift statistics
+  aryo sbom test-drift                          Simulate fileless shellcode PROT_EXEC injection test drill
+
 )" << std::endl;
 }
 
