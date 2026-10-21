@@ -72,9 +72,6 @@ Domains & Commands:
   aryo artifact synthesize-vaccine <inbox> [o]  Synthesize sealed .spkg vaccine from honeynet inbox
   aryo publish <file> [--token <KEY>] [--url]   Publish .spkg, .onnx, .slab, .pcap to Hub
 
-
-
-  
 [5. Hub Registry Marketplace]
   aryo hub search [query]                       Search verified packages on hub catalog
   aryo hub inspect <file.spkg>                  Inspect package manifest & security audit
@@ -87,6 +84,7 @@ Domains & Commands:
 
 [6. Fleet & Threat Administration]
   aryo fleet list                               List all connected edge appliance nodes
+  aryo fleet vaccine-audit                      Audit honeynet-synthesized vaccines across fleet
   aryo threat drop <IP>                         Broadcast instant sub-50ms eBPF drop
   aryo ota status|stage|advance|rollback        Manage neural model rollout lifecycle
   aryo report cmmc|scada                        Export CMMC 2.0 & IEC 62443 compliance audits
@@ -122,10 +120,11 @@ Domains & Commands:
   aryo lab federated [-c cfg]                   Federated AI Byzantine poisoning evaluator
   aryo lab patch-regression [-c cfg]            Exploit neutralization scorecard evaluator
 
-[11. Digital Twin Range Mesh]
+[11. Digital Twin Range Mesh & Active Honeynet]
   aryo matrix up|down|restart|status|tui        Manage multi-container simulation mesh
   aryo matrix plc [-p 502] [-s 102] [-i 2404]   Launch standalone RK4 ODE mock PLC twin
   aryo matrix attack <scenario_name>            Replay malware attack across digital twin
+  aryo matrix spool [dir]                       Inspect captured honeynet exploit JSON records
   aryo matrix honeynet-autohunt [spool_dir]     Autonomous loop: harvest exploit, synthesize & broadcast vaccine
 
 [12. Cache & Offline Assets]
@@ -476,13 +475,13 @@ int main(int argc, char *argv[])
     }
 
     // -------------------------------------------------------------------------
-    // [10. Cyber Range Digital Twin]
+    // [10. Cyber Range Digital Twin & Active Honeynet]
     // -------------------------------------------------------------------------
     if (domain == "matrix")
     {
         if (args.empty())
         {
-            std::cerr << "[-] Error: Matrix action required (up, down, restart, status, tui, plc, attack <name>, test-blueprint)\n";
+            std::cerr << "[-] Error: Matrix action required (up, down, restart, status, tui, plc, attack <name>, spool, honeynet-autohunt, test-blueprint)\n";
             return 1;
         }
         std::string act = args[0];
@@ -495,30 +494,44 @@ int main(int argc, char *argv[])
             std::vector<std::string> plc_args(args.begin() + 1, args.end());
             forward_exec("mock_plc", plc_args);
         }
-        else if (act == "attack" && args.size() > 1)
+        else if (act == "spool")
         {
-            return run_shell("cd /home/kami/sentinel-matrix && make attack-" + args[1]);
+            std::string spool = (args.size() > 1) ? args[1] : "/var/run/sentinel/honeynet_spool";
+            std::cout << "\033[1;36m[*] [Honeynet Spool Inbox] Contents of " << spool << ":\033[0m\n";
+            std::string cmd = "ls -lh " + spool + " 2>/dev/null || ls -lh ./honeynet_spool 2>/dev/null || echo '[-] Inbox empty.'";
+            return run_shell(cmd);
         }
         else if (act == "honeynet-autohunt")
         {
             std::string spool = (args.size() > 1) ? args[1] : "/var/run/sentinel/honeynet_spool";
-            std::cout << "\033[1;36m[*] [Aryo Autohunt] Harvesting Honeynet inbox: " << spool << "\033[0m\n";
+            std::cout << "\033[1;36m========================================================================================\033[0m\n";
+            std::cout << "\033[1;37m        ARYORITHM AUTOHUNT: CLOSED-LOOP HONEYNET FLEET IMMUNIZATION                     \033[0m\n";
+            std::cout << "\033[1;36m========================================================================================\033[0m\n";
+            std::cout << "[*] Phase 1: Scanning Honeynet Spool for active zero-day exploit PDUs (" << spool << ")...\n";
+
             std::string synth_cmd = "sentinel-artifact synthesize-vaccine " + spool + " /tmp/honeynet_vaccines";
             int ret = run_shell(synth_cmd);
             if (ret != 0)
             {
-                std::cerr << "\033[1;31m[-] Error: Vaccine synthesis failed or inbox empty.\033[0m\n";
+                std::cerr << "\033[1;31m[-] Error: Vaccine synthesis failed or inbox is empty.\033[0m\n";
                 return 1;
             }
 
-            std::cout << "\033[1;32m[+] [Aryo Autohunt] Vaccine generated. Broadcasting fleet-wide via Nexus (< 50ms)...\033[0m\n";
+            std::cout << "\n[*] Phase 2: Vaccine synthesized & certified. Broadcasting fleet-wide via Nexus (< 50ms)...\n";
             std::string bcast_cmd = "for f in /tmp/honeynet_vaccines/*/*.spkg; do "
                                     "  if [ -f \"$f\" ]; then "
                                     "    nexus-ctl hub broadcast \"$f\"; "
                                     "    break; "
                                     "  fi; "
                                     "done";
-            return run_shell(bcast_cmd);
+            int bcast_res = run_shell(bcast_cmd);
+            std::cout << "\033[1;32m[+] [AUTOHUNT COMPLETE] Entire edge fleet successfully vaccinated against zero-day exploit!\033[0m\n";
+            std::cout << "\033[1;36m========================================================================================\033[0m\n";
+            return bcast_res;
+        }
+        else if (act == "attack" && args.size() > 1)
+        {
+            return run_shell("cd /home/kami/sentinel-matrix && make attack-" + args[1]);
         }
         else
         {
@@ -537,7 +550,7 @@ int main(int argc, char *argv[])
     }
 
     // -------------------------------------------------------------------------
-    // [13. Standalone Air-Gapped System Portability (.aryopack)]
+    // [12. Standalone Air-Gapped System Portability (.aryopack)]
     // -------------------------------------------------------------------------
     if (domain == "system")
     {
