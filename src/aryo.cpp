@@ -138,6 +138,12 @@ Domains & Commands:
 [14. Licensing & Entitlements]
   aryo license apply <file.lic>                 Apply commercial license to /etc/sentinel/license.lic
   aryo license inspect <file.lic>               Inspect license entitlements, nodes & expiration
+
+[15. Private 5G/6G Wireless Network Slicing & UPF Guard]
+  aryo 5g status                                Inspect active 5G slice TEIDs & kernel violation drops
+  aryo 5g enable [iface] [config.yaml]          Provision 3GPP slices into in-kernel eBPF driver
+  aryo 5g blast-test [iface]                    Replay synthetic 5G GTP-U slice-hopping attack test
+
 )" << std::endl;
 }
 
@@ -577,6 +583,33 @@ int main(int argc, char *argv[])
         }
     }
 
+    // -------------------------------------------------------------------------
+    // [14. Private 5G/6G Wireless Network Slicing & UPF Guard]
+    // -------------------------------------------------------------------------
+    if (domain == "5g")
+    {
+        if (args.empty())
+        {
+            std::cerr << "[-] Error: 5G action required (status, enable, blast-test)\n";
+            return 1;
+        }
+        std::string act = args[0];
+        if (act == "blast-test")
+        {
+            std::string iface = (args.size() > 1) ? args[1] : "lo";
+            std::string venv_py = "/opt/sentinel-stack/venv/bin/python3";
+            std::string blaster = "/opt/sentinel-stack/harnesses/gtp_slice_blaster.py";
+            if (!fs::exists(blaster))
+                blaster = "/home/kami/sentinel-stack/harnesses/gtp_slice_blaster.py";
+            return run_shell(venv_py + " " + blaster + " --iface " + iface);
+        }
+        else
+        {
+            std::vector<std::string> ctl_args = {"5g"};
+            ctl_args.insert(ctl_args.end(), args.begin(), args.end());
+            forward_exec("sentinel-ctl", ctl_args);
+        }
+    }
     std::cerr << "[-] Error: Unknown command 'aryo " << domain << "'. Run 'aryo --help' for usage.\n";
     return 1;
 }
