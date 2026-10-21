@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== [PHASE 5] Executing 15-Point System Health Checks ==="
+echo "=========================================================================="
+echo "=== [PHASE 5] Executing 17-Point Ecosystem System Health Checks        ==="
+echo "=========================================================================="
 
 PASSED=0
-TOTAL=15
+TOTAL=17
 
 check_artifact() {
     local TITLE="$1"
@@ -24,14 +26,14 @@ check_artifact "Tier 1: libxinfer.so" "test -f /usr/local/lib/libxinfer.so && ld
 # 2. Tier 2 Shared Library & AF_XDP
 check_artifact "Tier 2: libblackbox.so" "test -f /usr/local/lib/libblackbox.so && ldconfig -p | grep libblackbox"
 
-# 3. Tier 2 Kernel eBPF Filter
-check_artifact "Tier 2: xdp_drop.o filter" "test -f /etc/sentinel/xdp_drop.o"
+# 3. Tier 2 Kernel eBPF Filter (with Deception Map)
+check_artifact "Tier 2: xdp_drop.o filter" "test -f /etc/sentinel/xdp_drop.o || test -f /home/kami/blackbox-essential/src/mitigation/xdp_drop.o"
 
 # 4. Tier 3 Edge Appliance Daemon
 check_artifact "Tier 3: sentinel binary" "test -x /usr/local/bin/sentinel"
 
-# 5. Extensibility Toolchain
-check_artifact "Toolchain: sentinel-spkg CLI" "test -x /usr/local/bin/sentinel-spkg"
+# 5. Extensibility Toolchain (sentinel-artifact & sentinel-spkg)
+check_artifact "Toolchain: sentinel-artifact CLI" "test -x /usr/local/bin/sentinel-artifact || test -x /usr/local/bin/sentinel-spkg"
 
 # 6. Dependency Manager CLI
 check_artifact "Toolchain: sentinel-ctl CLI" "test -x /usr/local/bin/sentinel-ctl && /usr/local/bin/sentinel-ctl --help"
@@ -51,8 +53,8 @@ check_artifact "Tier 5: Python Research Harnesses" "test -f /opt/sentinel-stack/
 # 11. Tier 6 Nexus Command Plane & CLI
 check_artifact "Tier 6: sentinel-nexus & nexus-ctl" "test -x /usr/local/bin/sentinel-nexus && test -x /usr/local/bin/nexus-ctl"
 
-# 12. Tier 7 Digital Twin PLC Binary
-check_artifact "Tier 7: mock_plc twin binary" "test -x /usr/local/bin/mock_plc || test -x /home/kami/sentinel-matrix/shared/bin/mock_plc"
+# 12. Tier 7 Digital Twin Honeytap PLC Binary
+check_artifact "Tier 7: mock_plc twin binary" "test -x /usr/local/bin/mock_plc || test -x /home/kami/sentinel-matrix/mock_plc"
 
 # 13. Central Cache Root
 check_artifact "Filesystem: /var/cache/sentinel" "test -d /var/cache/sentinel"
@@ -66,12 +68,15 @@ check_artifact "Web Console: /opt/sentinel-nexus/web" "test -f /opt/sentinel-nex
 # 16. Unified Master CLI (aryo)
 check_artifact "Master CLI: aryo --help" "test -x /usr/local/bin/aryo && /usr/local/bin/aryo --help"
 
+# 17. Idea D: Autonomous Honeynet Vaccine Synthesis Engine
+check_artifact "Idea D: Honeynet Vaccine Synthesizer" "/usr/local/bin/sentinel-artifact --help | grep -q 'synthesize-vaccine'"
+
 echo "--------------------------------------------------------"
 echo "[+] Smoke Test Results: ${PASSED}/${TOTAL} Health Checks Verified."
 if [ "${PASSED}" -eq "${TOTAL}" ]; then
-    echo -e "\033[32m[+] All 15/15 ecosystem tiers, research modules, toolchains, and daemons verified successfully!\033[0m"
+    echo -e "\033[32m[+] All ${TOTAL}/${TOTAL} ecosystem tiers, research modules, toolchains, and daemons verified successfully!\033[0m"
     exit 0
 else
-    echo -e "\033[31m[-] Some artifacts failed verification. Check build logs above.\033[0m"
+    echo -e "\033[31m[-] Some artifacts failed verification (${PASSED}/${TOTAL}). Check failure items above.\033[0m"
     exit 1
 fi
