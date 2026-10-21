@@ -155,6 +155,12 @@ Domains & Commands:
   aryo space status                             Display space link telemetry, APID ACL & SLA status
   aryo space ccsds                              Inspect and verify live CCSDS 133.0-B-2 space packets
   aryo space blast-sim                          Replay synthetic LEO telemetry & TC injection attacks
+
+[18. GenAI / LLM Prompt Injection Firewall (AI TRiSM)]
+  aryo trism status                             Inspect AI TRiSM firewall status & sub-µs SLA
+  aryo trism inspect --prompt "<text>"          Inspect prompt text for jailbreaks & injection vectors
+  aryo trism test-jailbreak                     Run red-team benchmark across 4 injection classes
+  aryo trism policy                             Display active OT Copilot tool governance policy
 )" << std::endl;
 }
 
