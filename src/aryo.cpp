@@ -663,6 +663,15 @@ int main(int argc, char *argv[])
             return 1;
         }
     }
+    // -------------------------------------------------------------------------
+    // [17. GenAI / LLM Prompt Injection Firewall (AI TRiSM)]
+    // -------------------------------------------------------------------------
+    if (domain == "trism")
+    {
+        std::vector<std::string> ctl_args = {"trism"};
+        ctl_args.insert(ctl_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", ctl_args);
+    }
 
     std::cerr << "[-] Error: Unknown command 'aryo " << domain << "'. Run 'aryo --help' for usage.\n";
     return 1;
