@@ -69,8 +69,12 @@ Domains & Commands:
   aryo artifact verify <pub_key> <file.spkg>    Verify Ed25519 Merkle signature
   aryo artifact extract-source <file> <out>     Extract plain-text source for audit
   aryo artifact test <file.spkg>                Run in-sandbox pre-flight test vector
+  aryo artifact synthesize-vaccine <inbox> [o]  Synthesize sealed .spkg vaccine from honeynet inbox
   aryo publish <file> [--token <KEY>] [--url]   Publish .spkg, .onnx, .slab, .pcap to Hub
 
+
+
+  
 [5. Hub Registry Marketplace]
   aryo hub search [query]                       Search verified packages on hub catalog
   aryo hub inspect <file.spkg>                  Inspect package manifest & security audit
@@ -122,6 +126,7 @@ Domains & Commands:
   aryo matrix up|down|restart|status|tui        Manage multi-container simulation mesh
   aryo matrix plc [-p 502] [-s 102] [-i 2404]   Launch standalone RK4 ODE mock PLC twin
   aryo matrix attack <scenario_name>            Replay malware attack across digital twin
+  aryo matrix honeynet-autohunt [spool_dir]     Autonomous loop: harvest exploit, synthesize & broadcast vaccine
 
 [12. Cache & Offline Assets]
   aryo cache list|clean|export|import           Manage local content-addressable cache
@@ -493,6 +498,27 @@ int main(int argc, char *argv[])
         else if (act == "attack" && args.size() > 1)
         {
             return run_shell("cd /home/kami/sentinel-matrix && make attack-" + args[1]);
+        }
+        else if (act == "honeynet-autohunt")
+        {
+            std::string spool = (args.size() > 1) ? args[1] : "/var/run/sentinel/honeynet_spool";
+            std::cout << "\033[1;36m[*] [Aryo Autohunt] Harvesting Honeynet inbox: " << spool << "\033[0m\n";
+            std::string synth_cmd = "sentinel-artifact synthesize-vaccine " + spool + " /tmp/honeynet_vaccines";
+            int ret = run_shell(synth_cmd);
+            if (ret != 0)
+            {
+                std::cerr << "\033[1;31m[-] Error: Vaccine synthesis failed or inbox empty.\033[0m\n";
+                return 1;
+            }
+
+            std::cout << "\033[1;32m[+] [Aryo Autohunt] Vaccine generated. Broadcasting fleet-wide via Nexus (< 50ms)...\033[0m\n";
+            std::string bcast_cmd = "for f in /tmp/honeynet_vaccines/*/*.spkg; do "
+                                    "  if [ -f \"$f\" ]; then "
+                                    "    nexus-ctl hub broadcast \"$f\"; "
+                                    "    break; "
+                                    "  fi; "
+                                    "done";
+            return run_shell(bcast_cmd);
         }
         else
         {
