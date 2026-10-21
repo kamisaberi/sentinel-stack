@@ -471,11 +471,15 @@ int main(int argc, char *argv[])
     {
         if (args.empty())
         {
-            std::cerr << "[-] Error: Matrix action required (up, down, restart, status, tui, plc, attack <name>)\n";
+            std::cerr << "[-] Error: Matrix action required (up, down, restart, status, tui, plc, attack <name>, test-blueprint)\n";
             return 1;
         }
         std::string act = args[0];
-        if (act == "plc")
+        if (act == "test-blueprint")
+        {
+            return run_shell("bash /home/kami/sentinel-stack/scripts/validate_blueprint_pipeline.sh");
+        }
+        else if (act == "plc")
         {
             std::vector<std::string> plc_args(args.begin() + 1, args.end());
             forward_exec("mock_plc", plc_args);
@@ -489,7 +493,6 @@ int main(int argc, char *argv[])
             return run_shell("cd /home/kami/sentinel-matrix && make " + act);
         }
     }
-
     // -------------------------------------------------------------------------
     // [11. Cache & Offline Assets]
     // -------------------------------------------------------------------------
