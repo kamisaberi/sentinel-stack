@@ -90,8 +90,8 @@ Domains & Commands:
 [7. Continual AI & Quantization]
   aryo forge run [--config <yaml>]              Execute continual fine-tuning cycle
   aryo forge quantize --model <m> --output <o>  Convert FP32 model to INT8 QDQ ONNX (< 20 us)
-  aryo forge finetune --base-model <m> --dataset <d> --output <o> Fine-tune model on new telemetry
-
+  aryo forge finetune --base-model <m> --dataset <d> --output <o>
+                                                Fine-tune pre-trained model on new SLAB telemetry
 
 [8. SLAB Protocol Engine]
   aryo slab convert <in.csv> <out.slab> <dim>   Convert CSV to 0x534C4142 zero-copy binary
@@ -129,6 +129,10 @@ Domains & Commands:
 [13. Standalone Air-Gapped System Portability]
   aryo system export [output.aryopack]          Package complete ecosystem for offline USB transfer
   aryo system import <input.aryopack>           Restore complete operational ecosystem offline
+
+[14. Licensing & Entitlements]
+  aryo license apply <file.lic>                 Apply commercial license to /etc/sentinel/license.lic
+  aryo license inspect <file.lic>               Inspect license entitlements, nodes & expiration
 )" << std::endl;
 }
 
@@ -198,15 +202,17 @@ int main(int argc, char *argv[])
     }
 
     // -------------------------------------------------------------------------
-    // [2. Appliance & Routing]
+    // [2. Appliance, Routing & Licensing]
     // -------------------------------------------------------------------------
     if (domain == "status")
     {
         forward_exec("sentinel-ctl", {"status"});
     }
-    if (domain == "appliance")
+    if (domain == "appliance" || domain == "license")
     {
-        forward_exec("sentinel-ctl", args);
+        std::vector<std::string> lic_args = {domain};
+        lic_args.insert(lic_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", lic_args);
     }
     if (domain == "hardware")
     {
@@ -493,6 +499,7 @@ int main(int argc, char *argv[])
             return run_shell("cd /home/kami/sentinel-matrix && make " + act);
         }
     }
+
     // -------------------------------------------------------------------------
     // [11. Cache & Offline Assets]
     // -------------------------------------------------------------------------
