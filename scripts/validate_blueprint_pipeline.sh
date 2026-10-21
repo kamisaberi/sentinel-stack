@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# ARYORITHM TECHNOLOGIES: END-TO-END VISUAL BLUEPRINT PIPELINE VALIDATION
-# Verifies visual blueprint compilation -> matrix deployment -> live fire audit
+# ARYORITHM TECHNOLOGIES: END-TO-END VISUAL BLUEPRINT VALIDATION PIPELINE
 # ==============================================================================
 set -euo pipefail
+export DOCKER_BUILDKIT=0  # Prevents BuildKit TLS cache corruption on VMware
 
 CYAN='\033[36m'
 GREEN='\033[32m'
@@ -35,7 +35,7 @@ echo -e "${GREEN}[+] Blueprint compiled successfully to matrix node configuratio
 echo -e "\n${YELLOW}[STEP 2/4] Verifying Sentinel-Matrix Digital Twin Grid...${NC}"
 if ! docker ps --format '{{.Names}}' | grep -q "matrix-edge-substation-01"; then
     echo "  [*] Launching Sentinel-Matrix grid..."
-    make up
+    DOCKER_BUILDKIT=0 make up
 else
     echo "  [+] Matrix grid is already active (Edge Substation 01 online)."
 fi
@@ -53,7 +53,3 @@ echo "==========================================================================
 echo "  [SUCCESS] VISUAL BLUEPRINT END-TO-END PIPELINE CERTIFIED 100% OPERATIONAL!"
 echo "=========================================================================="
 echo -e "${NC}"
-echo -e "  • Visual SaaS Blueprint compiled cleanly into model_routes.yaml"
-echo -e "  • Deployed and executed live on Sentinel-Matrix Edge Container"
-echo -e "  • Verified live under attack via Sentinel-Lab HIL and CBF Invariants"
-echo ""
