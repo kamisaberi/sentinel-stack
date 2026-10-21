@@ -6,7 +6,7 @@ echo "=== [PHASE 5] Executing 17-Point Ecosystem System Health Checks        ===
 echo "=========================================================================="
 
 PASSED=0
-TOTAL=17
+TOTAL=19
 
 check_artifact() {
     local TITLE="$1"
@@ -73,6 +73,9 @@ check_artifact "Idea D: Honeynet Vaccine Synthesizer" "/usr/local/bin/sentinel-a
 
 # 18. Idea B: 5G/6G GTP-U & UPF Network Slicing Guard
 check_artifact "Idea B: 5G GTP-U Slice Guard" "/usr/local/bin/sentinel-ctl 5g status"
+
+# 19. Idea C: Live-SBOM Memory Drift Engine
+check_artifact "Idea C: Live-SBOM Memory Integrity" "/usr/local/bin/sentinel-ctl sbom status"
 
 echo "--------------------------------------------------------"
 echo "[+] Smoke Test Results: ${PASSED}/${TOTAL} Health Checks Verified."
