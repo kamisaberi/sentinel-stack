@@ -632,6 +632,32 @@ int main(int argc, char *argv[])
         forward_exec("sentinel-ctl", ctl_args);
     }
 
+    // -------------------------------------------------------------------------
+    // [16. Orbital & Space-Based Telemetry Security Guard]
+    // -------------------------------------------------------------------------
+    if (domain == "space")
+    {
+        if (args.empty() || args[0] == "status")
+        {
+            return run_shell("ccsds-guard status");
+        }
+        else if (args[0] == "blast-sim")
+        {
+            std::string blaster = "/home/kami/sentinel-stack/harnesses/space_link_blaster.py";
+            return run_shell("python3 " + blaster);
+        }
+        else if (args[0] == "ccsds")
+        {
+            std::vector<std::string> c_args = {"status"};
+            forward_exec("ccsds-guard", c_args);
+        }
+        else
+        {
+            std::cerr << "[-] Error: Unknown space action. Run 'aryo space status' or 'aryo space blast-sim'.\n";
+            return 1;
+        }
+    }
+
     std::cerr << "[-] Error: Unknown command 'aryo " << domain << "'. Run 'aryo --help' for usage.\n";
     return 1;
 }
