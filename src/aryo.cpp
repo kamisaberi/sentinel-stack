@@ -617,6 +617,17 @@ int main(int argc, char *argv[])
             forward_exec("sentinel-ctl", ctl_args);
         }
     }
+
+    // -------------------------------------------------------------------------
+    // [15. Live-SBOM Memory Integrity Engine]
+    // -------------------------------------------------------------------------
+    if (domain == "sbom")
+    {
+        std::vector<std::string> ctl_args = {"sbom"};
+        ctl_args.insert(ctl_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", ctl_args);
+    }
+
     std::cerr << "[-] Error: Unknown command 'aryo " << domain << "'. Run 'aryo --help' for usage.\n";
     return 1;
 }
