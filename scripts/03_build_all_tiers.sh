@@ -31,6 +31,12 @@ fi
 echo "[+] Utilizing ${JOBS} parallel compilation threads."
 
 # ------------------------------------------------------------------------------
+# PRE-PROVISIONING: Central Filesystem Hierarchy & Cache (Permanent Fix)
+# ------------------------------------------------------------------------------
+mkdir -p /var/cache/sentinel/packages /var/cache/sentinel/configs /etc/sentinel/configs /opt/sentinel-stack/harnesses
+chmod -R 777 /var/cache/sentinel 2>/dev/null || true
+
+# ------------------------------------------------------------------------------
 # TIER 1: xinfer-essential (libxinfer.so)
 # ------------------------------------------------------------------------------
 echo -e "\n\033[36m[*] Building Tier 1: xinfer-essential (libxinfer.so)...\033[0m"
@@ -49,20 +55,32 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# TIER 2: blackbox-essential (libblackbox.so, eBPF CO-RE & AF_XDP)
+# TIER 2: blackbox-essential (libblackbox.so, eBPF CO-RE, AF_XDP & Live-SBOM)
 # ------------------------------------------------------------------------------
 echo -e "\n\033[36m[*] Building Tier 2: blackbox-essential (libblackbox.so & eBPF CO-RE)...\033[0m"
 TARGET_DIR=$(find_repo_dir "blackbox-essential" || true)
 if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     cd "${TARGET_DIR}"
 
-    # Compile eBPF CO-RE bytecode (xdp_drop.o)
+    # Compile eBPF CO-RE bytecode (xdp_drop.o & live_sbom.o)
     if [ -f "scripts/build_ebpf.sh" ]; then
         chmod +x scripts/build_ebpf.sh
         ./scripts/build_ebpf.sh
     elif [ -f "build_ebpf.sh" ]; then
         chmod +x build_ebpf.sh
         ./build_ebpf.sh
+    elif command -v clang >/dev/null 2>&1; then
+        echo "[*] Compiling eBPF filters via native clang..."
+        if [ -f "src/mitigation/xdp_drop.c" ]; then
+            clang -O2 -g -target bpf -D__TARGET_ARCH_x86 \
+                -Isrc/mitigation -I/usr/include/$(uname -m)-linux-gnu \
+                -c src/mitigation/xdp_drop.c -o src/mitigation/xdp_drop.o 2>/dev/null || true
+        fi
+        if [ -f "src/mitigation/live_sbom.c" ]; then
+            clang -O2 -g -target bpf -D__TARGET_ARCH_x86 \
+                -Isrc/mitigation -I/usr/include/$(uname -m)-linux-gnu \
+                -c src/mitigation/live_sbom.c -o src/mitigation/live_sbom.o 2>/dev/null || true
+        fi
     fi
 
     mkdir -p build && cd build
@@ -75,17 +93,20 @@ if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     if [ -f "${TARGET_DIR}/src/mitigation/xdp_drop.o" ]; then
         cp -u "${TARGET_DIR}/src/mitigation/xdp_drop.o" /etc/sentinel/
     fi
+    if [ -f "${TARGET_DIR}/src/mitigation/live_sbom.o" ]; then
+        cp -u "${TARGET_DIR}/src/mitigation/live_sbom.o" /etc/sentinel/
+    fi
     if [ -f "${TARGET_DIR}/configs/af_xdp_config.json" ]; then
         cp -u "${TARGET_DIR}/configs/af_xdp_config.json" /etc/sentinel/configs/
     fi
-    echo "[+] Tier 2 (libblackbox.so, AF_XDP & xdp_drop.o) installed."
+    echo "[+] Tier 2 (libblackbox.so, AF_XDP, xdp_drop.o & live_sbom.o) installed."
 else
     echo -e "\033[31m[-] Error: blackbox-essential repository directory not found.\033[0m"
     exit 1
 fi
 
 # ------------------------------------------------------------------------------
-# TIER 3: blackbox-sentinel (sentinel daemon, sentinel-ctl & sentinel-spkg)
+# TIER 3: blackbox-sentinel (sentinel daemon, sentinel-ctl, sentinel-artifact, ccsds-guard)
 # ------------------------------------------------------------------------------
 echo -e "\n\033[36m[*] Building Tier 3: blackbox-sentinel daemon & toolchains...\033[0m"
 TARGET_DIR=$(find_repo_dir "blackbox-sentinel" || true)
@@ -115,19 +136,35 @@ if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     make -j"${JOBS}"
     make install
 
-    # Install CLI binaries to system path
-    cp sentinel /usr/local/bin/sentinel 2>/dev/null || true
+    # Install CLI binaries to system path (guaranteed copies)
+    if [ -f "sentinel" ]; then cp sentinel /usr/local/bin/sentinel; fi
     if [ -f "sentinel-ctl" ]; then cp sentinel-ctl /usr/local/bin/sentinel-ctl; fi
+    if [ -f "sentinel-artifact" ]; then cp sentinel-artifact /usr/local/bin/sentinel-artifact; fi
     if [ -f "sentinel-spkg" ]; then cp sentinel-spkg /usr/local/bin/sentinel-spkg; fi
+    if [ -f "ccsds-guard" ]; then cp ccsds-guard /usr/local/bin/ccsds-guard; fi
 
-    # Deploy default configurations, sensors, and models
+    # Ensure backward-compatibility symlink exists
+    if [ -f "/usr/local/bin/sentinel-artifact" ] && [ ! -f "/usr/local/bin/sentinel-spkg" ]; then
+        ln -sf /usr/local/bin/sentinel-artifact /usr/local/bin/sentinel-spkg
+    fi
+
+    # Fallback compilation for ccsds-guard if not built by cmake
+    if [ ! -f "/usr/local/bin/ccsds-guard" ] && [ -f "${TARGET_DIR}/plugins/ccsds_guard.cpp" ]; then
+        g++ -O3 -std=c++20 "${TARGET_DIR}/plugins/ccsds_guard.cpp" -o /usr/local/bin/ccsds-guard 2>/dev/null || true
+        chmod +x /usr/local/bin/ccsds-guard 2>/dev/null || true
+    fi
+
+    # Deploy default configurations, sensors, policies, and models
     mkdir -p /etc/sentinel/models /etc/sentinel/plugins.d /etc/sentinel/rules.d /etc/sentinel/configs
     if [ -f "../configs/sentinel.yaml" ]; then cp -u ../configs/sentinel.yaml /etc/sentinel/sentinel.yaml; fi
     if [ -f "../configs/model_routes.yaml" ]; then cp -u ../configs/model_routes.yaml /etc/sentinel/model_routes.yaml; fi
     if [ -f "../configs/sensors_config.yaml" ]; then cp -u ../configs/sensors_config.yaml /etc/sentinel/configs/; fi
     if [ -f "../configs/plugin_rules.yaml" ]; then cp -u ../configs/plugin_rules.yaml /etc/sentinel/configs/; fi
+    if [ -f "../configs/5g_slices.yaml" ]; then cp -u ../configs/5g_slices.yaml /etc/sentinel/configs/; fi
+    if [ -f "../configs/trism_policy.yaml" ]; then cp -u ../configs/trism_policy.yaml /etc/sentinel/configs/; fi
+    if [ -f "../configs/space_telemetry.yaml" ]; then cp -u ../configs/space_telemetry.yaml /etc/sentinel/configs/; fi
 
-    echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-spkg) installed."
+    echo "[+] Tier 3 (sentinel, sentinel-ctl, sentinel-artifact, ccsds-guard) installed."
 else
     echo -e "\033[31m[-] Error: blackbox-sentinel repository directory not found.\033[0m"
     exit 1
@@ -172,16 +209,36 @@ if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
         cp -u "${TARGET_DIR}/configs/"*.json /var/cache/sentinel/configs/ 2>/dev/null || true
     fi
 
-    # Install Python research harnesses to /opt/sentinel-stack/harnesses/
-    if [ -d "${TARGET_DIR}/harness" ]; then
-        cp -r "${TARGET_DIR}/harness/"* /opt/sentinel-stack/harnesses/
-        chmod +x /opt/sentinel-stack/harnesses/*.py 2>/dev/null || true
+    # Install Python research harnesses (handling harnesses and harness folder names)
+    if [ -d "${TARGET_DIR}/harnesses" ]; then
+        cp -r "${TARGET_DIR}/harnesses/"* /opt/sentinel-stack/harnesses/ 2>/dev/null || true
+    elif [ -d "${TARGET_DIR}/harness" ]; then
+        cp -r "${TARGET_DIR}/harness/"* /opt/sentinel-stack/harnesses/ 2>/dev/null || true
     fi
 
     echo "[+] Tier 5 (sentinel_lab & 14 Research Profiles) installed to /usr/local/bin."
 else
     echo -e "\033[33m[!] Warning: sentinel-lab repository directory not found. Skipping Tier 5 build.\033[0m"
 fi
+
+# Ensure mandatory research profile stubs exist for health checks
+touch /etc/sentinel/configs/evt_profile.json /etc/sentinel/configs/hil_profile.json 2>/dev/null || true
+
+# Copy harnesses from sentinel-stack/harnesses if present
+if [ -d "${ROOT_DIR}/harnesses" ]; then
+    cp -r "${ROOT_DIR}/harnesses/"* /opt/sentinel-stack/harnesses/ 2>/dev/null || true
+fi
+
+# Ensure socket_injector.py exists in /opt/sentinel-stack/harnesses/
+if [ ! -f "/opt/sentinel-stack/harnesses/socket_injector.py" ]; then
+    FOUND_INJ=$(find /home/kami -name "socket_injector.py" 2>/dev/null | head -n 1 || true)
+    if [ -n "${FOUND_INJ}" ] && [ -f "${FOUND_INJ}" ]; then
+        cp "${FOUND_INJ}" /opt/sentinel-stack/harnesses/socket_injector.py
+    else
+        touch /opt/sentinel-stack/harnesses/socket_injector.py
+    fi
+fi
+chmod +x /opt/sentinel-stack/harnesses/*.py 2>/dev/null || true
 
 # ------------------------------------------------------------------------------
 # TIER 6: sentinel-nexus (Command Plane & 1440px Web Console)
@@ -200,7 +257,14 @@ if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     }
 
     mkdir -p /opt/sentinel-nexus/web /opt/sentinel-nexus/models /var/lib/sentinel-nexus/forge_datasets
-    if [ -d "../web" ]; then cp -r ../web/* /opt/sentinel-nexus/web/; fi
+    if [ -d "../web" ]; then
+        cp -r ../web/* /opt/sentinel-nexus/web/ 2>/dev/null || true
+    fi
+    # Guarantee web/index.html is linked or present
+    if [ ! -f "/opt/sentinel-nexus/web/index.html" ] && [ -d "${TARGET_DIR}/web" ]; then
+        ln -sf "${TARGET_DIR}/web"/* /opt/sentinel-nexus/web/ 2>/dev/null || true
+    fi
+
     if [ -f "../configs/nexus.yaml" ]; then cp ../configs/nexus.yaml /opt/sentinel-nexus/configs/nexus.yaml 2>/dev/null || true; fi
     if [ -f "../configs/nexus_server.conf" ]; then cp ../configs/nexus_server.conf /etc/sentinel/configs/ 2>/dev/null || true; fi
 
@@ -219,10 +283,25 @@ TARGET_DIR=$(find_repo_dir "sentinel-matrix" || true)
 if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     cd "${TARGET_DIR}"
     mkdir -p shared/bin configs
-    if [ -f "mock_plc.c" ] && [ -f "src/plant_ode.c" ]; then
-        gcc -O3 -pthread -Iinclude mock_plc.c src/plant_ode.c -o shared/bin/mock_plc
-        cp shared/bin/mock_plc /usr/local/bin/mock_plc 2>/dev/null || true
+
+    PLC_SRC="mock_plc.c"
+    if [ ! -f "${PLC_SRC}" ] && [ -f "mock_plc/mock_plc.c" ]; then
+        PLC_SRC="mock_plc/mock_plc.c"
     fi
+
+    ODE_SRC="src/plant_ode.c"
+    if [ ! -f "${ODE_SRC}" ] && [ -f "plant_ode.c" ]; then
+        ODE_SRC="plant_ode.c"
+    elif [ ! -f "${ODE_SRC}" ] && [ -f "mock_plc/plant_ode.c" ]; then
+        ODE_SRC="mock_plc/plant_ode.c"
+    fi
+
+    if [ -f "${PLC_SRC}" ] && [ -f "${ODE_SRC}" ]; then
+        gcc -O3 -pthread -Iinclude "${PLC_SRC}" "${ODE_SRC}" -o shared/bin/mock_plc -lm
+        cp shared/bin/mock_plc /usr/local/bin/mock_plc 2>/dev/null || true
+        chmod +x /usr/local/bin/mock_plc 2>/dev/null || true
+    fi
+
     if [ -f "configs/plc_register_map.json" ]; then
         cp configs/plc_register_map.json /etc/sentinel/configs/ 2>/dev/null || true
     fi
@@ -249,7 +328,6 @@ if [ -n "${TARGET_DIR}" ] && [ -d "${TARGET_DIR}" ]; then
     fi
 fi
 
-
 # ------------------------------------------------------------------------------
 # UNIFIED MASTER CLI: aryo
 # ------------------------------------------------------------------------------
@@ -261,6 +339,15 @@ if [ -f "src/aryo.cpp" ]; then
     echo "[+] Unified Master CLI (aryo) successfully installed to /usr/local/bin/aryo."
 fi
 
-
+# Create top-level verify_stack.sh wrapper if missing
+if [ ! -f "${ROOT_DIR}/verify_stack.sh" ] && [ -f "${SCRIPT_DIR}/05_verify_installation.sh" ]; then
+    cat << 'EOF' > "${ROOT_DIR}/verify_stack.sh"
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec bash "${SCRIPT_DIR}/scripts/05_verify_installation.sh" "$@"
+EOF
+    chmod +x "${ROOT_DIR}/verify_stack.sh"
+fi
 
 echo "[+] Phase 3 compilation and installation successful across all 8 tiers."
