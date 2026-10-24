@@ -127,6 +127,9 @@ Domains & Commands:
   aryo matrix plc [-p 502] [-s 102] [-i 2404]   Launch standalone RK4 ODE mock PLC twin
   aryo matrix attack <scenario_name>            Replay malware attack across digital twin
   aryo matrix honeynet-autohunt [spool_dir]     Autonomous loop: harvest exploit, synthesize & broadcast vaccine
+  aryo matrix scenario load <file.yaml> [--mode] Dynamically compile and launch scenario without compose limits
+  aryo matrix scenario down                     Tear down active dynamic scenario overlay
+  aryo matrix sim-finetune [--mode m]           Simulate local, air-gapped, or cloud fine-tuning mesh
 
 [12. Cache & Offline Assets]
   aryo cache list|clean|export|import           Manage local content-addressable cache
