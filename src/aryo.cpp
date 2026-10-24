@@ -92,10 +92,10 @@ Domains & Commands:
   aryo report cmmc|scada                        Export CMMC 2.0 & IEC 62443 compliance audits
 
 [7. Continual AI & Quantization]
-  aryo forge run [--config <yaml>]              Execute continual fine-tuning cycle
+  aryo forge run [--remote] [--endpoint <url>]  Execute adaptation cycle (local or remote GPU)
   aryo forge quantize --model <m> --output <o>  Convert FP32 model to INT8 QDQ ONNX (< 20 us)
-  aryo forge finetune --base-model <m> --dataset <d> --output <o>
-                                                Fine-tune pre-trained model on new SLAB telemetry
+  aryo forge finetune --base-model <m> --dataset <d> --output <o> [--remote]
+                                                Fine-tune on new SLAB telemetry (local or remote GPU)
 
 [8. SLAB Protocol Engine]
   aryo slab convert <in.csv> <out.slab> <dim>   Convert CSV to 0x534C4142 zero-copy binary
