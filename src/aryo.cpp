@@ -546,6 +546,30 @@ int main(int argc, char *argv[])
                                     "done";
             return run_shell(bcast_cmd);
         }
+        else if (act == "scenario" && args.size() > 1)
+        {
+            std::string sub_act = args[1];
+            std::string target_file = (args.size() > 2) ? args[2] : "";
+            std::string mode_flag = (args.size() > 4 && args[3] == "--mode") ? " --mode " + args[4] : "";
+
+            if (sub_act == "load")
+            {
+                return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py load " + target_file + mode_flag);
+            }
+            else if (sub_act == "down")
+            {
+                return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py down");
+            }
+            else if (sub_act == "status")
+            {
+                return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py status");
+            }
+        }
+        else if (act == "sim-finetune")
+        {
+            std::string mode_val = (args.size() > 2 && args[1] == "--mode") ? args[2] : "air-gapped";
+            return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py load scenarios/finetune_simulation.yaml --mode " + mode_val);
+        }
         else
         {
             return run_shell("cd /home/kami/sentinel-matrix && make " + act);
