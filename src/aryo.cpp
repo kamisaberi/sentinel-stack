@@ -379,7 +379,15 @@ int main(int argc, char *argv[])
         d_args.insert(d_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", d_args);
     }
-
+    // -------------------------------------------------------------------------
+    // [5. Hub Registry & Pulling]
+    // -------------------------------------------------------------------------
+    if (domain == "scenario")
+    {
+        std::vector<std::string> sc_args = {"scenario"};
+        sc_args.insert(sc_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", sc_args);
+    }
     // -------------------------------------------------------------------------
     // [6. Fleet & Threat Administration]
     // -------------------------------------------------------------------------
