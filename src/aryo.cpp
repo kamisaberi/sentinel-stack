@@ -84,6 +84,7 @@ Domains & Commands:
   aryo pcap pull <slug>                         Pull certified malware PCAP into cache
   aryo dataset pull <slug>                      Pull zero-copy .slab dataset into cache
   aryo model pull <model_slug>                  Pull verified ONNX neural weights
+  aryo scenario pack <dir> [out.tar.gz]         Pack scenario directory into verified bundle for Hub
   aryo scenario pull <slug>                     Pull verified scenario bundle from Hub into matrix
   aryo scenario list                            List locally cached and staged digital twin scenarios
 
