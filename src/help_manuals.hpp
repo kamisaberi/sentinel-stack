@@ -380,3 +380,235 @@ EXAMPLE:
 ================================================================================
 )";
 }
+
+
+inline void print_help_package()
+{
+    std::cout << R"(================================================================================
+ARYORITHM EXTENSION PACKAGE TOOLCHAIN (.spkg)
+================================================================================
+Tiers:     Tier A (Native C++20 <120ns), Tier B (Rust Wasm3 <1.5us), Tier C (LuaJIT <450ns)
+Security:  Ed25519 Merkle-Sealed, In-Sandbox Pre-Flight Assertion
+
+USAGE:
+  aryo package <action> [arguments]
+  aryo artifact <action> [arguments]
+
+ACTIONS:
+  new <name> [rust|cpp|lua]       Scaffold a new extension package project
+  keygen <prefix>                 Generate Ed25519 developer keypair
+  pack <dir> [key.pem]            Smart auto-pack directory into sealed .spkg
+  inspect <file.spkg>             Inspect package header, tier, SLA & manifest
+  verify <pub_key> <file.spkg>    Verify Ed25519 Merkle signature
+  extract-source <file> <out>     Extract plain-text source for audit
+  test <file.spkg>                Run in-sandbox pre-flight test vector
+  synthesize-vaccine <inbox>      Synthesize sealed .spkg vaccine from Honeynet exploit
+  pull <slug>                     Pull verified .spkg from Hub and deploy
+  list                            List active deployed and cached packages
+
+REAL-WORLD EXAMPLES:
+  1. Scaffold a new LuaJIT Modbus filter:
+     $ aryo package new modbus_safety_filter lua
+
+  2. Pack and sign a package with your developer key:
+     $ aryo package pack /tmp/modbus_safety_filter ~/.sentinel/keys/developer_private.pem
+
+  3. Test an artifact in sandbox against embedded threat vectors:
+     $ aryo package test /tmp/modbus_safety_filter/modbus_safety_filter.spkg
+
+  4. Install a verified .spkg package to active runtime:
+     $ sudo aryo appliance install /tmp/modbus_safety_filter/modbus_safety_filter.spkg
+================================================================================
+)";
+}
+
+inline void print_help_dataset()
+{
+    std::cout << R"(================================================================================
+ARYORITHM SLAB ZERO-COPY DATASET PROTOCOL (0x534C4142)
+================================================================================
+Protocol:  Binary SLAB Protocol (0x534C4142), std::span<const float> extraction
+SLA:       65,000+ EPS zero-copy streaming, 1 to 1024D tensors
+
+USAGE:
+  aryo dataset <action> [arguments]
+  aryo slab <action> [arguments]
+
+ACTIONS:
+  convert <in.csv> <out.slab> <dim>  Convert CSV to zero-copy binary SLAB dataset
+  verify <file.slab>                  Verify binary SLAB dataset integrity
+  stream <file.slab> [port]           Stream zero-copy binary records at 65k+ EPS
+  pull <slug>                         Pull zero-copy .slab dataset from Hub
+  list                                List locally cached .slab datasets
+
+REAL-WORLD EXAMPLES:
+  1. Convert a 32-dimensional CSV file to binary SLAB format:
+     $ aryo dataset convert telemetry.csv telemetry.slab 32
+
+  2. Stream SLAB binary records on UDP port 9999:
+     $ aryo dataset stream telemetry.slab 9999
+
+  3. Pull certified telemetry dataset from hub.aryorithm.com:
+     $ aryo dataset pull industrial_telemetry_baseline
+================================================================================
+)";
+}
+
+inline void print_help_appliance()
+{
+    std::cout << R"(================================================================================
+ARYORITHM APPLIANCE ROUTING & HARDWARE ATTESTATION
+================================================================================
+Pipeline: 4-Stage ModelRouter (Reflex -> Dissectors -> AI -> Fusion)
+Hardware: Physical TPM 2.0 Silicon Root of Trust & Licensing
+
+USAGE:
+  aryo appliance <action> [arguments]
+  aryo hardware <action>
+
+ACTIONS:
+  sync <routes.yaml>             Audit dependencies and resolve missing assets from cache
+  check <routes.yaml>            Check if all dependencies are satisfied locally
+  launch <routes.yaml>           Synchronize and launch Sentinel daemon in one step
+  install <file.spkg>            Verify Ed25519 signature & deploy package to /etc/sentinel/
+  hardware status                Inspect physical hardware profile & TPM 2.0 attestation
+  hardware enroll                Enroll physical TPM 2.0 silicon identity token
+  license apply <file.lic>       Apply commercial license to /etc/sentinel/license.lic
+  license inspect <file.lic>     Inspect license entitlements, node limits & expiration
+
+REAL-WORLD EXAMPLES:
+  1. Sync dependencies and launch edge daemon with routing profile:
+     $ aryo appliance launch /etc/sentinel/model_routes.yaml
+
+  2. Inspect physical TPM 2.0 silicon root:
+     $ aryo hardware status
+================================================================================
+)";
+}
+
+inline void print_help_stack()
+{
+    std::cout << R"(================================================================================
+ARYORITHM STACK & SYSTEMD SERVICE MANAGEMENT
+================================================================================
+Tiers:    8 Integrated Tiers (Silicon, Kernel, Daemon, AI, Lab, C2, Matrix, Stack)
+Suite:    21-Point System Verification Pipeline
+
+USAGE:
+  aryo stack <action>
+  aryo service <action> [sentinel|nexus|all]
+
+ACTIONS:
+  stack build                    Run topological DAG build across all tiers
+  stack verify                   Run 21-point full system health inspection
+  stack env                      Audit system dependencies, compilers & Python venv
+  stack install                  Run master 6-tier installation pipeline
+  stack purge                    Execute immediate full system purge (--yes)
+  service start [svc]            Start blackbox-sentinel or sentinel-nexus daemon
+  service stop [svc]             Stop systemd service(s)
+  service restart [svc]          Restart systemd service(s)
+  service status [svc]           Display systemd service status
+  service logs [svc] [-f]        Stream journalctl service logs in real time
+
+REAL-WORLD EXAMPLES:
+  1. Run the 21-point system verification check:
+     $ aryo stack verify
+
+  2. Stream real-time logs from blackbox-sentinel daemon:
+     $ aryo service logs sentinel -f
+
+  3. Restart all systemd daemons:
+     $ aryo service restart all
+================================================================================
+)";
+}
+
+inline void print_help_fleet()
+{
+    std::cout << R"(================================================================================
+ARYORITHM FLEET COMMAND & THREAT ADMINISTRATION
+================================================================================
+Orchestrator: Sentinel-Nexus (gRPC 50051 / REST 9443 / SSE 9444)
+Propagation:  Sub-50ms Collective Defense Grid & Canary OTA Rollouts
+
+USAGE:
+  aryo fleet <action>
+  aryo threat <action> <IP>
+  aryo ota <action>
+
+ACTIONS:
+  fleet list                     List all connected edge appliance nodes & metrics
+  fleet vaccine-audit            Audit honeynet-synthesized vaccines across fleet
+  threat drop <IP>               Broadcast instant sub-50ms eBPF drop across fleet
+  ota status                     Check current ONNX model rollout stage
+  ota stage                      Stage new candidate model into SHADOW_MODE
+  ota advance                    Advance model rollout stage (Shadow -> 5% -> Fleet)
+  ota rollback                   Execute emergency model rollback
+  report cmmc|scada              Export CMMC 2.0 & IEC 62443 compliance audit reports
+
+REAL-WORLD EXAMPLES:
+  1. Broadcast an instant sub-50ms eBPF drop across all fleet nodes:
+     $ aryo threat drop 198.51.100.99
+
+  2. Audit honeynet vaccines deployed fleet-wide:
+     $ aryo fleet vaccine-audit
+
+  3. Advance candidate neural model from Shadow Mode to 5% Fleet Canary:
+     $ aryo ota advance
+================================================================================
+)";
+}
+
+inline void print_help_cache()
+{
+    std::cout << R"(================================================================================
+ARYORITHM CONTENT-ADDRESSABLE ASSET CACHE
+================================================================================
+Location:  /var/cache/sentinel (or ~/.cache/sentinel)
+Supported: Packages (.spkg), Models (.onnx), Datasets (.slab), PCAPs, Scenarios
+
+USAGE:
+  aryo cache <action> [arguments]
+
+ACTIONS:
+  list                           List all cached assets and their file sizes
+  search <query> [--type <t>]    Search local cache by keyword and asset type
+  clean                          Purge local asset cache
+  export <out.tar.gz>            Export cache to a bundle for offline USB transfer
+  import <in.tar.gz>             Import an offline bundle into local cache
+
+REAL-WORLD EXAMPLES:
+  1. Search cached packages matching 'modbus':
+     $ aryo cache search modbus --type package
+
+  2. Export complete cache for air-gapped USB transfer:
+     $ aryo cache export /tmp/offline_sentinel_cache.tar.gz
+
+  3. Import cache bundle on an isolated facility:
+     $ aryo cache import /tmp/offline_sentinel_cache.tar.gz
+================================================================================
+)";
+}
+
+inline void print_help_system()
+{
+    std::cout << R"(================================================================================
+ARYORITHM STANDALONE AIR-GAPPED SYSTEM PORTABILITY (.aryopack)
+================================================================================
+Container: Self-extracting, zero-dependency offline system bundle
+Contents:  All 8 compiled tiers, binaries, Python venv, eBPF bytecode & configs
+
+USAGE:
+  aryo system export [output.aryopack]
+  aryo system import <input.aryopack>
+
+REAL-WORLD EXAMPLES:
+  1. Export the entire 21-point verified ecosystem to a single USB bundle:
+     $ aryo system export sentinel_2026_ecosystem.aryopack
+
+  2. Restore and install the full ecosystem on an isolated air-gapped server:
+     $ aryo system import sentinel_2026_ecosystem.aryopack
+================================================================================
+)";
+}
+
