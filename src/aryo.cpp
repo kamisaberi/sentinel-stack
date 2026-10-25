@@ -88,6 +88,21 @@ Domains & Commands:
   aryo scenario pull <slug>                     Pull verified scenario bundle from Hub into matrix
   aryo scenario list                            List locally cached and staged digital twin scenarios
 
+
+[Hub Marketplace & Global Discovery]
+  aryo hub search [query] [--type <t>]          Live search across packages, models, datasets, pcaps, scenarios
+  aryo hub list [--type <type>]                 List live catalog items on hub.aryorithm.com
+  aryo hub info <type> <slug>                   Preview cloud asset manifest & SLA before downloading
+  aryo hub broadcast <file.spkg>                Broadcast sealed package fleet-wide (< 50ms)
+  aryo publish <file>                           Publish any asset (.spkg, .onnx, .slab, .pcap, .tar.gz) to Hub
+
+[Unified Asset Lifecycles (pack, pull, inspect, list)]
+  aryo package  pack|pull|inspect|verify|list   Manage .spkg active defense reflex rules
+  aryo model    pack|pull|inspect|list          Manage .onnx neural weights (INT8 PTQ)
+  aryo dataset  pack|pull|inspect|verify|list   Manage zero-copy .slab telemetry datasets
+  aryo pcap     pack|pull|inspect|list          Manage certified malware network captures
+  aryo scenario pack|pull|inspect|list          Manage self-sovereign digital twin scenarios
+
 [6. Fleet & Threat Administration]
   aryo fleet list                               List all connected edge appliance nodes
   aryo threat drop <IP>                         Broadcast instant sub-50ms eBPF drop
@@ -711,6 +726,22 @@ int main(int argc, char *argv[])
         forward_exec("sentinel-ctl", ctl_args);
     }
 
+    // -------------------------------------------------------------------------
+    // [Universal Symmetric Asset Routing]
+    // -------------------------------------------------------------------------
+    if (domain == "package")
+    {
+        if (!args.empty() && (args[0] == "pack" || args[0] == "new" || args[0] == "inspect" || args[0] == "verify" || args[0] == "test"))
+        {
+            forward_exec("sentinel-artifact", args);
+        }
+        else
+        {
+            std::vector<std::string> pkg_args = {"package"};
+            pkg_args.insert(pkg_args.end(), args.begin(), args.end());
+            forward_exec("sentinel-ctl", pkg_args);
+        }
+    }
     std::cerr << "[-] Error: Unknown command 'aryo " << domain << "'. Run 'aryo --help' for usage.\n";
     return 1;
 }
