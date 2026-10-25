@@ -172,9 +172,6 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         }
     }
 
-// -------------------------------------------------------------------------
-    // [05. Symmetrical Asset Lifecycles: Model]
-    // -------------------------------------------------------------------------
     if (domain == "model")
     {
         if (wants_help)
