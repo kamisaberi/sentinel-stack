@@ -1,7 +1,7 @@
 src/*
 !src/aryo.cpp
-!src/common.hpp
-!src/help_manuals.hpp
-!src/domain_router.hpp
+!src/common*.hpp
+!src/help_manuals*.hpp
+!src/domain_router*.hpp
 !src/aryo*.cpp
 build/
