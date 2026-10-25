@@ -21,7 +21,6 @@ static void print_banner()
               << std::endl;
 }
 
-
 static void print_help()
 {
     print_banner();
@@ -184,7 +183,6 @@ Domains & Commands:
   aryo trism policy                             Display active OT Copilot tool governance policy
 )" << std::endl;
 }
-
 
 [[noreturn]] static void forward_exec(const std::string &binary, const std::vector<std::string> &args)
 {
@@ -369,11 +367,23 @@ int main(int argc, char *argv[])
     // -------------------------------------------------------------------------
     // [5. Hub Registry & Pulling]
     // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // [5. Hub Registry & Discovery Routing]
+    // -------------------------------------------------------------------------
     if (domain == "hub")
     {
         std::vector<std::string> hub_args = {"hub"};
         hub_args.insert(hub_args.end(), args.begin(), args.end());
-        forward_exec("nexus-ctl", hub_args);
+
+        // Fleet actions belong to nexus-ctl; Catalog discovery belongs to sentinel-ctl
+        if (!args.empty() && (args[0] == "broadcast" || args[0] == "new"))
+        {
+            forward_exec("nexus-ctl", hub_args);
+        }
+        else
+        {
+            forward_exec("sentinel-ctl", hub_args);
+        }
     }
     if (domain == "pcap")
     {
