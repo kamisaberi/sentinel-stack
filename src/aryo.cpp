@@ -21,6 +21,7 @@ static void print_banner()
               << std::endl;
 }
 
+
 static void print_help()
 {
     print_banner();
@@ -29,14 +30,14 @@ static void print_help()
 
 Domains & Commands:
 
-[1. Authentication & Registry Identity]
+[01. Authentication & Registry Identity]
   aryo login --jwt <TOKEN> [--hub-url <url>]    Exchange JWT for API key & save credentials
   aryo whoami                                   Display active authenticated registry identity
   aryo auth login [email] [pass] [--url]        Authenticate with backend and save cloud session
   aryo auth register [email] [pass] [user]      Register a new user account with backend
   aryo auth status                              Display active cloud session on disk
 
-[2. Appliance & Routing Lifecycle]
+[02. Appliance & Routing Lifecycle]
   aryo status                                   Inspect appliance health, TPM 2.0 & eBPF status
   aryo appliance sync <routes.yaml>             Audit dependencies and resolve packages/models
   aryo appliance check <routes.yaml>            Check if all dependencies are satisfied locally
@@ -45,10 +46,10 @@ Domains & Commands:
   aryo hardware status                          Inspect physical hardware profile & TPM 2.0
   aryo hardware enroll                          Enroll physical TPM 2.0 silicon identity token
 
-[3. Stack & Systemd Services Management]
+[03. Stack & Systemd Services Management]
   aryo stack install                            Run master 6-tier installation pipeline
   aryo stack build                              Run topological DAG build across all tiers
-  aryo stack verify                             Run 15-point system verification suite
+  aryo stack verify                             Run 21-point system verification suite
   aryo stack uninstall                          Run interactive ecosystem uninstaller
   aryo stack purge                              Execute immediate full system purge (--yes)
   aryo stack env                                Audit system dependencies, compiler & venv
@@ -60,7 +61,36 @@ Domains & Commands:
   aryo service enable [sentinel|nexus|all]      Enable service(s) on boot
   aryo service disable [sentinel|nexus|all]     Disable service(s) on boot
 
-[4. Universal Artifacts & .spkg Packaging]
+[04. Global Hub Discovery & Publishing]
+  aryo hub search [query] [--type <t>]          Live search across packages, models, datasets, pcaps, scenarios
+  aryo hub list [--type <type>]                 List live catalog items on hub.aryorithm.com
+  aryo hub info <type> <slug>                   Preview cloud asset manifest & SLA before downloading
+  aryo hub inspect <file.spkg>                  Inspect package manifest & security audit
+  aryo hub verify <pub_key> <pkg>               Verify Ed25519 signature of hub package
+  aryo hub broadcast <file.spkg>                Broadcast sealed package fleet-wide (< 50ms)
+  aryo hub new <name> [tier]                    Scaffold package template on C2 node
+  aryo publish <file> [--token <K>] [--url]     Publish any asset (.spkg, .onnx, .slab, .pcap, .tar.gz) to Hub
+
+[05. Symmetrical Asset Lifecycles (pack, pull, inspect, list)]
+  aryo package pack [dir]                       Smart auto-pack directory into sealed .spkg
+  aryo package pull <slug>                      Pull verified .spkg and deploy to active runtime
+  aryo package inspect <file.spkg>              Inspect package header, tier & SLA metadata
+  aryo package verify <pub_key> <file.spkg>     Verify Ed25519 Merkle signature
+  aryo package list                             List active and cached extension packages (.spkg)
+  aryo model pack <model> --output <out>        Quantize and pack neural weights into INT8 ONNX
+  aryo model pull <model_slug>                  Pull verified ONNX neural weights
+  aryo model list                               List locally cached and staged AI models
+  aryo dataset pack <in.csv> <out.slab> <dim>   Convert CSV into zero-copy binary SLAB dataset
+  aryo dataset pull <slug>                      Pull zero-copy .slab dataset into cache
+  aryo dataset list                             List locally cached .slab datasets
+  aryo pcap pack <key> <m> <in> <out>           Sign and seal raw PCAP into .spcap container
+  aryo pcap pull <slug>                         Pull certified malware PCAP into cache
+  aryo pcap list                                List locally cached and staged PCAP captures
+  aryo scenario pack <dir> [out.tar.gz]         Pack scenario directory into verified bundle for Hub
+  aryo scenario pull <slug>                     Pull verified scenario bundle from Hub into matrix
+  aryo scenario list                            List locally cached and staged digital twin scenarios
+
+[06. Artifact Authoring Toolchain (.spkg)]
   aryo artifact new <name> [rust|cpp|lua]       Scaffold a new extension package project
   aryo artifact keygen <prefix>                 Generate Ed25519 developer keypair
   aryo artifact pack [dir]                      Smart auto-pack directory into sealed .spkg
@@ -70,58 +100,24 @@ Domains & Commands:
   aryo artifact extract-source <file> <out>     Extract plain-text source for audit
   aryo artifact test <file.spkg>                Run in-sandbox pre-flight test vector
   aryo artifact synthesize-vaccine <inbox> [o]  Synthesize sealed .spkg vaccine from honeynet inbox
-  aryo publish <file> [--token <KEY>] [--url]   Publish .spkg, .onnx, .slab, .pcap to Hub
 
-
-
-  
-[5. Hub Registry Marketplace]
-  aryo hub search [query]                       Search verified packages on hub catalog
-  aryo hub inspect <file.spkg>                  Inspect package manifest & security audit
-  aryo hub verify <pub_key> <pkg>               Verify Ed25519 signature of hub package
-  aryo hub broadcast <file.spkg>                Broadcast sealed .spkg fleet-wide (< 50ms)
-  aryo hub new <name> [tier]                    Scaffold package template on C2 node
-  aryo pcap pull <slug>                         Pull certified malware PCAP into cache
-  aryo dataset pull <slug>                      Pull zero-copy .slab dataset into cache
-  aryo model pull <model_slug>                  Pull verified ONNX neural weights
-  aryo scenario pack <dir> [out.tar.gz]         Pack scenario directory into verified bundle for Hub
-  aryo scenario pull <slug>                     Pull verified scenario bundle from Hub into matrix
-  aryo scenario list                            List locally cached and staged digital twin scenarios
-
-
-[Hub Marketplace & Global Discovery]
-  aryo hub search [query] [--type <t>]          Live search across packages, models, datasets, pcaps, scenarios
-  aryo hub list [--type <type>]                 List live catalog items on hub.aryorithm.com
-  aryo hub info <type> <slug>                   Preview cloud asset manifest & SLA before downloading
-  aryo hub broadcast <file.spkg>                Broadcast sealed package fleet-wide (< 50ms)
-  aryo publish <file>                           Publish any asset (.spkg, .onnx, .slab, .pcap, .tar.gz) to Hub
-
-[Unified Asset Lifecycles (pack, pull, inspect, list)]
-  aryo package  pack|pull|inspect|verify|list   Manage .spkg active defense reflex rules
-  aryo model    pack|pull|inspect|list          Manage .onnx neural weights (INT8 PTQ)
-  aryo dataset  pack|pull|inspect|verify|list   Manage zero-copy .slab telemetry datasets
-  aryo pcap     pack|pull|inspect|list          Manage certified malware network captures
-  aryo scenario pack|pull|inspect|list          Manage self-sovereign digital twin scenarios
-
-[6. Fleet & Threat Administration]
+[07. Fleet & Threat Administration]
   aryo fleet list                               List all connected edge appliance nodes
+  aryo fleet vaccine-audit                      Audit honeynet-synthesized vaccines across fleet
   aryo threat drop <IP>                         Broadcast instant sub-50ms eBPF drop
   aryo ota status|stage|advance|rollback        Manage neural model rollout lifecycle
   aryo report cmmc|scada                        Export CMMC 2.0 & IEC 62443 compliance audits
 
-[7. Continual AI & Quantization]
+[08. Continual AI & Quantization (Forge)]
   aryo forge run [--remote] [--endpoint <url>]  Execute adaptation cycle (local or remote GPU)
   aryo forge quantize --model <m> --output <o>  Convert FP32 model to INT8 QDQ ONNX (< 20 us)
   aryo forge finetune --base-model <m> --dataset <d> --output <o> [--remote]
                                                 Fine-tune on new SLAB telemetry (local or remote GPU)
 
-[8. SLAB Protocol Engine]
+[09. SLAB Protocol Engine (0x534C4142)]
   aryo slab convert <in.csv> <out.slab> <dim>   Convert CSV to 0x534C4142 zero-copy binary
   aryo slab verify <file.slab>                  Verify binary SLAB dataset integrity
   aryo slab stream <file.slab> [port]           Stream zero-copy binary records at 65k+ EPS
-
-[9. PCAP Capture Vault]
-  aryo pcap pack <key> <manifest> <in> <out>    Sign and seal raw PCAP into .spcap container
 
 [10. Research Lab (14 Scientific Modules)]
   aryo lab daemon [options]                     Launch C++20 research evaluation daemon
@@ -140,19 +136,24 @@ Domains & Commands:
   aryo lab federated [-c cfg]                   Federated AI Byzantine poisoning evaluator
   aryo lab patch-regression [-c cfg]            Exploit neutralization scorecard evaluator
 
-[11. Digital Twin Range Mesh]
+[11. Digital Twin Range Mesh & Active Honeynet]
   aryo matrix up|down|restart|status|tui        Manage multi-container simulation mesh
   aryo matrix plc [-p 502] [-s 102] [-i 2404]   Launch standalone RK4 ODE mock PLC twin
   aryo matrix attack <scenario_name>            Replay malware attack across digital twin
   aryo matrix honeynet-autohunt [spool_dir]     Autonomous loop: harvest exploit, synthesize & broadcast vaccine
-  aryo matrix scenario load <file.yaml> [--mode] Dynamically compile and launch scenario without compose limits
-  aryo matrix scenario down                     Tear down active dynamic scenario overlay
-  aryo matrix sim-finetune [--mode m]           Simulate local, air-gapped, or cloud fine-tuning mesh
+  aryo matrix scenario load <file.yaml>         Dynamically compile and launch sovereign scenario
+  aryo matrix scenario down [--name <name>]     Tear down dynamic scenario overlay
+  aryo matrix scenario status [--name <name>]   Display status of live scenario nodes
+  aryo matrix sim-finetune [--mode <m>]         Simulate local, air-gapped, or cloud fine-tuning mesh
 
 [12. Cache & Offline Assets]
-  aryo cache list|clean|export|import           Manage local content-addressable cache
+  aryo cache list                               List all cached assets and their sizes
+  aryo cache search <query> [--type <t>]        Search local cache by keyword and asset type
+  aryo cache clean                              Purge the local asset cache
+  aryo cache export <out.tar.gz>                Export cache to a bundle for offline USB transfer
+  aryo cache import <in.tar.gz>                 Import an offline bundle into local cache
 
-[13. Standalone Air-Gapped System Portability]
+[13. Standalone Air-Gapped System Portability (.aryopack)]
   aryo system export [output.aryopack]          Package complete ecosystem for offline USB transfer
   aryo system import <input.aryopack>           Restore complete operational ecosystem offline
 
@@ -164,7 +165,6 @@ Domains & Commands:
   aryo 5g status                                Inspect active 5G slice TEIDs & kernel violation drops
   aryo 5g enable [iface] [config.yaml]          Provision 3GPP slices into in-kernel eBPF driver
   aryo 5g blast-test [iface]                    Replay synthetic 5G GTP-U slice-hopping attack test
-
 
 [16. Live-SBOM Memory Integrity Engine]
   aryo sbom generate                            Generate cryptographic Live-SBOM (/etc/sentinel/live_sbom.json)
@@ -184,6 +184,7 @@ Domains & Commands:
   aryo trism policy                             Display active OT Copilot tool governance policy
 )" << std::endl;
 }
+
 
 [[noreturn]] static void forward_exec(const std::string &binary, const std::vector<std::string> &args)
 {
