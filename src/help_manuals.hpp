@@ -4,7 +4,7 @@
 
 inline void print_global_help()
 {
-    std::cout << R"(Usage:
+  std::cout << R"(Usage:
   aryo <domain> <action> [arguments]
 
 Tip: Run 'aryo <domain> --help' for detailed subcommands and copy-paste examples.
@@ -31,9 +31,49 @@ Domains:
 )" << std::endl;
 }
 
+inline void print_help_model()
+{
+  std::cout << R"(================================================================================
+ARYORITHM NEURAL MODEL VAULT & ONNX PACKAGING ENGINE
+================================================================================
+Formats:   ONNX (FP32, FP16, INT8 QDQ), TensorRT Engine, OpenVINO IR, RKNN
+Inference: Zero-Copy host pointers via libxinfer.so (< 20 µs INT8 latency)
+
+USAGE:
+  aryo model <action> [arguments] [options]
+
+ACTIONS:
+  pack <model.onnx> [--precision INT8|FP32] [--domain <d>]
+                                Pack model & auto-generate companion manifest for Hub
+  pull <model_slug>             Pull verified ONNX weights from Hub into models/
+  list                          List all locally cached and staged AI models
+
+OPTIONS:
+  --precision <INT8|FP32>       Quantization format (auto-detects 'int8' in filename)
+  --domain <name>               Target domain (default: SCADA_ICS)
+
+REAL-WORLD EXAMPLES:
+  1. Pack an ONNX model and auto-generate the Hub manifest:
+     $ aryo model pack /tmp/industrial_anomaly_detector.onnx
+
+  2. Explicitly pack an INT8 model for industrial ICS:
+     $ aryo model pack models/detector_int8.onnx --precision INT8 --domain SCADA_ICS
+
+  3. Pull verified neural weights from hub.aryorithm.com:
+     $ aryo model pull network_threat_detector
+
+  4. List active and cached models:
+     $ aryo model list
+
+  5. Publish to Hub after packing:
+     $ aryo publish /tmp/industrial_anomaly_detector.onnx
+================================================================================
+)";
+}
+
 inline void print_help_5g()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM 5G/6G WIRELESS SLICING & UPF GUARD (3GPP N3 GTP-U)
 ================================================================================
 Subsystem: In-Kernel eBPF Driver Ring Filter (< 0.84 µs SLA)
@@ -63,7 +103,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_sbom()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM LIVE-SBOM: RUNTIME MEMORY INTEGRITY & W^X ENGINE
 ================================================================================
 Subsystem: In-Kernel eBPF Tracepoint (sys_enter_mprotect / sys_enter_execve)
@@ -93,7 +133,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_space()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM ORBITAL & SPACE TELEMETRY GUARD (CCSDS / STANAG)
 ================================================================================
 Subsystem: Native C++20 Space Dissector (< 120 ns SLA)
@@ -119,7 +159,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_trism()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM AI TRiSM: INDUSTRIAL GENAI & LLM PROMPT FIREWALL
 ================================================================================
 Subsystem: Inline Streaming Token Interceptor & Tool-Calling Governor
@@ -147,7 +187,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_scenario()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM DIGITAL TWIN SCENARIO & REGISTRY HUB ENGINE
 ================================================================================
 Subsystem: Self-Sovereign Multi-Network Simulation (sentinel-matrix)
@@ -179,7 +219,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_hub()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM REGISTRY HUB & GLOBAL CLOUD DISCOVERY
 ================================================================================
 Base URL:  https://backend.aryorithm.com/api/v1
@@ -212,7 +252,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_matrix()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM SENTINEL-MATRIX: DIGITAL TWIN RANGE MESH
 ================================================================================
 Subnet:    10.240.0.0/24 (Configurable via sovereign scenarios)
@@ -243,7 +283,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_forge()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 XINFER-FORGE: CONTINUAL LEARNING & ASYMMETRIC REMOTE GPU RETRAINING
 ================================================================================
 Hardware: Local CPU or Remote GPU Cluster (CUDA / TensorRT)
@@ -272,7 +312,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_lab()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 SENTINEL-LAB: 14-DIMENSIONAL SCIENTIFIC RESEARCH TESTBED
 ================================================================================
 Standards: CERN/Zenodo DOI (10.5281/zenodo.23598779), SLAB Protocol (0x534C4142)
