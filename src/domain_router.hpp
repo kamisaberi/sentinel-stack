@@ -172,13 +172,27 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         }
     }
 
-    if (domain == "model" || domain == "dataset")
+// -------------------------------------------------------------------------
+    // [05. Symmetrical Asset Lifecycles: Model]
+    // -------------------------------------------------------------------------
+    if (domain == "model")
     {
-        std::vector<std::string> d_args = {domain};
+        if (wants_help)
+        {
+            print_help_model();
+            return 0;
+        }
+        std::vector<std::string> d_args = {"model"};
         d_args.insert(d_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", d_args);
     }
 
+    if (domain == "dataset")
+    {
+        std::vector<std::string> d_args = {"dataset"};
+        d_args.insert(d_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", d_args);
+    }
     if (domain == "pcap")
     {
         if (!args.empty() && args[0] == "pack")
