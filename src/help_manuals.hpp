@@ -71,6 +71,43 @@ REAL-WORLD EXAMPLES:
 )";
 }
 
+inline void print_help_pcap()
+{
+    std::cout << R"(================================================================================
+ARYORITHM CERTIFIED MALWARE PCAP VAULT
+================================================================================
+Standards: PCAP v2.4 Microsecond Capture, Wireshark/tcpdump Compliant
+Replay:    Deterministic wire injection via traffic-gen container & socket blaster
+
+USAGE:
+  aryo pcap <action> [arguments] [options]
+
+ACTIONS:
+  pack <file.pcap> [--category <c>] [--protocol <p>] [--attack <a>]
+                                Pack PCAP & auto-generate Hub companion manifest
+  pull <slug>                   Pull certified PCAP capture into /etc/sentinel/pcaps/
+  list                          List all locally cached and staged PCAPs
+
+OPTIONS:
+  --category <enum>             SCADA_ICS | POWER_GRID | ENTERPRISE | DEFENSE
+  --protocol <proto>            MODBUS_TCP | S7COMM | IEC_104 | DNP3 | GTP_U
+  --attack <type>               RECON | EXPLOIT | DOS | MAN_IN_THE_MIDDLE
+
+REAL-WORLD EXAMPLES:
+  1. Pack a raw PCAP capture and generate the Hub manifest:
+     $ aryo pcap pack /tmp/modbus_unauthorized_write.pcap
+
+  2. Explicitly specify protocol and attack tags:
+     $ aryo pcap pack capture.pcap --category POWER_GRID --protocol IEC_104 --attack EXPLOIT
+
+  3. Pull certified malware PCAP from Hub:
+     $ aryo pcap pull industroyer2_substation
+
+  4. Publish to Hub after packing:
+     $ aryo publish /tmp/modbus_unauthorized_write.pcap
+================================================================================
+)";
+}
 inline void print_help_5g()
 {
   std::cout << R"(================================================================================
