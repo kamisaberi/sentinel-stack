@@ -1,3 +1,4 @@
 src/*
 !src/aryo.cpp
+!src/common.hpp
 !src/aryo*.cpp
