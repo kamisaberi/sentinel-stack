@@ -192,18 +192,14 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     }
     if (domain == "pcap")
     {
-        if (!args.empty() && args[0] == "pack")
+        if (wants_help)
         {
-            std::vector<std::string> p_args = {"pcap"};
-            p_args.insert(p_args.end(), args.begin(), args.end());
-            forward_exec("sentinel-artifact", p_args);
+            print_help_pcap();
+            return 0;
         }
-        else
-        {
-            std::vector<std::string> p_args = {"pcap"};
-            p_args.insert(p_args.end(), args.begin(), args.end());
-            forward_exec("sentinel-ctl", p_args);
-        }
+        std::vector<std::string> p_args = {"pcap"};
+        p_args.insert(p_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", p_args);
     }
 
     if (domain == "scenario")
