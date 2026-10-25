@@ -34,21 +34,19 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     {
         if (args.empty() || wants_help)
         {
-            std::cout << "Usage: aryo appliance <sync | check | launch | install> [arguments]\n";
+            print_help_appliance();
             return 0;
         }
-        // Forward directly: "install", "sync", "check", "launch"
         forward_exec("sentinel-ctl", args);
     }
-    if (domain == "license")
+    if (domain == "license" || domain == "hardware")
     {
-        std::vector<std::string> lic_args = {"license"};
-        lic_args.insert(lic_args.end(), args.begin(), args.end());
-        forward_exec("sentinel-ctl", lic_args);
-    }
-    if (domain == "hardware")
-    {
-        std::vector<std::string> hw_args = {"hardware"};
+        if (wants_help)
+        {
+            print_help_appliance();
+            return 0;
+        }
+        std::vector<std::string> hw_args = {domain};
         hw_args.insert(hw_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", hw_args);
     }
@@ -60,7 +58,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     {
         if (args.empty() || wants_help)
         {
-            std::cout << "Usage: aryo stack <install | build | verify | uninstall | purge | env>\n";
+            print_help_stack();
             return 0;
         }
         std::string sub = args[0];
@@ -88,7 +86,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     {
         if (args.empty() || wants_help)
         {
-            std::cout << "Usage: aryo service <start|stop|restart|status|logs|enable|disable> [sentinel|nexus|all]\n";
+            print_help_stack();
             return 0;
         }
         std::string action = args[0];
@@ -158,6 +156,11 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     if (domain == "package" || domain == "artifact")
     {
+        if (wants_help)
+        {
+            print_help_package();
+            return 0;
+        }
         if (!args.empty() && (args[0] == "pack" || args[0] == "new" || args[0] == "inspect" ||
                               args[0] == "verify" || args[0] == "test" || args[0] == "keygen" ||
                               args[0] == "extract-source" || args[0] == "synthesize-vaccine"))
@@ -186,10 +189,16 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
 
     if (domain == "dataset")
     {
+        if (wants_help)
+        {
+            print_help_dataset();
+            return 0;
+        }
         std::vector<std::string> d_args = {"dataset"};
         d_args.insert(d_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", d_args);
     }
+
     if (domain == "pcap")
     {
         if (wants_help)
@@ -219,6 +228,11 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     if (domain == "fleet" || domain == "threat" || domain == "ota" || domain == "report")
     {
+        if (wants_help)
+        {
+            print_help_fleet();
+            return 0;
+        }
         std::vector<std::string> n_args = {domain};
         n_args.insert(n_args.end(), args.begin(), args.end());
         forward_exec("nexus-ctl", n_args);
@@ -380,6 +394,11 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     if (domain == "cache")
     {
+        if (wants_help)
+        {
+            print_help_cache();
+            return 0;
+        }
         std::vector<std::string> c_args = {"cache"};
         c_args.insert(c_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", c_args);
@@ -392,7 +411,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     {
         if (args.empty() || wants_help)
         {
-            std::cout << "Usage: aryo system <export [file.aryopack] | import <file.aryopack>>\n";
+            print_help_system();
             return 0;
         }
         std::string act = args[0];
