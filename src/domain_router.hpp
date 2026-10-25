@@ -30,9 +30,19 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     {
         forward_exec("sentinel-ctl", {"status"});
     }
-    if (domain == "appliance" || domain == "license")
+    if (domain == "appliance")
     {
-        std::vector<std::string> lic_args = {domain};
+        if (args.empty() || wants_help)
+        {
+            std::cout << "Usage: aryo appliance <sync | check | launch | install> [arguments]\n";
+            return 0;
+        }
+        // Forward directly: "install", "sync", "check", "launch"
+        forward_exec("sentinel-ctl", args);
+    }
+    if (domain == "license")
+    {
+        std::vector<std::string> lic_args = {"license"};
         lic_args.insert(lic_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", lic_args);
     }
