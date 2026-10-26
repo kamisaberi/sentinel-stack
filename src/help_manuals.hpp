@@ -73,7 +73,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_pcap()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM CERTIFIED MALWARE PCAP VAULT
 ================================================================================
 Standards: PCAP v2.4 Microsecond Capture, Wireshark/tcpdump Compliant
@@ -227,33 +227,38 @@ inline void print_help_scenario()
   std::cout << R"(================================================================================
 ARYORITHM DIGITAL TWIN SCENARIO & REGISTRY HUB ENGINE
 ================================================================================
-Subsystem: Self-Sovereign Multi-Network Simulation (sentinel-matrix)
+Modes:     Declarative Reference (~15 KB) & Embedded Standalone (--embed)
 Supported: Custom subnets, multi-homed nodes, air-gapped bridges, .tar.gz bundles
 
 USAGE:
-  aryo scenario <action> [arguments]
+  aryo scenario <action> [arguments] [options]
 
 ACTIONS:
-  pack <dir> [out.tar.gz]       Pack scenario folder into verified bundle for Hub
+  new <name> [--sector <s>]     Scaffold turnkey scenario skeleton in 1 command
+  add <dir> <asset> [--embed]   Add package/model/pcap by simple name (no paths needed!)
+  pack <dir> [--embed]          Pack scenario (default: declarative ~15KB, --embed: standalone)
   pull <slug>                   Pull verified scenario from Hub & stage to sentinel-matrix
-  list                          List all locally cached archives and staged scenarios
-  load <file.yaml>              Dynamically compile and launch scenario across custom subnets
-  status [--name <name>]        Inspect running containers across custom scenario subnets
+  list                          List all locally cached and staged digital twin scenarios
+  load <file.yaml>              Compile and launch scenario across custom subnets
   down [--name <name>]          Tear down active scenario containers and custom networks
 
 REAL-WORLD EXAMPLES:
-  1. Pack a local water treatment scenario folder for publishing:
-     $ aryo scenario pack /home/kami/sentinel-matrix/scenarios/water_plant_pack
+  1. Scaffold a fresh scenario:
+     $ aryo scenario new water_grid_demo --sector WATER_TREATMENT
 
-  2. Pull a certified scenario from hub.aryorithm.com:
-     $ aryo scenario pull water-treatment-plant
+  2. Add assets by name (automatically resolves from /etc/sentinel/ or cache):
+     $ aryo scenario add water_grid_demo modbus_rate_limiter
+     $ aryo scenario add water_grid_demo industrial_anomaly_detector
+     $ aryo scenario add water_grid_demo modbus_unauthorized_write
 
-  3. Launch a multi-zone sovereign grid with custom subnets (10.210.0.0/24):
-     $ aryo matrix scenario load scenarios/water_plant_pack/scenario.yaml
+  3. Pack in Declarative Mode for Hub publishing (~15 KB):
+     $ aryo scenario pack water_grid_demo
+
+  4. Pack in Embedded Mode for USB air-gapped sneakernet:
+     $ aryo scenario pack water_grid_demo --embed
 ================================================================================
 )";
 }
-
 inline void print_help_hub()
 {
   std::cout << R"(================================================================================
@@ -381,10 +386,9 @@ EXAMPLE:
 )";
 }
 
-
 inline void print_help_package()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM EXTENSION PACKAGE TOOLCHAIN (.spkg)
 ================================================================================
 Tiers:     Tier A (Native C++20 <120ns), Tier B (Rust Wasm3 <1.5us), Tier C (LuaJIT <450ns)
@@ -424,7 +428,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_dataset()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM SLAB ZERO-COPY DATASET PROTOCOL (0x534C4142)
 ================================================================================
 Protocol:  Binary SLAB Protocol (0x534C4142), std::span<const float> extraction
@@ -456,7 +460,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_appliance()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM APPLIANCE ROUTING & HARDWARE ATTESTATION
 ================================================================================
 Pipeline: 4-Stage ModelRouter (Reflex -> Dissectors -> AI -> Fusion)
@@ -488,7 +492,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_stack()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM STACK & SYSTEMD SERVICE MANAGEMENT
 ================================================================================
 Tiers:    8 Integrated Tiers (Silicon, Kernel, Daemon, AI, Lab, C2, Matrix, Stack)
@@ -525,7 +529,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_fleet()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM FLEET COMMAND & THREAT ADMINISTRATION
 ================================================================================
 Orchestrator: Sentinel-Nexus (gRPC 50051 / REST 9443 / SSE 9444)
@@ -561,7 +565,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_cache()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM CONTENT-ADDRESSABLE ASSET CACHE
 ================================================================================
 Location:  /var/cache/sentinel (or ~/.cache/sentinel)
@@ -592,7 +596,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_system()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM STANDALONE AIR-GAPPED SYSTEM PORTABILITY (.aryopack)
 ================================================================================
 Container: Self-extracting, zero-dependency offline system bundle
@@ -611,4 +615,3 @@ REAL-WORLD EXAMPLES:
 ================================================================================
 )";
 }
-
