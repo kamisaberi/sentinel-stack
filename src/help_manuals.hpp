@@ -616,3 +616,46 @@ REAL-WORLD EXAMPLES:
 ================================================================================
 )";
 }
+
+inline void print_help_blueprint()
+{
+    std::cout << R"(================================================================================
+ARYORITHM PRODUCTION SITE BLUEPRINTS (.blueprint)
+================================================================================
+Target:   Physical Edge Appliances, Bare-Metal IPCs, Substation Servers
+Engine:   4-Stage ModelRouter DAG, Zero-Downtime RCU Hot-Reload (< 2 ms)
+
+USAGE:
+  aryo blueprint <action> [arguments] [options]
+
+ACTIONS:
+  new <name> [--site <s>]       Scaffold physical blueprint directory structure
+  add <dir> <asset> [--embed]   Add package/model dependency by name or path
+  pack <dir> [--embed]          Pack blueprint (default: declarative, --embed: standalone)
+  inspect <file|dir>            Inspect hardware NIC bindings, DAG stages & SLA
+  deploy <file|dir>             Atomically deploy to /etc/sentinel/ (with auto-backup)
+  rollback                      Instantly restore previous stable configuration
+  list                          List active deployed and cached blueprints
+
+REAL-WORLD EXAMPLES:
+  1. Scaffold a fresh blueprint for an electrical substation:
+     $ aryo blueprint new substation_alpha --site Substation-North-01
+
+  2. Add dependencies by name without paths:
+     $ aryo blueprint add substation_alpha modbus_rate_limiter
+     $ aryo blueprint add substation_alpha industrial_anomaly_detector
+
+  3. Pack the blueprint into an archive for site technicians:
+     $ aryo blueprint pack substation_alpha --embed
+
+  4. Inspect hardware NIC bindings before applying to live production:
+     $ aryo blueprint inspect substation_alpha
+
+  5. Atomically deploy to physical edge hardware with zero downtime:
+     $ sudo aryo blueprint deploy substation_alpha
+
+  6. Emergency rollback to previous configuration:
+     $ sudo aryo blueprint rollback
+================================================================================
+)";
+}
