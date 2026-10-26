@@ -509,6 +509,20 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         ctl_args.insert(ctl_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", ctl_args);
     }
+    // -------------------------------------------------------------------------
+    // [19. Production Site Blueprints]
+    // -------------------------------------------------------------------------
+    if (domain == "blueprint")
+    {
+        if (wants_help)
+        {
+            print_help_blueprint();
+            return 0;
+        }
+        std::vector<std::string> bp_args = {"blueprint"};
+        bp_args.insert(bp_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", bp_args);
+    }
 
     std::cerr << "[-] Error: Unknown domain 'aryo " << domain << "'. Run 'aryo --help'.\n";
     return 1;
