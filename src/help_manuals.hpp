@@ -28,6 +28,7 @@ Domains:
 [16. Live-SBOM]        aryo sbom (generate, enforce, status, test-drift)
 [17. Space/Orbital]    aryo space (status, ccsds, blast-sim)
 [18. AI TRiSM Guard]   aryo trism (status, inspect, test-jailbreak, policy)
+[19. Blueprints]       aryo blueprint (new, add, pack, inspect, deploy, rollback, list)
 )" << std::endl;
 }
 
