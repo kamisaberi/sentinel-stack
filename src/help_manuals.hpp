@@ -155,6 +155,7 @@ ACTIONS:
   enforce                       Activate in-kernel W^X enforcement and sub-µs SIGKILL
   status                        Audit runtime process memory integrity & drift statistics
   test-drift                    Simulate fileless shellcode PROT_EXEC injection test drill
+  attest                        Upload live_sbom.json to cloud compliance dashboard
 
 REAL-WORLD EXAMPLES:
   1. Generate cryptographic Live-SBOM manifest anchored to physical silicon:
