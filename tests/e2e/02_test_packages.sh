@@ -23,6 +23,11 @@ KEY_CANDIDATES=(
     "/home/kami/.sentinel/keys/ed25519_private.pem"
     "/etc/sentinel/keys/developer_private.pem"
     "/etc/sentinel/keys/ed25519_private.pem"
+    "/home/kami/.sentinel/keys/developer_private.pem"
+    "/home/kami/.sentinel/keys/ed25519_private.pem"
+    "${HOME}/.sentinel/keys/developer_private.pem"
+    "${HOME}/.sentinel/keys/ed25519_private.pem"
+    "/etc/sentinel/keys/developer_private.pem"
 )
 
 for k in "${KEY_CANDIDATES[@]}"; do
