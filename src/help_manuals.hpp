@@ -658,6 +658,12 @@ REAL-WORLD EXAMPLES:
 
   6. Emergency rollback to previous configuration:
      $ sudo aryo blueprint rollback
+     
+  7. Pull a blueprint from the cloud:
+     $ aryo blueprint pull substation_alpha
+
+  8. Publish a certified blueprint to the Hub:
+     $ aryo blueprint publish substation_alpha.blueprint
 ================================================================================
 )";
 }
