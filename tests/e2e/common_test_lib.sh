@@ -7,8 +7,8 @@ set -euo pipefail
 export SENTINEL_HUB_URL="${SENTINEL_HUB_URL:-http://localhost:8000}"
 export BACKEND_BASE="${SENTINEL_HUB_URL}/api/v1"
 
-TEST_USER="${TEST_USER:-admin@aryorithm.com}"
-TEST_PASS="${TEST_PASS:-password123}"
+TEST_USER="${TEST_USER:-kamisaberi@gmail.com}"
+TEST_PASS="${TEST_PASS:-12345678}"
 TEST_NAME="${TEST_NAME:-Security Admin}"
 
 WORKDIR="${TEST_WORKDIR:-$(mktemp -d /tmp/aryo_e2e_run_XXXXXX)}"
