@@ -512,6 +512,9 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     // [19. Production Site Blueprints]
     // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // [19. Production Site Blueprints]
+    // -------------------------------------------------------------------------
     if (domain == "blueprint")
     {
         if (wants_help)
@@ -519,11 +522,19 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             print_help_blueprint();
             return 0;
         }
+
+        // Direct 'aryo blueprint publish <file>' to sentinel-artifact
+        if (!args.empty() && args[0] == "publish")
+        {
+            std::vector<std::string> pub_args = {"publish"};
+            pub_args.insert(pub_args.end(), args.begin() + 1, args.end());
+            forward_exec("sentinel-artifact", pub_args);
+        }
+
         std::vector<std::string> bp_args = {"blueprint"};
         bp_args.insert(bp_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", bp_args);
     }
-
     std::cerr << "[-] Error: Unknown domain 'aryo " << domain << "'. Run 'aryo --help'.\n";
     return 1;
 }
