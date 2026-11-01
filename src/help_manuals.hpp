@@ -636,6 +636,8 @@ ACTIONS:
   deploy <file|dir>             Atomically deploy to /etc/sentinel/ (with auto-backup)
   rollback                      Instantly restore previous stable configuration
   list                          List active deployed and cached blueprints
+  pull <slug>                   Pull verified .blueprint bundle from Hub
+  publish <file.blueprint>      Publish production blueprint to hub.aryorithm.com
 
 REAL-WORLD EXAMPLES:
   1. Scaffold a fresh blueprint for an electrical substation:
