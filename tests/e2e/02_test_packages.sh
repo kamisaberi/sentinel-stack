@@ -44,7 +44,7 @@ log_info "6. Live Hub search & verification..."
 aryo hub search "$PKG_SLUG" >> "$LOG_FILE" 2>&1
 
 log_info "7. Pulling and staging to runtime..."
-sudo aryo package pull "$PKG_SLUG" >> "$LOG_FILE" 2>&1
+aryo package pull "$PKG_SLUG" >> "$LOG_FILE" 2>&1
 
 assert_file_exists "/etc/sentinel/rules.d/${PKG_SLUG}.lua"
 log_success "Package deployed to active runtime: /etc/sentinel/rules.d/${PKG_SLUG}.lua"
