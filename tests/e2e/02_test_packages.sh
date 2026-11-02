@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# TEST 02: EXTENSION PACKAGES (.spkg) LIFECYCLE
+# TEST 02: EXTENSION PACKAGES (.spkg) REAL-WORLD LIFECYCLE
 # ==============================================================================
 set -euo pipefail
 
@@ -10,76 +10,38 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 02: SENTINEL PACKAGES (.spkg)"
 cd "$WORKDIR"
 
-# Clean up any leftover artifacts from prior runs in this workspace
 rm -rf "$WORKDIR/s7_safety_guard"
 
-# 1. Resolve Persistent Developer Private Key
-log_info "1. Locating enrolled author developer key..."
-DEV_KEY=""
-KEY_CANDIDATES=(
-    "${HOME}/.sentinel/keys/developer_private.pem"
-    "${HOME}/.sentinel/keys/ed25519_private.pem"
-    "/home/kami/.sentinel/keys/developer_private.pem"
-    "/home/kami/.sentinel/keys/ed25519_private.pem"
-    "/etc/sentinel/keys/developer_private.pem"
-    "/etc/sentinel/keys/ed25519_private.pem"
-    "/home/kami/.sentinel/keys/developer_private.pem"
-    "/home/kami/.sentinel/keys/ed25519_private.pem"
-    "${HOME}/.sentinel/keys/developer_private.pem"
-    "${HOME}/.sentinel/keys/ed25519_private.pem"
-    "/etc/sentinel/keys/developer_private.pem"
-)
+log_info "1. Verifying author signing key on disk..."
+assert_file_exists "$DEV_KEY"
+log_success "Author key verified: $DEV_KEY"
 
-for k in "${KEY_CANDIDATES[@]}"; do
-    if [[ -f "$k" ]]; then
-        DEV_KEY="$k"
-        break
-    fi
-done
-
-if [[ -z "$DEV_KEY" ]]; then
-    # Generate persistent key once in user home directory if missing
-    KEY_DIR="${HOME}/.sentinel/keys"
-    mkdir -p "$KEY_DIR"
-    sentinel-artifact keygen "$KEY_DIR/developer" >> "$LOG_FILE" 2>&1
-    DEV_KEY="$KEY_DIR/developer_private.pem"
-    log_info "Generated fresh author identity key at $DEV_KEY"
-else
-    log_info "Using enrolled author key: $DEV_KEY"
-fi
-
-# 2. Scaffold Package Project
-log_info "2. Scaffolding new LuaJIT reflex package..."
+log_info "2. Scaffolding LuaJIT reflex package..."
 aryo package new s7_safety_guard lua >> "$LOG_FILE" 2>&1
 
-# 3. Pack and Sign Package with Enrolled Key
-log_info "3. Packing and signing package with author key..."
+log_info "3. Packing and signing package with enrolled developer key..."
 aryo artifact pack s7_safety_guard "$DEV_KEY" >> "$LOG_FILE" 2>&1
 
 PKG_FILE=$(ls "$WORKDIR"/s7_safety_guard/*.spkg 2>/dev/null | head -n 1)
 assert_file_exists "$PKG_FILE"
 
-# 4. Sandbox Pre-Flight Verification
-log_info "4. Running sandbox pre-flight assertion..."
+log_info "4. Running sandbox pre-flight verification..."
 aryo artifact test "$PKG_FILE" >> "$LOG_FILE" 2>&1
-log_success "Package packed & pre-flight verified authentic ($PKG_FILE)"
+log_success "Pre-flight test passed ($PKG_FILE)"
 
-# 5. Publish Package to Hub
 log_info "5. Publishing package to Hub ($SENTINEL_HUB_URL)..."
 if ! aryo publish "$PKG_FILE" --hub-url "$SENTINEL_HUB_URL" >> "$LOG_FILE" 2>&1; then
-    echo -e "${RED}[ERROR] Publish failed. Recent log entries:${RESET}"
-    tail -n 15 "$LOG_FILE"
+    echo -e "${RED}[ERROR] Publish failed. Recent log output:${RESET}"
+    tail -n 20 "$LOG_FILE"
     exit 1
 fi
-log_success "Published package to Hub"
+log_success "Package published to Hub (HTTP 201 Created)"
 
-# 6. Hub Search & Pull
-log_info "6. Querying live Hub catalog..."
+log_info "6. Live Hub search & verification..."
 aryo hub search s7_safety >> "$LOG_FILE" 2>&1
 
-log_info "7. Pulling and installing package into active runtime..."
+log_info "7. Pulling and staging to runtime..."
 sudo aryo package pull s7_safety_guard >> "$LOG_FILE" 2>&1
 
-# Verify physical runtime deployment
 assert_file_exists "/etc/sentinel/rules.d/s7_safety_guard.lua"
-log_success "Package deployed and active in /etc/sentinel/rules.d/s7_safety_guard.lua"
+log_success "Package deployed to active runtime: /etc/sentinel/rules.d/s7_safety_guard.lua"
