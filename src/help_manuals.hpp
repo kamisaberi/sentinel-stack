@@ -13,7 +13,7 @@ Domains:
 [01. Authentication]   aryo login | whoami | auth (login, register, status)
 [02. Appliance]        aryo status | appliance (sync, check, launch, install) | hardware (status, enroll)
 [03. Stack & Service]  aryo stack (install, build, verify, uninstall, purge, env) | service (start, stop, logs...)
-[04. Hub Discovery]    aryo hub (search, list, info, broadcast, new) | publish <file>
+[04. Hub Discovery]    aryo hub (search, list, info, broadcast, new) | visibility <type> <slug> [mode] | publish <file>
 [05. Asset Lifecycles] aryo package | model | dataset | pcap | scenario (pack, pull, inspect, list)
 [06. Artifact Tool]    aryo artifact (new, keygen, pack, inspect, verify, test, synthesize-vaccine)
 [07. Fleet & Threat]   aryo fleet (list, vaccine-audit) | threat drop | ota (status, stage, advance) | report
