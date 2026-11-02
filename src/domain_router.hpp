@@ -151,6 +151,24 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         forward_exec("sentinel-artifact", pub_args);
     }
 
+
+    // -------------------------------------------------------------------------
+    // [04b. Direct Artifact Visibility Controller]
+    // -------------------------------------------------------------------------
+    if (domain == "visibility")
+    {
+        if (args.empty() || wants_help)
+        {
+            std::cout << "\033[1;36mUsage:\033[0m aryo visibility <package|model|dataset|pcap|scenario|blueprint> <slug> [public|private]\n";
+            std::cout << "Example: aryo visibility package my_filter public\n";
+            return 0;
+        }
+
+        std::vector<std::string> vis_args = {"hub", "visibility"};
+        vis_args.insert(vis_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", vis_args);
+    }
+
     // -------------------------------------------------------------------------
     // [05. Symmetrical Asset Lifecycles (package, model, dataset, pcap, scenario)]
     // -------------------------------------------------------------------------
