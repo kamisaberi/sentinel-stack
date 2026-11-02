@@ -7,6 +7,8 @@ set -euo pipefail
 # 1. Endpoints & Real Account Credentials
 export SENTINEL_HUB_URL="${SENTINEL_HUB_URL:-http://localhost:8000}"
 export BACKEND_BASE="${SENTINEL_HUB_URL}/api/v1"
+# --- ADD UNDER WORKDIR IN tests/e2e/common_test_lib.sh ---
+export RUN_TAG="$(date +%s)_$((RANDOM % 900 + 100))"
 
 TEST_USER="${TEST_USER:-kamisaberi@gmail.com}"
 TEST_PASS="${TEST_PASS:-12345678}"
