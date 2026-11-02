@@ -280,6 +280,8 @@ ACTIONS:
   inspect <file.spkg>           Inspect local package manifest & security audit
   verify <pub_key> <pkg>        Verify Ed25519 signature of hub package
   broadcast <file.spkg>         Broadcast sealed package fleet-wide via gRPC (< 50ms)
+  visibility <type> <slug> [public|private]
+                                Promote or demote artifact visibility via PUT API
 
 REAL-WORLD EXAMPLES:
   1. Search live catalog for Modbus protection packages:
