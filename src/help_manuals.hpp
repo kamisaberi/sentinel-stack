@@ -292,6 +292,12 @@ REAL-WORLD EXAMPLES:
 
   3. Publish an asset to the Hub:
      $ aryo publish scenario_water_plant.tar.gz
+  
+  4. Promote an existing package to public:
+     $ aryo hub visibility package s7_guard public
+
+  5. Or use the direct top-level shortcut:
+     $ aryo visibility package s7_guard public
 ================================================================================
 )";
 }
