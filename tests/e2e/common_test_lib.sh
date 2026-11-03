@@ -7,8 +7,6 @@ set -euo pipefail
 # 1. Endpoints & Real Account Credentials
 export SENTINEL_HUB_URL="${SENTINEL_HUB_URL:-http://localhost:8000}"
 export BACKEND_BASE="${SENTINEL_HUB_URL}/api/v1"
-# --- ADD UNDER WORKDIR IN tests/e2e/common_test_lib.sh ---
-export RUN_TAG="$(date +%s)_$((RANDOM % 900 + 100))"
 
 TEST_USER="${TEST_USER:-kamisaberi@gmail.com}"
 TEST_PASS="${TEST_PASS:-12345678}"
@@ -17,6 +15,9 @@ TEST_NAME="${TEST_NAME:-Kamran Saberifard}"
 # 2. Workspace & Log File
 WORKDIR="${TEST_WORKDIR:-$(mktemp -d /tmp/aryo_e2e_run_XXXXXX)}"
 LOG_FILE="$WORKDIR/suite_execution.log"
+
+# Unique run tag for dynamic slugs
+export RUN_TAG="$(date +%s)_$((RANDOM % 900 + 100))"
 
 # 3. Persistent Author Key Resolution
 DEV_KEY=""
@@ -79,4 +80,20 @@ sync_credentials() {
     if [[ -f "/home/kami/.sentinel/credentials.json" && "$HOME" != "/home/kami" ]]; then
         cp "/home/kami/.sentinel/credentials.json" "$HOME/.sentinel/credentials.json" 2>/dev/null || sudo cp "/home/kami/.sentinel/credentials.json" "$HOME/.sentinel/credentials.json"
     fi
+}
+
+# 8. Dynamic Auto-Refreshing JWT Token Resolver
+get_jwt_token() {
+    local token
+    token=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json 2>/dev/null || echo "")
+
+    # Validate token against /auth/me; if missing or expired, fetch a fresh one automatically
+    local http_code
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" "$BACKEND_BASE/auth/me" 2>/dev/null || echo "000")
+    if [[ "$http_code" != "200" ]]; then
+        token=$(curl -s -X POST "$BACKEND_BASE/auth/login" \
+            -H "Content-Type: application/json" \
+            -d "{\"email\":\"$TEST_USER\",\"password\":\"$TEST_PASS\"}" | jq -r '.access_token // empty')
+    fi
+    echo "$token"
 }
