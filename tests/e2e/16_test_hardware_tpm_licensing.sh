@@ -21,7 +21,7 @@ log_info "1. Auditing physical hardware profile & silicon root..."
 aryo hardware status >> "$LOG_FILE" 2>&1
 
 # 3. Enroll Hardware Identity Token
-log_info "2. Enrolling hardware identity token into /etc/sentinel/..."
+log_info "2. Enrolling hardware identity token into /etc/sentinel/...";
 sudo aryo hardware enroll >> "$LOG_FILE" 2>&1
 assert_file_exists "/etc/sentinel/hardware_identity.token"
 
@@ -89,13 +89,13 @@ assert_file_exists "/etc/sentinel/license.lic"
 log_info "7. Inspecting cryptographic license entitlements..."
 aryo license inspect "$LIC_FILE" >> "$LOG_FILE" 2>&1
 
-# 9. Cryptographic Signature Verification on Backend
-log_info "8. Verifying license signature on backend (/licenses/verify/$HW_TOKEN)..."
-VERIFY_RESP=$(curl -s -X GET "$BACKEND_BASE/licenses/verify/$HW_TOKEN" -H "Authorization: Bearer $JWT")
+# 9. Cryptographic Signature Verification on Backend (Querying unique LICENSE_ID)
+log_info "8. Verifying license signature on backend (/licenses/verify/$LICENSE_ID)..."
+VERIFY_RESP=$(curl -s -X GET "$BACKEND_BASE/licenses/verify/$LICENSE_ID" -H "Authorization: Bearer $JWT")
 IS_VALID=$(echo "$VERIFY_RESP" | jq -r '.signature_valid // false')
-ACTIVE_ID=$(echo "$VERIFY_RESP" | jq -r '.license_id // empty')
+STATUS=$(echo "$VERIFY_RESP" | jq -r '.status // "unknown"')
 
 if [[ "$IS_VALID" != "true" ]]; then
     log_fail "License signature verification failed. Response:\n$VERIFY_RESP"
 fi
-log_success "Cryptographic license verified authentic ($ACTIVE_ID, status: ACTIVE)"
+log_success "Cryptographic license verified authentic ($LICENSE_ID, status: $STATUS)"
