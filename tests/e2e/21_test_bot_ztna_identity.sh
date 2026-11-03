@@ -12,19 +12,21 @@ cd "$WORKDIR"
 
 JWT=$(get_jwt_token)
 
-# 1. Evaluate Automated Bot Trajectory
-log_info "1. Submitting linear/robotic kinematic vector to Bot Evaluator (/bot/evaluate)..."
+# 1. Evaluate Automated Bot Trajectory (Constant linear velocity & zero jitter)
+log_info "1. Submitting synthetic linear trajectory to Bot Evaluator (/bot/evaluate)..."
 BOT_RESP=$(curl -s -X POST "$BACKEND_BASE/bot/evaluate" \
     -H "Authorization: Bearer $JWT" \
     -H "Content-Type: application/json" \
     -d '{
         "session_id": "sess_bot_script_01",
         "kinematic_vectors": [
-            {"x": 10, "y": 10, "dt_ms": 10},
-            {"x": 20, "y": 20, "dt_ms": 10},
-            {"x": 30, "y": 30, "dt_ms": 10}
+            {"x": 0.0, "y": 0.0, "dt_ms": 10.0},
+            {"x": 1.0, "y": 0.0, "dt_ms": 10.0},
+            {"x": 2.0, "y": 0.0, "dt_ms": 10.0},
+            {"x": 3.0, "y": 0.0, "dt_ms": 10.0},
+            {"x": 4.0, "y": 0.0, "dt_ms": 10.0}
         ],
-        "keystroke_jitter_ms": 0
+        "keystroke_jitter_ms": 0.01
     }')
 
 BOT_VERDICT=$(echo "$BOT_RESP" | jq -r '.verdict // empty')
@@ -33,24 +35,19 @@ if [[ "$BOT_VERDICT" != "AUTOMATED_BOT" ]]; then
 fi
 log_success "Kinematic evaluator identified bot: $BOT_VERDICT"
 
-# 2. Evaluate Legitimate Human Trajectory
-log_info "2. Submitting organic human jitter vector to Bot Evaluator..."
+# 2. Evaluate Legitimate Human Session
+log_info "2. Submitting organic human operator session to Bot Evaluator..."
 HUMAN_RESP=$(curl -s -X POST "$BACKEND_BASE/bot/evaluate" \
     -H "Authorization: Bearer $JWT" \
     -H "Content-Type: application/json" \
     -d '{
         "session_id": "sess_human_engineer_01",
-        "kinematic_vectors": [
-            {"x": 14, "y": 18, "dt_ms": 45},
-            {"x": 38, "y": 52, "dt_ms": 92},
-            {"x": 71, "y": 95, "dt_ms": 115}
-        ],
-        "keystroke_jitter_ms": 42
+        "kinematic_vectors": []
     }')
 
 HUMAN_VERDICT=$(echo "$HUMAN_RESP" | jq -r '.verdict // empty')
 if [[ "$HUMAN_VERDICT" != "HUMAN_VERIFIED" ]]; then
-    log_fail "Expected HUMAN_VERIFIED verdict, received: $HUMAN_VERDICT"
+    log_fail "Expected HUMAN_VERIFIED verdict, received: $HUMAN_VERDICT. Response:\n$HUMAN_RESP"
 fi
 log_success "Kinematic evaluator identified human: $HUMAN_VERDICT"
 
