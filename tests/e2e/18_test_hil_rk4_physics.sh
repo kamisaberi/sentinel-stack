@@ -10,7 +10,11 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 18: HIL RK4 CONTINUOUS PHYSICS & CRITICAL CLEARING TIME"
 cd "$WORKDIR"
 
-JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
+# Acquire validated, auto-refreshed JWT token
+JWT=$(get_jwt_token)
+if [[ -z "$JWT" ]]; then
+    log_fail "Failed to acquire valid JWT token."
+fi
 
 # 1. Run Continuous Plant ODE RK4 Co-Simulator Drill
 log_info "1. Executing closed-loop generator swing ODE solver (RK4)..."
@@ -32,14 +36,14 @@ fi
 log_info "2. Auditing 14-dimensional scientific research testbed (/range/lab-bench)..."
 LAB_RESP=$(curl -s -X GET "$BACKEND_BASE/range/lab-bench" -H "Authorization: Bearer $JWT")
 
-METRICS_COUNT=$(echo "$LAB_RESP" | jq -r '.metrics | length // 0')
+METRICS_COUNT=$(echo "$LAB_RESP" | jq -r '(.metrics // []) | length')
 OVERALL_SCORE=$(echo "$LAB_RESP" | jq -r '.overall_score // 0')
-PASSED=$(echo "$LAB_RESP" | jq -r '.passed // false')
+PASSED=$(echo "$LAB_RESP" | jq -r '.passed // 0')
 
 if [[ "$METRICS_COUNT" -lt 10 ]]; then
-    log_fail "Scientific lab testbed returned incomplete metrics. Found $METRICS_COUNT entries"
+    log_fail "Scientific lab testbed returned incomplete metrics. Found $METRICS_COUNT entries. Response:\n$LAB_RESP"
 fi
-log_success "Scientific Testbed verified ($METRICS_COUNT engines evaluated, score: $OVERALL_SCORE, status: PASS)"
+log_success "Scientific Testbed verified (All $METRICS_COUNT engines evaluated, score: $OVERALL_SCORE%, passed: $PASSED)"
 
 # 3. Assert Critical Clearing Time Invariant (T_crit <= 38.4 ms)
 log_info "3. Auditing physical plant Critical Clearing Time invariant..."
