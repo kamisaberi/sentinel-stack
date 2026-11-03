@@ -10,21 +10,22 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 16: HARDWARE SILICON IDENTITY & COMMERCIAL LICENSING"
 cd "$WORKDIR"
 
-JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
+# 1. Acquire valid, unexpired JWT token
+JWT=$(get_jwt_token)
 if [[ -z "$JWT" ]]; then
-    log_fail "No JWT token found in credentials.json. Run Test 01 first."
+    log_fail "Failed to acquire valid JWT token."
 fi
 
-# 1. Audit Hardware Profile & TPM 2.0 Identity
+# 2. Audit Hardware Profile & Silicon Root
 log_info "1. Auditing physical hardware profile & silicon root..."
 aryo hardware status >> "$LOG_FILE" 2>&1
 
-# 2. Enroll Hardware Identity Token
+# 3. Enroll Hardware Identity Token
 log_info "2. Enrolling hardware identity token into /etc/sentinel/..."
 sudo aryo hardware enroll >> "$LOG_FILE" 2>&1
 assert_file_exists "/etc/sentinel/hardware_identity.token"
 
-# Extract clean token string without JSON quotes
+# Extract clean hardware token string
 if jq -e . /etc/sentinel/hardware_identity.token >/dev/null 2>&1; then
     HW_TOKEN=$(jq -r '.hardware_token_hash // .token_hash // .token // empty' /etc/sentinel/hardware_identity.token)
     if [[ -z "$HW_TOKEN" ]]; then
@@ -36,7 +37,7 @@ fi
 
 log_success "Clean hardware token extracted: ${HW_TOKEN:0:24}..."
 
-# 3. Retrieve Master License Verification Key
+# 4. Fetch Master Ed25519 Public Key
 log_info "3. Fetching Master Ed25519 Public Key from backend (/licenses/public-key)..."
 PUBKEY_RESP=$(curl -s "$BACKEND_BASE/licenses/public-key")
 if [[ -z "$PUBKEY_RESP" ]]; then
@@ -44,7 +45,7 @@ if [[ -z "$PUBKEY_RESP" ]]; then
 fi
 log_success "Master license verification key acquired"
 
-# 4. Subscribe Node & Issue Commercial License Envelope
+# 5. Subscribe Node & Issue Commercial License
 log_info "4. Subscribing commercial appliance node (/licenses/subscribe)..."
 SUB_PAYLOAD=$(cat << EOF
 {
@@ -67,7 +68,7 @@ if [[ -z "$LICENSE_ID" ]]; then
 fi
 log_success "Commercial license generated: $LICENSE_ID"
 
-# 5. Download Offline Air-Gapped .lic License File
+# 6. Download Offline Air-Gapped .lic File
 log_info "5. Downloading offline 1-year .lic envelope (/licenses/portal-download)..."
 LIC_FILE="$WORKDIR/appliance_license.lic"
 curl -s -X POST "$BACKEND_BASE/licenses/portal-download" \
@@ -79,21 +80,22 @@ curl -s -X POST "$BACKEND_BASE/licenses/portal-download" \
 assert_file_exists "$LIC_FILE"
 log_success "Offline license file downloaded: $LIC_FILE"
 
-# 6. Apply License to Appliance Runtime
+# 7. Apply License Locally to Runtime
 log_info "6. Applying license to /etc/sentinel/license.lic..."
 sudo aryo license apply "$LIC_FILE" >> "$LOG_FILE" 2>&1
 assert_file_exists "/etc/sentinel/license.lic"
 
-# 7. Inspect License Entitlements Locally
+# 8. Inspect License Entitlements Locally
 log_info "7. Inspecting cryptographic license entitlements..."
 aryo license inspect "$LIC_FILE" >> "$LOG_FILE" 2>&1
 
-# 8. Cryptographic Signature Verification via Backend
-log_info "8. Verifying license signature on backend (/licenses/verify/$LICENSE_ID)..."
-VERIFY_RESP=$(curl -s -X GET "$BACKEND_BASE/licenses/verify/$LICENSE_ID" -H "Authorization: Bearer $JWT")
+# 9. Cryptographic Signature Verification on Backend
+log_info "8. Verifying license signature on backend (/licenses/verify/$HW_TOKEN)..."
+VERIFY_RESP=$(curl -s -X GET "$BACKEND_BASE/licenses/verify/$HW_TOKEN" -H "Authorization: Bearer $JWT")
 IS_VALID=$(echo "$VERIFY_RESP" | jq -r '.signature_valid // false')
+ACTIVE_ID=$(echo "$VERIFY_RESP" | jq -r '.license_id // empty')
 
 if [[ "$IS_VALID" != "true" ]]; then
     log_fail "License signature verification failed. Response:\n$VERIFY_RESP"
 fi
-log_success "Cryptographic license verified authentic ($LICENSE_ID)"
+log_success "Cryptographic license verified authentic ($ACTIVE_ID, status: ACTIVE)"
