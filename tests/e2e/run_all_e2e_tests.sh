@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# MASTER RUNNER: Executes all 45 Real-World E2E Test Suites (45/45 Complete Matrix)
+# MASTER RUNNER: Executes all 50 Real-World E2E Test Suites (50/50 Golden Suite)
 # ==============================================================================
 set -euo pipefail
 
@@ -14,7 +14,7 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 echo -e "${CYAN}================================================================================${RESET}"
-echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (45/45 COMPLETE MATRIX)           ${RESET}"
+echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (50/50 GOLDEN SUITE)               ${RESET}"
 echo -e "${CYAN}================================================================================${RESET}"
 echo -e "Target Backend Endpoint : http://localhost:8000"
 echo -e "Master Workspace        : $TEST_WORKDIR\n"
@@ -65,6 +65,11 @@ SUITES=(
     "43_test_sdk_source_extraction_audit.sh"
     "44_test_fdia_causality_interlock.sh"
     "45_test_pqc_post_quantum_signatures.sh"
+    "46_test_5g_gtp_u_dual_header.sh"
+    "47_test_live_sbom_wx_sigkill.sh"
+    "48_test_trism_token_governor.sh"
+    "49_test_space_ccsds_stanag.sh"
+    "50_test_honeynet_vaccine_broadcast.sh"
 )
 
 for suite in "${SUITES[@]}"; do
@@ -76,7 +81,7 @@ ELAPSED=$(( $(date +%s) - START_TIME ))
 rm -rf "$TEST_WORKDIR"
 
 echo -e "\n${GREEN}================================================================================${RESET}"
-echo -e "${GREEN}  ALL 45 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
+echo -e "${GREEN}  ALL 50 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
 echo -e "${GREEN}================================================================================${RESET}"
 echo -e "  [01] Authentication & Token Minting      : PASS"
 echo -e "  [02] Extension Packages (.spkg)          : PASS"
@@ -123,4 +128,9 @@ echo -e "  [42] Fleet Decommission & Stale Timeout  : PASS"
 echo -e "  [43] SDK Scaffolding & Source Extraction : PASS"
 echo -e "  [44] FDIA Cross-Modal Causality Interlock: PASS"
 echo -e "  [45] NIST Post-Quantum Cryptography PQC  : PASS"
+echo -e "  [46] 3GPP 5G GTP-U In-Kernel Slicing    : PASS"
+echo -e "  [47] Live-SBOM W^X Memory SIGKILL        : PASS"
+echo -e "  [48] AI TRiSM Token & Tool Governor      : PASS"
+echo -e "  [49] Space CCSDS/STANAG Orbital Guard    : PASS"
+echo -e "  [50] Honeynet Deception & Fleet Broadcast: PASS"
 echo -e "${GREEN}================================================================================${RESET}\n"
