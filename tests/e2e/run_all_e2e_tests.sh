@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# MASTER RUNNER: Executes all 30 Real-World E2E Test Suites (30/30 Grand Master)
+# MASTER RUNNER: Executes all 35 Real-World E2E Test Suites (35/35 Apex Suite)
 # ==============================================================================
 set -euo pipefail
 
@@ -14,7 +14,7 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 echo -e "${CYAN}================================================================================${RESET}"
-echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (30/30 CATEGORIES)                ${RESET}"
+echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (35/35 APEX SUITE)                ${RESET}"
 echo -e "${CYAN}================================================================================${RESET}"
 echo -e "Target Backend Endpoint : http://localhost:8000"
 echo -e "Master Workspace        : $TEST_WORKDIR\n"
@@ -50,6 +50,11 @@ SUITES=(
     "28_test_settings_webhooks_audit.sh"
     "29_test_sse_streaming_xai.sh"
     "30_test_plans_ransomware_vault.sh"
+    "31_test_model_router_cascade.sh"
+    "32_test_nexus_c2_security_gate.sh"
+    "33_test_scada_dissectors_bench.sh"
+    "34_test_evt_wcet_pmu_counters.sh"
+    "35_test_matrix_sensor_fault_rig.sh"
 )
 
 for suite in "${SUITES[@]}"; do
@@ -61,7 +66,7 @@ ELAPSED=$(( $(date +%s) - START_TIME ))
 rm -rf "$TEST_WORKDIR"
 
 echo -e "\n${GREEN}================================================================================${RESET}"
-echo -e "${GREEN}  ALL 30 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
+echo -e "${GREEN}  ALL 35 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
 echo -e "${GREEN}================================================================================${RESET}"
 echo -e "  [01] Authentication & Token Minting      : PASS"
 echo -e "  [02] Extension Packages (.spkg)          : PASS"
@@ -93,4 +98,9 @@ echo -e "  [27] Multi-Framework Compliance Export   : PASS"
 echo -e "  [28] Settings, Webhooks & SOC Audit Log  : PASS"
 echo -e "  [29] Real-Time SSE Streams & MRD XAI     : PASS"
 echo -e "  [30] Plans Matrix & Ransomware Vault     : PASS"
+echo -e "  [31] 4-Stage ModelRouter Cascade DAG     : PASS"
+echo -e "  [32] Sentinel-Nexus C2 & Circuit Breaker : PASS"
+echo -e "  [33] Multi-Protocol SCADA Dissectors     : PASS"
+echo -e "  [34] EVT p99.999% WCET & PMU Counters    : PASS"
+echo -e "  [35] Matrix 4-Sensor Rig & Fault Hooks   : PASS"
 echo -e "${GREEN}================================================================================${RESET}\n"
