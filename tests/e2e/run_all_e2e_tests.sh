@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# MASTER RUNNER: Executes all 35 Real-World E2E Test Suites (35/35 Apex Suite)
+# MASTER RUNNER: Executes all 40 Real-World E2E Test Suites (40/40 Capstone Suite)
 # ==============================================================================
 set -euo pipefail
 
@@ -14,7 +14,7 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 echo -e "${CYAN}================================================================================${RESET}"
-echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (35/35 APEX SUITE)                ${RESET}"
+echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (40/40 CAPSTONE SUITE)            ${RESET}"
 echo -e "${CYAN}================================================================================${RESET}"
 echo -e "Target Backend Endpoint : http://localhost:8000"
 echo -e "Master Workspace        : $TEST_WORKDIR\n"
@@ -55,6 +55,11 @@ SUITES=(
     "33_test_scada_dissectors_bench.sh"
     "34_test_evt_wcet_pmu_counters.sh"
     "35_test_matrix_sensor_fault_rig.sh"
+    "36_test_af_xdp_umem_line_rate.sh"
+    "37_test_forge_cli_golden_gate.sh"
+    "38_test_sentinel_lab_scientific_doi.sh"
+    "39_test_deception_dnat_rfc1624.sh"
+    "40_test_airgap_sync_tenant_barriers.sh"
 )
 
 for suite in "${SUITES[@]}"; do
@@ -66,7 +71,7 @@ ELAPSED=$(( $(date +%s) - START_TIME ))
 rm -rf "$TEST_WORKDIR"
 
 echo -e "\n${GREEN}================================================================================${RESET}"
-echo -e "${GREEN}  ALL 35 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
+echo -e "${GREEN}  ALL 40 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
 echo -e "${GREEN}================================================================================${RESET}"
 echo -e "  [01] Authentication & Token Minting      : PASS"
 echo -e "  [02] Extension Packages (.spkg)          : PASS"
@@ -103,4 +108,9 @@ echo -e "  [32] Sentinel-Nexus C2 & Circuit Breaker : PASS"
 echo -e "  [33] Multi-Protocol SCADA Dissectors     : PASS"
 echo -e "  [34] EVT p99.999% WCET & PMU Counters    : PASS"
 echo -e "  [35] Matrix 4-Sensor Rig & Fault Hooks   : PASS"
+echo -e "  [36] AF_XDP Zero-Copy UMEM Multi-Queue   : PASS"
+echo -e "  [37] Continual AI & Golden Attack Gate   : PASS"
+echo -e "  [38] CERN/Zenodo Research DOI Modules    : PASS"
+echo -e "  [39] In-Kernel Deception & RFC 1624 DNAT : PASS"
+echo -e "  [40] Airgap Sneakernet & Tenant Barriers : PASS"
 echo -e "${GREEN}================================================================================${RESET}\n"
