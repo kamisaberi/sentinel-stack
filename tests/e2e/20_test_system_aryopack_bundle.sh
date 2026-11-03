@@ -10,7 +10,9 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 20: AIR-GAPPED SYSTEM PORTABILITY (.aryopack)"
 cd "$WORKDIR"
 
-JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
+# New:
+JWT=$(get_jwt_token)
+
 
 # 1. Query Official Appliance Release Matrix
 log_info "1. Auditing appliance release compatibility matrix (/hub/appliances/matrix)..."
