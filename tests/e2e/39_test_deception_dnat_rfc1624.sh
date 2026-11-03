@@ -48,5 +48,8 @@ log_success "RFC 1624 incremental checksum recalculation verified (Zero-copy in-
 log_info "3. Auditing autonomous honeynet exploit spool directory..."
 sudo mkdir -p /var/run/sentinel/honeynet_spool
 sudo chmod 777 /var/run/sentinel/honeynet_spool
-assert_file_exists "/var/run/sentinel/honeynet_spool" 2>/dev/null || test -d "/var/run/sentinel/honeynet_spool"
+
+if [[ ! -d "/var/run/sentinel/honeynet_spool" ]]; then
+    log_fail "Assertion failed: Directory not found: /var/run/sentinel/honeynet_spool"
+fi
 log_success "Autonomous honeynet spool verified (/var/run/sentinel/honeynet_spool)"
