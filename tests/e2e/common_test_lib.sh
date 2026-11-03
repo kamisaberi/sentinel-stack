@@ -82,18 +82,28 @@ sync_credentials() {
     fi
 }
 
-# 8. Dynamic Auto-Refreshing JWT Token Resolver
+# 8. Dynamic Auto-Refreshing JWT Token Resolver (Persists to disk)
 get_jwt_token() {
     local token
     token=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json 2>/dev/null || echo "")
 
-    # Validate token against /auth/me; if missing or expired, fetch a fresh one automatically
+    # Validate token against /auth/me; if missing or expired, fetch a fresh one
     local http_code
     http_code=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $token" "$BACKEND_BASE/auth/me" 2>/dev/null || echo "000")
     if [[ "$http_code" != "200" ]]; then
         token=$(curl -s -X POST "$BACKEND_BASE/auth/login" \
             -H "Content-Type: application/json" \
             -d "{\"email\":\"$TEST_USER\",\"password\":\"$TEST_PASS\"}" | jq -r '.access_token // empty')
+
+        if [[ -n "$token" && "$token" != "null" ]]; then
+            # Persist fresh token back to credentials.json on disk for C++ binaries
+            if [[ -f "$HOME/.sentinel/credentials.json" ]]; then
+                jq --arg t "$token" '.jwt_token = $t' "$HOME/.sentinel/credentials.json" > "$HOME/.sentinel/credentials.json.tmp" && mv "$HOME/.sentinel/credentials.json.tmp" "$HOME/.sentinel/credentials.json"
+            fi
+            if [[ -f "/root/.sentinel/credentials.json" ]]; then
+                sudo jq --arg t "$token" '.jwt_token = $t' "/root/.sentinel/credentials.json" > /tmp/root_cred.tmp && sudo mv /tmp/root_cred.tmp /root/.sentinel/credentials.json
+            fi
+        fi
     fi
     echo "$token"
 }
