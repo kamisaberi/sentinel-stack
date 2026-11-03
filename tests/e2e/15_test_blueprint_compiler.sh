@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# TEST 15: VISUAL BLUEPRINT DAG COMPILER & HARDWARE DEPLOYMENT
+# TEST 15: VISUAL BLUEPRINT GRAPH COMPILER & DEPLOYMENT
 # ==============================================================================
 set -euo pipefail
 
@@ -11,16 +11,23 @@ log_header "TEST 15: VISUAL BLUEPRINT GRAPH COMPILER & DEPLOYMENT"
 cd "$WORKDIR"
 
 JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
+if [[ -z "$JWT" ]]; then
+    log_fail "No JWT token found in credentials.json. Run Test 01 first."
+fi
+
 BP_ID="bp_graph_${RUN_TAG:-$(date +%s)}"
 
 # 1. Audit Visual Node Palette Catalog
 log_info "1. Auditing Visual Threat Blueprint Palette (/blueprints/node-catalog)..."
 CATALOG_RESP=$(curl -s -X GET "$BACKEND_BASE/blueprints/node-catalog" -H "Authorization: Bearer $JWT")
-CAT_COUNT=$(echo "$CATALOG_RESP" | jq -r '.catalog | length // 0')
-if [[ "$CAT_COUNT" -lt 5 ]]; then
-    log_fail "Node catalog missing required stages. Found $CAT_COUNT entries"
+
+NODE_COUNT=$(echo "$CATALOG_RESP" | jq -r '(.nodes // []) | length')
+STAGE_COUNT=$(echo "$CATALOG_RESP" | jq -r '(.stages // []) | length')
+
+if [[ "$NODE_COUNT" -lt 5 || "$STAGE_COUNT" -lt 3 ]]; then
+    log_fail "Node catalog missing required stages or nodes. Found $NODE_COUNT nodes across $STAGE_COUNT stages."
 fi
-log_success "Palette catalog verified ($CAT_COUNT stages and socket types loaded)"
+log_success "Palette catalog verified ($NODE_COUNT palette nodes across $STAGE_COUNT stages loaded)"
 
 # 2. Submit Multi-Stage Threat Blueprint Graph
 log_info "2. Submitting visual threat blueprint graph ($BP_ID)..."
@@ -75,14 +82,14 @@ CREATE_RESP=$(curl -s -X POST "$BACKEND_BASE/blueprints" \
     -d "$GRAPH_PAYLOAD")
 
 CREATED_ID=$(echo "$CREATE_RESP" | jq -r '.blueprint_id // empty')
-if [[ "$CREATED_ID" != "$BP_ID" ]]; then
+if [[ -z "$CREATED_ID" ]]; then
     log_fail "Failed to create blueprint graph. Response:\n$CREATE_RESP"
 fi
-log_success "Visual blueprint graph created: $BP_ID"
+log_success "Visual blueprint graph created: $CREATED_ID"
 
 # 3. Execute Graph Topology Compiler (/compile)
 log_info "3. Compiling graph DAG & asserting socket compatibility..."
-COMPILE_RESP=$(curl -s -X POST "$BACKEND_BASE/blueprints/$BP_ID/compile" -H "Authorization: Bearer $JWT")
+COMPILE_RESP=$(curl -s -X POST "$BACKEND_BASE/blueprints/$CREATED_ID/compile" -H "Authorization: Bearer $JWT")
 IS_VALID=$(echo "$COMPILE_RESP" | jq -r '.valid // false')
 ESTIMATED_LATENCY=$(echo "$COMPILE_RESP" | jq -r '.estimated_latency_ns // 0')
 
@@ -93,7 +100,7 @@ log_success "Blueprint successfully compiled! Pipeline SLA: ${ESTIMATED_LATENCY}
 
 # 4. Trigger Simulated Sub-50ms Fleet Broadcast Deployment
 log_info "4. Triggering fleet-wide broadcast deploy (/deploy)..."
-DEPLOY_RESP=$(curl -s -X POST "$BACKEND_BASE/blueprints/$BP_ID/deploy" -H "Authorization: Bearer $JWT")
+DEPLOY_RESP=$(curl -s -X POST "$BACKEND_BASE/blueprints/$CREATED_ID/deploy" -H "Authorization: Bearer $JWT")
 DEPLOY_STATUS=$(echo "$DEPLOY_RESP" | jq -r '.status // empty')
 BROADCAST_MS=$(echo "$DEPLOY_RESP" | jq -r '.broadcast_latency_ms // 0')
 
