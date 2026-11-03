@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# MASTER RUNNER: Executes all 20 Real-World E2E Test Suites
+# MASTER RUNNER: Executes all 25 Real-World E2E Test Suites (25/25 Master Suite)
 # ==============================================================================
 set -euo pipefail
 
@@ -14,7 +14,7 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 echo -e "${CYAN}================================================================================${RESET}"
-echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (20 CATEGORIES)                   ${RESET}"
+echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (25 CATEGORIES)                   ${RESET}"
 echo -e "${CYAN}================================================================================${RESET}"
 echo -e "Target Backend Endpoint : http://localhost:8000"
 echo -e "Master Workspace        : $TEST_WORKDIR\n"
@@ -40,6 +40,11 @@ SUITES=(
     "18_test_hil_rk4_physics.sh"
     "19_test_dfir_firmware_cdr.sh"
     "20_test_system_aryopack_bundle.sh"
+    "21_test_bot_ztna_identity.sh"
+    "22_test_ai_silicon_compiler.sh"
+    "23_test_range_twin_attack_replay.sh"
+    "24_test_soc_emergency_dispatch.sh"
+    "25_test_kernel_ebpf_stack_health.sh"
 )
 
 for suite in "${SUITES[@]}"; do
@@ -51,7 +56,7 @@ ELAPSED=$(( $(date +%s) - START_TIME ))
 rm -rf "$TEST_WORKDIR"
 
 echo -e "\n${GREEN}================================================================================${RESET}"
-echo -e "${GREEN}  ALL 20 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
+echo -e "${GREEN}  ALL 25 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
 echo -e "${GREEN}================================================================================${RESET}"
 echo -e "  [01] Authentication & Token Minting      : PASS"
 echo -e "  [02] Extension Packages (.spkg)          : PASS"
@@ -73,4 +78,9 @@ echo -e "  [17] 3-Tier Plugin Supervisor & SLA      : PASS"
 echo -e "  [18] HIL Continuous ODE Physics (T_crit) : PASS"
 echo -e "  [19] DFIR Firmware & CDR Sanitization    : PASS"
 echo -e "  [20] System Portability Bundle (.aryopack): PASS"
+echo -e "  [21] Bot Kinematics & ZTNA Session Risk  : PASS"
+echo -e "  [22] Multi-Silicon AI Compiler Service   : PASS"
+echo -e "  [23] Cyber-Range Enclave & Attack Replay : PASS"
+echo -e "  [24] SOC Incidents & Emergency Dispatch  : PASS"
+echo -e "  [25] 21-Check Stack & eBPF Driver Health : PASS"
 echo -e "${GREEN}================================================================================${RESET}\n"
