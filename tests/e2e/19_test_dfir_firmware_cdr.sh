@@ -10,7 +10,9 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 19: DFIR FIRMWARE DISSECTION & CDR SANITIZATION"
 cd "$WORKDIR"
 
-JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
+# New:
+JWT=$(get_jwt_token)
+
 
 # 1. Content Disarm and Reconstruction (CDR) Document Sanitization
 log_info "1. Synthesizing malicious Office XML document containing macros..."
