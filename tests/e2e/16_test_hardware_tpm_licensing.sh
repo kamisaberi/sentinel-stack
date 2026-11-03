@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# TEST 16: HARDWARE ROOT OF TRUST & CRYPTOGRAPHIC LICENSING LIFECYCLE
+# TEST 16: HARDWARE SILICON IDENTITY & COMMERCIAL LICENSING LIFECYCLE
 # ==============================================================================
 set -euo pipefail
 
@@ -24,8 +24,17 @@ log_info "2. Enrolling hardware identity token into /etc/sentinel/..."
 sudo aryo hardware enroll >> "$LOG_FILE" 2>&1
 assert_file_exists "/etc/sentinel/hardware_identity.token"
 
-HW_TOKEN=$(cat /etc/sentinel/hardware_identity.token | tr -d ' \n\r')
-log_success "Hardware identity enrolled: ${HW_TOKEN:0:16}..."
+# Extract clean token string without JSON quotes
+if jq -e . /etc/sentinel/hardware_identity.token >/dev/null 2>&1; then
+    HW_TOKEN=$(jq -r '.hardware_token_hash // .token_hash // .token // empty' /etc/sentinel/hardware_identity.token)
+    if [[ -z "$HW_TOKEN" ]]; then
+        HW_TOKEN=$(sha256sum /etc/sentinel/hardware_identity.token | awk '{print $1}')
+    fi
+else
+    HW_TOKEN=$(tr -d ' \n\r"' < /etc/sentinel/hardware_identity.token)
+fi
+
+log_success "Clean hardware token extracted: ${HW_TOKEN:0:24}..."
 
 # 3. Retrieve Master License Verification Key
 log_info "3. Fetching Master Ed25519 Public Key from backend (/licenses/public-key)..."
@@ -37,15 +46,20 @@ log_success "Master license verification key acquired"
 
 # 4. Subscribe Node & Issue Commercial License Envelope
 log_info "4. Subscribing commercial appliance node (/licenses/subscribe)..."
+SUB_PAYLOAD=$(cat << EOF
+{
+  "plan_slug": "enterprise",
+  "hardware_token": "$HW_TOKEN",
+  "hostname": "sentinel-edge-node-01",
+  "customer_name": "Aryorithm Critical Infrastructure"
+}
+EOF
+)
+
 SUB_RESP=$(curl -s -X POST "$BACKEND_BASE/licenses/subscribe" \
     -H "Authorization: Bearer $JWT" \
     -H "Content-Type: application/json" \
-    -d "{
-        \"plan_slug\": \"enterprise\",
-        \"hardware_token\": \"$HW_TOKEN\",
-        \"hostname\": \"sentinel-edge-node-01\",
-        \"customer_name\": \"Aryorithm Critical Infrastructure\"
-    }")
+    -d "$SUB_PAYLOAD")
 
 LICENSE_ID=$(echo "$SUB_RESP" | jq -r '.license_id // empty')
 if [[ -z "$LICENSE_ID" ]]; then
