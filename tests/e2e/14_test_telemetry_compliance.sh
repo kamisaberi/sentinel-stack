@@ -11,6 +11,10 @@ log_header "TEST 14: TELEMETRY HEARTBEAT SYNC & COMPLIANCE AUDITS"
 cd "$WORKDIR"
 
 JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
+if [[ -z "$JWT" ]]; then
+    log_fail "No JWT token found in credentials.json. Run Test 01 first."
+fi
+
 NODE_ID="NODE_E2E_${RUN_TAG:-$(date +%s)}"
 
 # 1. Dispatch Edge Fleet Sync with 5G and Live-SBOM Metrics
@@ -31,7 +35,7 @@ SYNC_PAYLOAD=$(cat << EOF
       "gtp_slice_violations_dropped": 0,
       "unmapped_teids_dropped": 0,
       "n3_peer": "10.240.0.1",
-      "s_nssai": "2:1"
+      "s_nssai": ["2:1"]
     },
     "live_sbom": {
       "sbom_sha256": "d9af7532a37ea3c9c6726adc47720910c44c5f827b408127ec3206c8fc99506c",
