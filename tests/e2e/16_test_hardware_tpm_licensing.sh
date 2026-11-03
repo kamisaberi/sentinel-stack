@@ -21,7 +21,7 @@ log_info "1. Auditing physical hardware profile & silicon root..."
 aryo hardware status >> "$LOG_FILE" 2>&1
 
 # 3. Enroll Hardware Identity Token
-log_info "2. Enrolling hardware identity token into /etc/sentinel/...";
+log_info "2. Enrolling hardware identity token into /etc/sentinel/..."
 sudo aryo hardware enroll >> "$LOG_FILE" 2>&1
 assert_file_exists "/etc/sentinel/hardware_identity.token"
 
@@ -66,7 +66,7 @@ LICENSE_ID=$(echo "$SUB_RESP" | jq -r '.license_id // empty')
 if [[ -z "$LICENSE_ID" ]]; then
     log_fail "Failed to subscribe commercial license. Response:\n$SUB_RESP"
 fi
-log_success "Commercial license generated: $LICENSE_ID"
+log_success "Commercial license registered: $LICENSE_ID"
 
 # 6. Download Offline Air-Gapped .lic File
 log_info "5. Downloading offline 1-year .lic envelope (/licenses/portal-download)..."
@@ -89,13 +89,18 @@ assert_file_exists "/etc/sentinel/license.lic"
 log_info "7. Inspecting cryptographic license entitlements..."
 aryo license inspect "$LIC_FILE" >> "$LOG_FILE" 2>&1
 
-# 9. Cryptographic Signature Verification on Backend (Querying unique LICENSE_ID)
-log_info "8. Verifying license signature on backend (/licenses/verify/$LICENSE_ID)..."
-VERIFY_RESP=$(curl -s -X GET "$BACKEND_BASE/licenses/verify/$LICENSE_ID" -H "Authorization: Bearer $JWT")
+# 9. Cryptographic Signature Verification on Backend (Using active license ID from .lic file)
+ACTIVE_LIC_ID=$(jq -r '.claims.license_id // .license_id // empty' "$LIC_FILE")
+if [[ -z "$ACTIVE_LIC_ID" ]]; then
+    ACTIVE_LIC_ID="$LICENSE_ID"
+fi
+
+log_info "8. Verifying license signature on backend (/licenses/verify/$ACTIVE_LIC_ID)..."
+VERIFY_RESP=$(curl -s -X GET "$BACKEND_BASE/licenses/verify/$ACTIVE_LIC_ID" -H "Authorization: Bearer $JWT")
 IS_VALID=$(echo "$VERIFY_RESP" | jq -r '.signature_valid // false')
 STATUS=$(echo "$VERIFY_RESP" | jq -r '.status // "unknown"')
 
 if [[ "$IS_VALID" != "true" ]]; then
     log_fail "License signature verification failed. Response:\n$VERIFY_RESP"
 fi
-log_success "Cryptographic license verified authentic ($LICENSE_ID, status: $STATUS)"
+log_success "Cryptographic license verified authentic ($ACTIVE_LIC_ID, status: $STATUS)"
