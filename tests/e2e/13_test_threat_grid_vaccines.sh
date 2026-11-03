@@ -10,16 +10,19 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 13: THREAT GRID BROADCAST & FLEET VACCINE SHARING"
 cd "$WORKDIR"
 
+# Load validated JWT token
 JWT=$(jq -r '.jwt_token // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.jwt_token // empty' /root/.sentinel/credentials.json)
-API_KEY=$(jq -r '.api_key // empty' "$HOME/.sentinel/credentials.json" 2>/dev/null || jq -r '.api_key // empty' /root/.sentinel/credentials.json)
-AUTH_HEADER="Authorization: Bearer ${API_KEY:-$JWT}"
+if [[ -z "$JWT" ]]; then
+    log_fail "No JWT token found in credentials.json. Run Test 01 first."
+fi
+AUTH_HEADER="Authorization: Bearer $JWT"
 
 # 1. Broadcast Malicious Attacker IP to Collective Defense Grid
 ATTACKER_IP="198.51.100.$((RANDOM % 200 + 10))"
 log_info "1. Broadcasting attacker IP ($ATTACKER_IP) to threat bus..."
 
 BCAST_RESP=$(curl -s -X POST "$BACKEND_BASE/threats/broadcast" \
-    -H "Authorization: Bearer $JWT" \
+    -H "$AUTH_HEADER" \
     -H "Content-Type: application/json" \
     -d "{
         \"ip\": \"$ATTACKER_IP\",
