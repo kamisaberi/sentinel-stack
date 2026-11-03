@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# TEST 22: MULTI-SILICON EDGE AI COMPILER (OPENVINO/TENSORRT/RKNN/HAILO-8)
+# TEST 22: MULTI-SILICON EDGE AI COMPILER (INTEL_OPENVINO / TENSORRT / RKNN)
 # ==============================================================================
 set -euo pipefail
 
@@ -21,12 +21,12 @@ with open('$INPUT_ONNX', 'wb') as f:
 "
 assert_file_exists "$INPUT_ONNX"
 
-# 2. Submit Compilation Job (target_silicon=OPENVINO, precision=INT8)
+# 2. Submit Compilation Job (target_silicon=INTEL_OPENVINO, precision=INT8)
 log_info "2. Submitting compilation task (POST /ai/compiler/compile)..."
 COMPILE_JOB=$(curl -s -X POST "$BACKEND_BASE/ai/compiler/compile" \
     -H "Authorization: Bearer $JWT" \
     -F "file=@$INPUT_ONNX" \
-    -F "target_silicon=OPENVINO" \
+    -F "target_silicon=INTEL_OPENVINO" \
     -F "precision=INT8")
 
 TASK_ID=$(echo "$COMPILE_JOB" | jq -r '.task_id // empty')
@@ -60,11 +60,15 @@ log_success "Compilation completed! Performance speedup: $SPEEDUP"
 # 4. Download Compiled Silicon Artifact
 log_info "4. Downloading compiled edge artifact..."
 ARTIFACT_OUT="$WORKDIR/compiled_openvino_model.bin"
-DL_ENDPOINT="${DOWNLOAD_URL:-$BACKEND_BASE/ai/compiler/artifacts/$TASK_ID/model_int8.bin}"
+DL_ENDPOINT="${DOWNLOAD_URL:-/api/v1/ai/compiler/artifacts/$TASK_ID/model_int8.bin}"
 
-# Ensure absolute URL
+# Clean URL formatting
 if [[ "$DL_ENDPOINT" != http* ]]; then
-    DL_ENDPOINT="$BACKEND_BASE$DL_ENDPOINT"
+    if [[ "$DL_ENDPOINT" == /api/v1* ]]; then
+        DL_ENDPOINT="${SENTINEL_HUB_URL}${DL_ENDPOINT}"
+    else
+        DL_ENDPOINT="${BACKEND_BASE}/${DL_ENDPOINT#/}"
+    fi
 fi
 
 HTTP_CODE=$(curl -s -w "%{http_code}" -X GET "$DL_ENDPOINT" \
