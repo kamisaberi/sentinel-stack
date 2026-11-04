@@ -151,7 +151,6 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         forward_exec("sentinel-artifact", pub_args);
     }
 
-
     // -------------------------------------------------------------------------
     // [04b. Direct Artifact Visibility Controller]
     // -------------------------------------------------------------------------

@@ -10,13 +10,13 @@ inline void print_global_help()
 Tip: Run 'aryo <domain> --help' for detailed subcommands and copy-paste examples.
 
 Domains:
-[01. Authentication]   aryo login | whoami | auth (login, register, status)
-[02. Appliance]        aryo status | appliance (sync, check, launch, install) | hardware (status, enroll)
+[01. Authentication]   aryo login | whoami | auth (login, register, status, update-key)
+[02. Appliance]        aryo status | appliance (sync, check, launch, install, pull) | hardware (status, enroll)
 [03. Stack & Service]  aryo stack (install, build, verify, uninstall, purge, env) | service (start, stop, logs...)
-[04. Hub Discovery]    aryo hub (search, list, info, broadcast, new) | visibility <type> <slug> [mode] | publish <file>
+[04. Hub Discovery]    aryo hub (search, list, info, broadcast, new, yank) | visibility <type> <slug> [mode] | publish <file>
 [05. Asset Lifecycles] aryo package | model | dataset | pcap | scenario (pack, pull, inspect, list)
 [06. Artifact Tool]    aryo artifact (new, keygen, pack, inspect, verify, test, synthesize-vaccine)
-[07. Fleet & Threat]   aryo fleet (list, vaccine-audit) | threat drop | ota (status, stage, advance) | report
+[07. Fleet & Threat]   aryo fleet (list, vaccine-audit) | threat (drop, vaccine-share, vaccine-feed) | ota (status, stage, advance) | report
 [08. Continual AI]     aryo forge (run, quantize, finetune) [--remote]
 [09. SLAB Protocol]    aryo slab (convert, verify, stream)
 [10. Research Lab]     aryo lab (daemon, inspect-matrix, blast, evasion, drift, hil, fuzzer, fdia...)
@@ -25,10 +25,10 @@ Domains:
 [13. System Bundle]    aryo system (export, import) [.aryopack]
 [14. Licensing]        aryo license (apply, inspect)
 [15. 5G/6G Slicing]    aryo 5g (status, enable, blast-test)
-[16. Live-SBOM]        aryo sbom (generate, enforce, status, test-drift)
+[16. Live-SBOM]        aryo sbom (generate, enforce, status, test-drift, attest, drift-events)
 [17. Space/Orbital]    aryo space (status, ccsds, blast-sim)
-[18. AI TRiSM Guard]   aryo trism (status, inspect, test-jailbreak, policy)
-[19. Blueprints]       aryo blueprint (new, add, pack, inspect, deploy, rollback, list)
+[18. AI TRiSM Guard]   aryo trism (status, inspect, test-jailbreak, policy [pull|push|show])
+[19. Blueprints]       aryo blueprint (new, add, pack, inspect, deploy, rollback, list, pull, publish, raw-dag)
 )" << std::endl;
 }
 
