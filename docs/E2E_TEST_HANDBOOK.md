@@ -300,16 +300,3 @@ Below is the complete reference handbook documenting all 50 tests, detailing the
 * **CLI Command:** `sentinel-artifact synthesize-vaccine`, `sentinel-artifact test`
 * **Invariants Tested:** Spools zero-day SCADA exploit in `/var/run/sentinel/honeynet_spool/`, synthesizes signed Tier C LuaJIT reflex vaccine (`.spkg`), asserts in-sandbox preflight test, broadcasts vaccine fleet-wide via gRPC / REST ($< 50\text{ ms}$ SLA), audits global feed, and downloads sealed artifact.
 
----
-
-### Verification Command
-
-To save this documentation handbook to your codebase and run the complete 50-category master suite:
-
-```bash
-# 1. Save documentation handbook to sentinel-stack/docs/
-mkdir -p /home/kami/sentinel-stack/docs/
-
-# 2. Run the full 50-category master suite
-sudo bash /home/kami/sentinel-stack/tests/e2e/run_all_e2e_tests.sh
-```
