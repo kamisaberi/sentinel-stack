@@ -10,12 +10,18 @@ source "$SCRIPT_DIR/common_test_lib.sh"
 log_header "TEST 54: Live-SBOM DRIFT AUDIT & AI TRiSM POLICY PUSH"
 cd "$WORKDIR"
 
-# 1. Query In-Kernel Memory Drift Events via 'aryo sbom drift-events'
+# 1. Acquire and refresh active JWT in credentials.json on disk
+JWT=$(get_jwt_token)
+if [[ -z "$JWT" ]]; then
+    log_fail "Failed to acquire valid JWT token."
+fi
+
+# 2. Query In-Kernel Memory Drift Events via 'aryo sbom drift-events'
 log_info "1. Executing 'aryo sbom drift-events --limit 10'..."
 aryo sbom drift-events --limit 10 >> "$LOG_FILE" 2>&1
 log_success "In-kernel W^X memory drift events audited"
 
-# 2. Create Custom AI TRiSM Policy File
+# 3. Create Custom AI TRiSM Policy File
 log_info "2. Synthesizing custom AI TRiSM prompt firewall policy..."
 POLICY_YAML="$WORKDIR/custom_trism_policy.yaml"
 cat << 'EOF' > "$POLICY_YAML"
@@ -36,12 +42,16 @@ require_human_approval: true
 EOF
 assert_file_exists "$POLICY_YAML"
 
-# 3. Push Policy via 'aryo trism policy push'
+# 4. Push Policy via 'aryo trism policy push'
 log_info "3. Executing 'aryo trism policy push $POLICY_YAML'..."
-aryo trism policy push "$POLICY_YAML" >> "$LOG_FILE" 2>&1
+if ! aryo trism policy push "$POLICY_YAML" >> "$LOG_FILE" 2>&1; then
+    echo -e "${RED}[ERROR] Policy push failed. Recent log output:${RESET}"
+    tail -n 20 "$LOG_FILE"
+    exit 1
+fi
 log_success "Fleet-wide AI TRiSM policy pushed to backend"
 
-# 4. Verify Local Policy Sync via 'aryo trism policy pull'
+# 5. Verify Local Policy Sync via 'aryo trism policy pull'
 log_info "4. Verifying local sync via 'aryo trism policy pull'..."
 aryo trism policy pull >> "$LOG_FILE" 2>&1
 aryo trism policy show >> "$LOG_FILE" 2>&1
