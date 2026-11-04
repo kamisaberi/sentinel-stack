@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# MASTER RUNNER: Executes all 50 Real-World E2E Test Suites (50/50 Golden Suite)
+# MASTER RUNNER: Executes all 55 Real-World E2E Test Suites (55/55 Complete Matrix)
 # ==============================================================================
 set -euo pipefail
 
@@ -14,7 +14,7 @@ YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 echo -e "${CYAN}================================================================================${RESET}"
-echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (50/50 GOLDEN SUITE)               ${RESET}"
+echo -e "${YELLOW}       ARYORITHM MASTER E2E INTEGRATION SUITE (55/55 COMPLETE MATRIX)           ${RESET}"
 echo -e "${CYAN}================================================================================${RESET}"
 echo -e "Target Backend Endpoint : http://localhost:8000"
 echo -e "Master Workspace        : $TEST_WORKDIR\n"
@@ -70,6 +70,11 @@ SUITES=(
     "48_test_trism_token_governor.sh"
     "49_test_space_ccsds_stanag.sh"
     "50_test_honeynet_vaccine_broadcast.sh"
+    "51_test_author_key_rotation.sh"
+    "52_test_hub_yank_asset.sh"
+    "53_test_threat_vaccine_share_feed.sh"
+    "54_test_sbom_drift_events_trism_push.sh"
+    "55_test_blueprint_raw_dag_appliance_pull.sh"
 )
 
 for suite in "${SUITES[@]}"; do
@@ -81,7 +86,7 @@ ELAPSED=$(( $(date +%s) - START_TIME ))
 rm -rf "$TEST_WORKDIR"
 
 echo -e "\n${GREEN}================================================================================${RESET}"
-echo -e "${GREEN}  ALL 50 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
+echo -e "${GREEN}  ALL 55 REAL-WORLD E2E CATEGORIES COMPLETED SUCCESSFULLY in ${ELAPSED}s!       ${RESET}"
 echo -e "${GREEN}================================================================================${RESET}"
 echo -e "  [01] Authentication & Token Minting      : PASS"
 echo -e "  [02] Extension Packages (.spkg)          : PASS"
@@ -133,4 +138,9 @@ echo -e "  [47] Live-SBOM W^X Memory SIGKILL        : PASS"
 echo -e "  [48] AI TRiSM Token & Tool Governor      : PASS"
 echo -e "  [49] Space CCSDS/STANAG Orbital Guard    : PASS"
 echo -e "  [50] Honeynet Deception & Fleet Broadcast: PASS"
+echo -e "  [51] Author Key Rotation                 : PASS"
+echo -e "  [52] Artifact Yank & Catalog Purge       : PASS"
+echo -e "  [53] Threat Vaccine Share & Fleet Feed   : PASS"
+echo -e "  [54] Live-SBOM Drift & TRiSM Policy Push : PASS"
+echo -e "  [55] Raw Blueprint DAG & Appliance Pull  : PASS"
 echo -e "${GREEN}================================================================================${RESET}\n"
