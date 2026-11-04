@@ -244,6 +244,13 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     // [07. Fleet & Threat Administration]
     // -------------------------------------------------------------------------
+
+    if (domain == "threat" && !args.empty() && (args[0] == "vaccine-share" || args[0] == "vaccine-feed"))
+    {
+        std::vector<std::string> ctl_args = {"threat"};
+        ctl_args.insert(ctl_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", ctl_args);
+    }
     if (domain == "fleet" || domain == "threat" || domain == "ota" || domain == "report")
     {
         if (wants_help)
