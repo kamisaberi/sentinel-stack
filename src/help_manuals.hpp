@@ -156,6 +156,7 @@ ACTIONS:
   status                        Audit runtime process memory integrity & drift statistics
   test-drift                    Simulate fileless shellcode PROT_EXEC injection test drill
   attest                        Upload live_sbom.json to cloud compliance dashboard
+  drift-events [--limit <n>]    Query normalized in-kernel memory drift and SIGKILL events
 
 REAL-WORLD EXAMPLES:
   1. Generate cryptographic Live-SBOM manifest anchored to physical silicon:
@@ -166,6 +167,9 @@ REAL-WORLD EXAMPLES:
 
   3. Execute simulated memory injection test proving kernel SIGKILL termination:
      $ aryo sbom test-drift
+
+  4. Query live memory drift audit events from cloud compliance engine:
+     $ aryo sbom drift-events --limit 20
 ================================================================================
 )";
 }
@@ -213,6 +217,8 @@ ACTIONS:
   inspect --prompt "<text>"     Scan prompt string for jailbreaks, delimiters & RAG injections
   test-jailbreak                Run red-team benchmark suite across 4 prompt injection classes
   policy                        Print active industrial tool-call governance policy
+  policy [pull|push|show]       Inspect, pull from cloud, or push updated TRiSM policy
+
 
 REAL-WORLD EXAMPLES:
   1. Scan a prompt string for indirect injections before forwarding to SCADA LLM:
@@ -220,6 +226,9 @@ REAL-WORLD EXAMPLES:
 
   2. Execute the automated red-team jailbreak benchmark suite:
      $ aryo trism test-jailbreak
+
+  3. Push updated OT prompt firewall policy to fleet:
+     $ aryo trism policy push configs/trism_policy.yaml
 ================================================================================
 )";
 }
@@ -282,6 +291,8 @@ ACTIONS:
   broadcast <file.spkg>         Broadcast sealed package fleet-wide via gRPC (< 50ms)
   visibility <type> <slug> [public|private]
                                 Promote or demote artifact visibility via PUT API
+  yank <type> <slug>            Delete or yank published asset from Hub
+
 
 REAL-WORLD EXAMPLES:
   1. Search live catalog for Modbus protection packages:
@@ -298,6 +309,9 @@ REAL-WORLD EXAMPLES:
 
   5. Or use the direct top-level shortcut:
      $ aryo visibility package s7_guard public
+
+  6. Yank a deprecated package from the Hub catalog:
+     $ aryo hub yank package s7_old_filter
 ================================================================================
 )";
 }
@@ -489,6 +503,8 @@ ACTIONS:
   hardware enroll                Enroll physical TPM 2.0 silicon identity token
   license apply <file.lic>       Apply commercial license to /etc/sentinel/license.lic
   license inspect <file.lic>     Inspect license entitlements, node limits & expiration
+  pull <slug>                    Download official sealed .aryopack system release
+
 
 REAL-WORLD EXAMPLES:
   1. Sync dependencies and launch edge daemon with routing profile:
@@ -496,6 +512,9 @@ REAL-WORLD EXAMPLES:
 
   2. Inspect physical TPM 2.0 silicon root:
      $ aryo hardware status
+  
+  3. Pull official appliance bundle from Hub:
+     $ aryo appliance pull sentinel_edge_v2.5
 ================================================================================
 )";
 }
@@ -559,6 +578,8 @@ ACTIONS:
   ota advance                    Advance model rollout stage (Shadow -> 5% -> Fleet)
   ota rollback                   Execute emergency model rollback
   report cmmc|scada              Export CMMC 2.0 & IEC 62443 compliance audit reports
+  threat vaccine-share <file>   Broadcast honeynet .spkg vaccine to fleet feed
+  threat vaccine-feed [limit]   Display live zero-day vaccines discovered across grid
 
 REAL-WORLD EXAMPLES:
   1. Broadcast an instant sub-50ms eBPF drop across all fleet nodes:
@@ -569,6 +590,12 @@ REAL-WORLD EXAMPLES:
 
   3. Advance candidate neural model from Shadow Mode to 5% Fleet Canary:
      $ aryo ota advance
+
+  4. Share synthesized zero-day vaccine to global fleet feed:
+     $ aryo threat vaccine-share /tmp/vaccine_modbus_104.spkg
+
+  5. Inspect live zero-day vaccine feed across all sites:
+     $ aryo threat vaccine-feed
 ================================================================================
 )";
 }
@@ -647,6 +674,8 @@ ACTIONS:
   list                          List active deployed and cached blueprints
   pull <slug>                   Pull verified .blueprint bundle from Hub
   publish <file.blueprint>      Publish production blueprint to hub.aryorithm.com
+  raw-dag <slug>                Stream raw 4-stage model_routes.yaml DAG specification
+
 
 REAL-WORLD EXAMPLES:
   1. Scaffold a fresh blueprint for an electrical substation:
@@ -673,6 +702,9 @@ REAL-WORLD EXAMPLES:
 
   8. Publish a certified blueprint to the Hub:
      $ aryo blueprint publish substation_alpha.blueprint
+
+  9. Fetch raw 4-stage ModelRouter DAG without downloading archive:
+     $ aryo blueprint raw-dag substation_alpha > /tmp/routes.yaml
 ================================================================================
 )";
 }
