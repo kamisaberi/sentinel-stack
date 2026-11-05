@@ -1,25 +1,14 @@
 # Compilation DAG Tiers
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+Detailed compilation mechanics, CMake flags, and target artifacts across all six runtime tiers.
 
-Section overview for Compilation DAG Tiers — start with any guide below.
+## Section Navigation
 
-- [Building Tier 1: xinfer](./building-tier-1-xinfer.md)
-
-- [Building Tier 2: blackbox](./building-tier-2-blackbox.md)
-
-- [Building Tier 3: sentinel](./building-tier-3-sentinel.md)
-
-- [Building Tier 4: forge](./building-tier-4-forge.md)
-
-- [Building Tier 5: lab](./building-tier-5-lab.md)
-
-- [Building Tier 6: nexus](./building-tier-6-nexus.md)
-
-- [Dynamic Linker Cache (ldconfig)](./dynamic-linker-cache-ldconfig.md)
-
-- [Parallel Job Scaling & RAM](./parallel-job-scaling-ram.md)
-
----
-
-*Part of the sentinel-stack documentation set.*
+- [Tier 1: xinfer-essential](./building-tier-1-xinfer.md): Building `libxinfer.so` (Universal C++20 AI runtime).
+- [Tier 2: blackbox-essential](./building-tier-2-blackbox.md): Compiling `xdp_filter.o` bytecode and `libblackbox.so`.
+- [Tier 3: blackbox-sentinel](./building-tier-3-sentinel.md): Building `sentinel` daemon, 26 subsystems, and 30 plugins.
+- [Tier 4: xinfer-forge](./building-tier-4-forge.md): Installing `forge-cli` inside `/opt/sentinel-stack/venv`.
+- [Tier 5: sentinel-lab](./building-tier-5-lab.md): Building `sentinel_lab` research testbed and SLAB protocol tools.
+- [Tier 6: sentinel-nexus](./building-tier-6-nexus.md): Building `sentinel-nexus` command daemon and `nexus-ctl` CLI.
+- [Dynamic Linker ldconfig](./dynamic-linker-cache-ldconfig.md): Inter-tier `ldconfig` cache refresh invariants.
+- [Parallel Job Scaling & RAM](./parallel-job-scaling-ram.md): Dynamic compiler job throttling (`make -j`) based on system RAM.

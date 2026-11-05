@@ -1,17 +1,10 @@
 # Configuration & Customization
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+Customizing compilation flags, repository branches, and filesystem installation prefixes via `configs/stack.yaml`.
 
-Section overview for Configuration & Customization — start with any guide below.
+## Section Navigation
 
-- [Configuring Git Branches & Tags](./configuring-git-branches-and-tags.md)
-
-- [Customizing CMake Build Flags](./customizing-cmake-build-flags.md)
-
-- [Customizing Install Paths](./customizing-install-paths.md)
-
-- [stack.yaml Specification](./stack-yaml-specification.md)
-
----
-
-*Part of the sentinel-stack documentation set.*
+- [stack.yaml Specification](./stack-yaml-specification.md): Exhaustive YAML configuration manifest specification.
+- [Customizing Install Paths](./customizing-install-paths.md): Relocating system installation prefixes (`/usr/local` vs `/opt/aryorithm`).
+- [Git Branches & Tags](./configuring-git-branches-and-tags.md): Pinning production release tags (`v1.0.0`, `v2.4.0`) in `stack.yaml`.
+- [Customizing CMake Flags](./customizing-cmake-build-flags.md): Injecting microarchitecture optimization (`-march=native`) and LTO.

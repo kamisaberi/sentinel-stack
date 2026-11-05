@@ -1,19 +1,11 @@
 # Bridge to Sentinel-Matrix
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+`sentinel-stack` automates harvesting compiled binaries and dependencies into `sentinel-matrix` for zero-friction digital twin execution.
 
-Section overview for Bridge to Sentinel-Matrix — start with any guide below.
+## Section Navigation
 
-- [Dynamic Library Extraction (ldd)](./dynamic-library-extraction-ldd.md)
-
-- [Harvesting Host Binaries](./harvesting-host-binaries.md)
-
-- [Matrix Bridge Architecture](./matrix-bridge-architecture.md)
-
-- [Proto & Web Asset Handover](./proto-and-web-asset-handover.md)
-
-- [VMware Docker Mesh Handshake](./vmware-docker-mesh-handshake.md)
-
----
-
-*Part of the sentinel-stack documentation set.*
+- [Matrix Bridge Architecture](./matrix-bridge-architecture.md): Handover pipeline architecture and GLIBC 2.43 forward compatibility.
+- [Harvesting Host Binaries](./harvesting-host-binaries.md): `harvest_binaries.sh` script copying executables to `shared/bin/`.
+- [Dynamic Library Extraction (ldd)](./dynamic-library-extraction-ldd.md): `extract_libraries.sh` resolving dynamic dependencies (`libabsl`, `libgrpc++`).
+- [Proto & Web Asset Handover](./proto-and-web-asset-handover.md): Synchronizing `.proto` files and Web SPA assets to `shared/web/`.
+- [VMware / Docker Handshake](./vmware-docker-mesh-handshake.md): One-touch transition from host compilation to `make up` mesh launch.

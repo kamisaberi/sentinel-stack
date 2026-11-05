@@ -1,25 +1,14 @@
-# Troubleshooting
+# Troubleshooting & Diagnostic Help Desk
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+Diagnostic procedures, error code remediations, and support channels for resolving build and installation issues.
 
-Section overview for Troubleshooting — start with any guide below.
+## Section Navigation
 
-- [Dynamic Linker: Library Not Found](./dynamic-linker-library-not-found.md)
-
-- [Technical FAQ](./faq.md)
-
-- [gRPC/Protobuf Linking Errors](./grpc-protobuf-linking-errors.md)
-
-- [Missing Kernel Headers](./missing-kernel-headers.md)
-
-- [OOM Compiler Crashes](./oom-compiler-crashes.md)
-
-- [Python Externally-Managed Errors](./python-externally-managed-errors.md)
-
-- [Support Channels](./support.md)
-
-- [systemd Failed Starts](./systemd-service-failed-starts.md)
-
----
-
-*Part of the sentinel-stack documentation set.*
+- [OOM Compiler Crashes](./oom-compiler-crashes.md): Throttling parallel compiler jobs (`export PARALLEL_JOBS=2`) and swapfile allocation.
+- [Missing Kernel Headers](./missing-kernel-headers.md): Resolving `uname -r` kernel header mismatches during eBPF compilation.
+- [gRPC / Protobuf Linking Errors](./grpc-protobuf-linking-errors.md): Resolving Protobuf ABI divergence and Ubuntu `t64` package mismatches.
+- [Python PEP 668 Errors](./python-externally-managed-errors.md): Fixing externally managed environment errors via `/opt/sentinel-stack/venv`.
+- [Systemd Failed Starts](./systemd-service-failed-starts.md): Diagnosing `status=203/EXEC` and missing configuration file errors.
+- [Dynamic Linker Library Not Found](./dynamic-linker-library-not-found.md): Registering `/usr/local/lib` in `/etc/ld.so.conf.d/sentinel.conf`.
+- [Technical FAQ](./faq.md): Frequently asked technical questions regarding build times, ARM64 support, and air-gapped modes.
+- [Support Channels](./support.md): Generating automated diagnostic bundles (`collect_diagnostics.sh`) and enterprise commercial SLAs.

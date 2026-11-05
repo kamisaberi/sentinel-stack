@@ -1,19 +1,11 @@
 # Operations & Makefile
 
-> **Status:** Draft — placeholder content. Final technical prose is forthcoming.
+`sentinel-stack` provides operational targets for maintaining, updating, backing up, and purging the 6-tier runtime ecosystem.
 
-Section overview for Operations & Makefile — start with any guide below.
+## Section Navigation
 
-- [Automated Backup & Recovery](./automated-backup-and-recovery.md)
-
-- [Clean Uninstallation Guide](./clean-uninstallation-guide.md)
-
-- [Makefile Reference](./makefile-reference.md)
-
-- [Monitoring Daemons Status](./monitoring-daemons-status.md)
-
-- [Updating Installed Tiers](./updating-installed-tiers.md)
-
----
-
-*Part of the sentinel-stack documentation set.*
+- [Makefile Reference](./makefile-reference.md): Categorized cheat sheet covering all build, update, status, and clean targets.
+- [Updating Installed Tiers](./updating-installed-tiers.md): Automated updates (`sudo make update`) and incremental recompilation.
+- [Monitoring Daemons Status](./monitoring-daemons-status.md): Checking systemd service health and listener ports (`sudo make status`).
+- [Clean Uninstallation Guide](./clean-uninstallation-guide.md): Stopping services, purging installed binaries, and restoring dynamic linker cache.
+- [Backup & Recovery](./automated-backup-and-recovery.md): Automated configuration and state backup (`sudo make backup`).
