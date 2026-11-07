@@ -414,6 +414,9 @@ EXAMPLE:
   $ aryo lab rf-sdr
   $ aryo lab rf-sdr --attack gnss-spoof
   $ aryo lab rf-sdr --attack hpm-surge
+  $ aryo lab acoustic-tdoa
+  $ aryo lab acoustic-tdoa --attack airgap-leak
+  $ aryo lab acoustic-tdoa --attack bearing-fail
 ================================================================================
 )";
 }
