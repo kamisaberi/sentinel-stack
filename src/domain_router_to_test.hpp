@@ -154,7 +154,24 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     }
 
     // -------------------------------------------------------------------------
-    // [05. Symmetrical Asset Lifecycles]
+    // [04b. Direct Artifact Visibility Controller]
+    // -------------------------------------------------------------------------
+    if (domain == "visibility")
+    {
+        if (args.empty() || wants_help)
+        {
+            std::cout << "\033[1;36mUsage:\033[0m aryo visibility <package|model|dataset|pcap|scenario|blueprint> <slug> [public|private]\n";
+            std::cout << "Example: aryo visibility package my_filter public\n";
+            return 0;
+        }
+
+        std::vector<std::string> vis_args = {"hub", "visibility"};
+        vis_args.insert(vis_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", vis_args);
+    }
+
+    // -------------------------------------------------------------------------
+    // [05. Symmetrical Asset Lifecycles (package, model, dataset, pcap, scenario)]
     // -------------------------------------------------------------------------
     if (domain == "package" || domain == "artifact")
     {
@@ -228,6 +245,12 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     // [07. Fleet & Threat Administration]
     // -------------------------------------------------------------------------
+    if (domain == "threat" && !args.empty() && (args[0] == "vaccine-share" || args[0] == "vaccine-feed"))
+    {
+        std::vector<std::string> ctl_args = {"threat"};
+        ctl_args.insert(ctl_args.end(), args.begin(), args.end());
+        forward_exec("sentinel-ctl", ctl_args);
+    }
     if (domain == "fleet" || domain == "threat" || domain == "ota" || domain == "report")
     {
         if (wants_help)
@@ -273,7 +296,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     }
 
     // -------------------------------------------------------------------------
-    // [10. Research Lab (14 Scientific Modules) - Portable Resolution]
+    // [10. Research Lab (14 Scientific Modules)]
     // -------------------------------------------------------------------------
     if (domain == "lab")
     {
@@ -334,7 +357,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     }
 
     // -------------------------------------------------------------------------
-    // [11. Digital Twin Range Mesh & Active Honeynet - Portable Resolution]
+    // [11. Digital Twin Range Mesh & Active Honeynet]
     // -------------------------------------------------------------------------
     if (domain == "matrix")
     {
@@ -532,6 +555,15 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             print_help_blueprint();
             return 0;
         }
+
+        // Direct 'aryo blueprint publish <file>' to sentinel-artifact
+        if (!args.empty() && args[0] == "publish")
+        {
+            std::vector<std::string> pub_args = {"publish"};
+            pub_args.insert(pub_args.end(), args.begin() + 1, args.end());
+            forward_exec("sentinel-artifact", pub_args);
+        }
+
         std::vector<std::string> bp_args = {"blueprint"};
         bp_args.insert(bp_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", bp_args);
