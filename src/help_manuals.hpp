@@ -418,6 +418,9 @@ EXAMPLE:
   $ aryo lab acoustic-tdoa
   $ aryo lab acoustic-tdoa --attack airgap-leak
   $ aryo lab acoustic-tdoa --attack bearing-fail
+  $ aryo lab fluid-shock
+  $ aryo lab fluid-shock --attack water-hammer
+  $ aryo lab fluid-shock --attack nuclear-dnb
 ================================================================================
 )";
 }
