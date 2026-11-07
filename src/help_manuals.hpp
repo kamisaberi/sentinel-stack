@@ -405,6 +405,7 @@ ACTIONS:
   sensor-audit [--attack <type>] Audit Silicon PMU (#001-#007), PCB (#008-#014) & LVDT (#046)
   rf-sdr [--attack <type>]       Audit RF/GNSS (#023-#028), Lasers (#128-#134) & HPM (#456-#462)
   acoustic-tdoa [--attack <type>] Audit Acoustics (#029-#034), Rumble (#135) & ASW (#521-#527)
+  fluid-shock [--attack <type>]  Audit Water-Hammer (#052), DNB (#185) & Subsea APB (#256-#260)
 
 EXAMPLE:
   $ aryo lab hil --duration 60
