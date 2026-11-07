@@ -403,6 +403,7 @@ ACTIONS:
   federated [-c cfg]            Federated AI Byzantine poisoning evaluator
   patch-regression [-c cfg]     Exploit neutralization scorecard evaluator
   sensor-audit [--attack <type>] Audit Silicon PMU (#001-#007), PCB (#008-#014) & LVDT (#046)
+  rf-sdr [--attack <type>]       Audit RF/GNSS (#023-#028), Lasers (#128-#134) & HPM (#456-#462)
 
 EXAMPLE:
   $ aryo lab hil --duration 60
