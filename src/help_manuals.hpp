@@ -430,6 +430,9 @@ EXAMPLE:
   $ aryo lab quantum-metrology
   $ aryo lab quantum-metrology --attack rf-dephase
   $ aryo lab quantum-metrology --attack tokamak-disrupt
+  $ aryo lab power-grid
+  $ aryo lab power-grid --attack rocof-collapse
+  $ aryo lab power-grid --attack line-sag
 ================================================================================
 )";
 }
