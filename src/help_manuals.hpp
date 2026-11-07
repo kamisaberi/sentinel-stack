@@ -407,6 +407,8 @@ ACTIONS:
 EXAMPLE:
   $ aryo lab hil --duration 60
   $ aryo lab inspect-matrix --nexus 127.0.0.1 --plc 127.0.0.1
+  $ aryo lab sensor-audit
+  $ aryo lab sensor-audit --attack rowhammer
 ================================================================================
 )";
 }
