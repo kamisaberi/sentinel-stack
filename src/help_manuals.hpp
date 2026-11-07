@@ -407,6 +407,7 @@ ACTIONS:
   acoustic-tdoa [--attack <type>] Audit Acoustics (#029-#034), Rumble (#135) & ASW (#521-#527)
   fluid-shock [--attack <type>]  Audit Water-Hammer (#052), DNB (#185) & Subsea APB (#256-#260)
   space-avionics [--attack <t>]  Audit AoA (#093), ECLSS (#278), TVC (#313) & Fins (#513)
+  quantum-metrology [--attack <t>] Audit Qubits (#121), Atom Gravimeters (#326) & Tokamaks (#421)
 
 EXAMPLE:
   $ aryo lab hil --duration 60
