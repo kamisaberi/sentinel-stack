@@ -48,3 +48,55 @@ inline bool is_help_flag(const std::string &arg)
 {
     return (arg == "-h" || arg == "--help" || arg == "help");
 }
+
+// Portable repository & workspace path resolver (works for ANY user/system)
+inline fs::path get_repo_dir(const std::string &repo_name)
+{
+    std::error_code ec;
+
+    // 1. Check system production installation path first
+    fs::path sys_path = fs::path("/opt") / repo_name;
+    if (fs::exists(sys_path, ec) && !ec)
+        return sys_path;
+
+    // 2. Check current user's home directory: $HOME/<repo_name>
+    const char *home_env = std::getenv("HOME");
+    if (home_env)
+    {
+        fs::path user_repo = fs::path(home_env) / repo_name;
+        if (fs::exists(user_repo, ec) && !ec)
+            return user_repo;
+    }
+
+    // 3. Check relative to current working directory
+    fs::path cur_rel = fs::current_path() / repo_name;
+    if (fs::exists(cur_rel, ec) && !ec)
+        return cur_rel;
+
+    fs::path parent_rel = fs::current_path() / ".." / repo_name;
+    if (fs::exists(parent_rel, ec) && !ec)
+        return parent_rel;
+
+    // Fallback default
+    return home_env ? (fs::path(home_env) / repo_name) : fs::path("/opt") / repo_name;
+}
+
+// Portable python research harness resolver
+inline fs::path resolve_harness(const std::string &script_name)
+{
+    std::error_code ec;
+    std::vector<fs::path> candidates = {
+        fs::path("/opt/sentinel-stack/harnesses") / script_name,
+        get_repo_dir("sentinel-lab") / "harness" / script_name,
+        get_repo_dir("sentinel-lab") / "harnesses" / script_name,
+        get_repo_dir("sentinel-stack") / "harnesses" / script_name
+    };
+
+    for (const auto &p : candidates)
+    {
+        if (fs::exists(p, ec) && !ec)
+            return p;
+    }
+    // Return system default if not yet found
+    return fs::path("/opt/sentinel-stack/harnesses") / script_name;
+}
