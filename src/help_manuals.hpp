@@ -410,6 +410,9 @@ EXAMPLE:
   $ aryo lab inspect-matrix --nexus 127.0.0.1 --plc 127.0.0.1
   $ aryo lab sensor-audit
   $ aryo lab sensor-audit --attack rowhammer
+  $ aryo lab rf-sdr
+  $ aryo lab rf-sdr --attack gnss-spoof
+  $ aryo lab rf-sdr --attack hpm-surge
 ================================================================================
 )";
 }
