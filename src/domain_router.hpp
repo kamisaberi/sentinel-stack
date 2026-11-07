@@ -349,6 +349,8 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return run_shell(venv_py + " " + resolve_harness("federated_poison_evaluator.py").string() + flag_str);
         else if (act == "patch-regression")
             return run_shell(venv_py + " " + resolve_harness("patch_regression_evaluator.py").string() + flag_str);
+        else if (act == "sensor-audit")
+            return run_shell(venv_py + " " + resolve_harness("sensor_audit.py").string() + flag_str);
         else
         {
             std::cerr << "[-] Error: Unknown lab action '" << act << "'. Run 'aryo lab --help'.\n";
