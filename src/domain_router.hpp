@@ -363,6 +363,8 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return run_shell(venv_py + " " + resolve_harness("quantum_metrology.py").string() + flag_str);
         else if (act == "power-grid")
             return run_shell(venv_py + " " + resolve_harness("power_grid.py").string() + flag_str);
+        else if (act == "chemical-gas")
+            return run_shell(venv_py + " " + resolve_harness("chemical_gas.py").string() + flag_str);
         else
         {
             std::cerr << "[-] Error: Unknown lab action '" << act << "'. Run 'aryo lab --help'.\n";
