@@ -62,16 +62,18 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return 0;
         }
         std::string sub = args[0];
+        fs::path stack_dir = get_repo_dir("sentinel-stack");
+
         if (sub == "install")
-            return run_shell("sudo /home/kami/sentinel-stack/install.sh");
+            return run_shell("sudo " + (stack_dir / "install.sh").string());
         if (sub == "build")
-            return run_shell("/home/kami/sentinel-stack/build_all.sh");
+            return run_shell((stack_dir / "build_all.sh").string());
         if (sub == "verify")
-            return run_shell("/home/kami/sentinel-stack/verify_stack.sh");
+            return run_shell((stack_dir / "verify_stack.sh").string());
         if (sub == "uninstall")
-            return run_shell("sudo /home/kami/sentinel-stack/uninstall.sh");
+            return run_shell("sudo " + (stack_dir / "uninstall.sh").string());
         if (sub == "purge")
-            return run_shell("sudo /home/kami/sentinel-stack/uninstall.sh --yes");
+            return run_shell("sudo " + (stack_dir / "uninstall.sh").string() + " --yes");
         if (sub == "env")
         {
             std::cout << "\033[1;36m[*] Auditing Sentinel-Stack Environment:\033[0m\n";
@@ -243,7 +245,6 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
     // -------------------------------------------------------------------------
     // [07. Fleet & Threat Administration]
     // -------------------------------------------------------------------------
-
     if (domain == "threat" && !args.empty() && (args[0] == "vaccine-share" || args[0] == "vaccine-feed"))
     {
         std::vector<std::string> ctl_args = {"threat"};
@@ -305,8 +306,11 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return 0;
         }
         std::string act = args[0];
+
+        // Dynamic Python binary resolution
         std::string venv_py = "/opt/sentinel-stack/venv/bin/python3";
-        std::string h_dir = "/opt/sentinel-stack/harnesses";
+        if (!fs::exists(venv_py))
+            venv_py = "python3";
 
         std::string flag_str = "";
         for (size_t i = 1; i < args.size(); ++i)
@@ -318,33 +322,33 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             forward_exec("sentinel_lab", lab_args);
         }
         else if (act == "inspect-matrix")
-            return run_shell(venv_py + " " + h_dir + "/matrix_live_tap.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("matrix_live_tap.py").string() + flag_str);
         else if (act == "blast")
-            return run_shell(venv_py + " " + h_dir + "/socket_injector.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("socket_injector.py").string() + flag_str);
         else if (act == "evasion")
-            return run_shell(venv_py + " " + h_dir + "/socket_injector.py --evasion-mode" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("socket_injector.py").string() + " --evasion-mode" + flag_str);
         else if (act == "drift")
-            return run_shell(venv_py + " " + h_dir + "/drift_evaluator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("drift_evaluator.py").string() + flag_str);
         else if (act == "hil")
-            return run_shell(venv_py + " " + h_dir + "/hil_co_simulator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("hil_co_simulator.py").string() + flag_str);
         else if (act == "fuzzer")
-            return run_shell(venv_py + " " + h_dir + "/scada_fuzzer.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("scada_fuzzer.py").string() + flag_str);
         else if (act == "fdia")
-            return run_shell(venv_py + " " + h_dir + "/fdia_orchestrator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("fdia_orchestrator.py").string() + flag_str);
         else if (act == "quant")
-            return run_shell(venv_py + " " + h_dir + "/quant_evaluator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("quant_evaluator.py").string() + flag_str);
         else if (act == "pqc")
-            return run_shell(venv_py + " " + h_dir + "/pqc_tunnel_profiler.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("pqc_tunnel_profiler.py").string() + flag_str);
         else if (act == "stateful")
-            return run_shell(venv_py + " " + h_dir + "/stateful_fuzzer.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("stateful_fuzzer.py").string() + flag_str);
         else if (act == "sidechannel")
-            return run_shell(venv_py + " " + h_dir + "/sidechannel_analyzer.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("sidechannel_analyzer.py").string() + flag_str);
         else if (act == "cbf")
-            return run_shell(venv_py + " " + h_dir + "/cbf_reachability_evaluator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("cbf_reachability_evaluator.py").string() + flag_str);
         else if (act == "federated")
-            return run_shell(venv_py + " " + h_dir + "/federated_poison_evaluator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("federated_poison_evaluator.py").string() + flag_str);
         else if (act == "patch-regression")
-            return run_shell(venv_py + " " + h_dir + "/patch_regression_evaluator.py" + flag_str);
+            return run_shell(venv_py + " " + resolve_harness("patch_regression_evaluator.py").string() + flag_str);
         else
         {
             std::cerr << "[-] Error: Unknown lab action '" << act << "'. Run 'aryo lab --help'.\n";
@@ -363,6 +367,8 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return 0;
         }
         std::string act = args[0];
+        fs::path matrix_dir = get_repo_dir("sentinel-matrix");
+        fs::path engine_py = matrix_dir / "tools" / "scenario_engine.py";
 
         if (act == "plc")
         {
@@ -392,24 +398,24 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
                 extra_args += " " + args[i];
 
             if (sub_act == "load")
-                return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py load" + extra_args);
+                return run_shell("python3 " + engine_py.string() + " load" + extra_args);
             if (sub_act == "down")
-                return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py down" + extra_args);
+                return run_shell("python3 " + engine_py.string() + " down" + extra_args);
             if (sub_act == "status")
-                return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py status" + extra_args);
+                return run_shell("python3 " + engine_py.string() + " status" + extra_args);
         }
         else if (act == "sim-finetune")
         {
             std::string mode_val = (args.size() > 2 && args[1] == "--mode") ? args[2] : "air-gapped";
-            return run_shell("python3 /home/kami/sentinel-matrix/tools/scenario_engine.py load scenarios/finetune_simulation.yaml --mode " + mode_val);
+            return run_shell("python3 " + engine_py.string() + " load " + (matrix_dir / "scenarios" / "finetune_simulation.yaml").string() + " --mode " + mode_val);
         }
         else if (act == "attack" && args.size() > 1)
         {
-            return run_shell("cd /home/kami/sentinel-matrix && make attack-" + args[1]);
+            return run_shell("cd " + matrix_dir.string() + " && make attack-" + args[1]);
         }
         else
         {
-            return run_shell("cd /home/kami/sentinel-matrix && make " + act);
+            return run_shell("cd " + matrix_dir.string() + " && make " + act);
         }
     }
 
@@ -439,10 +445,12 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return 0;
         }
         std::string act = args[0];
+        fs::path stack_dir = get_repo_dir("sentinel-stack");
+
         if (act == "export")
         {
             std::string out_file = (args.size() > 1) ? args[1] : "sentinel_ecosystem.aryopack";
-            return run_shell("sudo /home/kami/sentinel-stack/scripts/export_system.sh " + out_file);
+            return run_shell("sudo " + (stack_dir / "scripts" / "export_system.sh").string() + " " + out_file);
         }
         if (act == "import" && args.size() >= 2)
         {
@@ -473,8 +481,8 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         if (args[0] == "blast-test")
         {
             std::string iface = (args.size() > 1) ? args[1] : "lo";
-            std::string blaster = "/home/kami/sentinel-stack/harnesses/gtp_slice_blaster.py";
-            return run_shell("python3 " + blaster + " --iface " + iface);
+            fs::path blaster = resolve_harness("gtp_slice_blaster.py");
+            return run_shell("python3 " + blaster.string() + " --iface " + iface);
         }
         else
         {
@@ -512,7 +520,10 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         if (args.empty() || args[0] == "status")
             return run_shell("ccsds-guard status");
         if (args[0] == "blast-sim")
-            return run_shell("python3 /home/kami/sentinel-stack/harnesses/space_link_blaster.py");
+        {
+            fs::path space_blaster = resolve_harness("space_link_blaster.py");
+            return run_shell("python3 " + space_blaster.string());
+        }
         if (args[0] == "ccsds")
             forward_exec("ccsds-guard", {"status"});
         std::cerr << "[-] Error: Unknown space action. Run 'aryo space --help'.\n";
@@ -533,9 +544,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         ctl_args.insert(ctl_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", ctl_args);
     }
-    // -------------------------------------------------------------------------
-    // [19. Production Site Blueprints]
-    // -------------------------------------------------------------------------
+
     // -------------------------------------------------------------------------
     // [19. Production Site Blueprints]
     // -------------------------------------------------------------------------
@@ -559,6 +568,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         bp_args.insert(bp_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", bp_args);
     }
+
     std::cerr << "[-] Error: Unknown domain 'aryo " << domain << "'. Run 'aryo --help'.\n";
     return 1;
 }
