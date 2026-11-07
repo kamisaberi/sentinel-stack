@@ -426,6 +426,9 @@ EXAMPLE:
   $ aryo lab space-avionics
   $ aryo lab space-avionics --attack aoa-spoof
   $ aryo lab space-avionics --attack tvc-lock
+  $ aryo lab quantum-metrology
+  $ aryo lab quantum-metrology --attack rf-dephase
+  $ aryo lab quantum-metrology --attack tokamak-disrupt
 ================================================================================
 )";
 }
