@@ -355,6 +355,8 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return run_shell(venv_py + " " + resolve_harness("rf_sdr.py").string() + flag_str);
         else if (act == "acoustic-tdoa")
             return run_shell(venv_py + " " + resolve_harness("acoustic_tdoa.py").string() + flag_str);
+        else if (act == "fluid-shock")
+            return run_shell(venv_py + " " + resolve_harness("fluid_shock.py").string() + flag_str);
         else
         {
             std::cerr << "[-] Error: Unknown lab action '" << act << "'. Run 'aryo lab --help'.\n";
