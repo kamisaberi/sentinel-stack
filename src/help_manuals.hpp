@@ -408,6 +408,7 @@ ACTIONS:
   fluid-shock [--attack <type>]  Audit Water-Hammer (#052), DNB (#185) & Subsea APB (#256-#260)
   space-avionics [--attack <t>]  Audit AoA (#093), ECLSS (#278), TVC (#313) & Fins (#513)
   quantum-metrology [--attack <t>] Audit Qubits (#121), Atom Gravimeters (#326) & Tokamaks (#421)
+  power-grid [--attack <type>]   Audit THD (#206), ROCOF (#212), DLR Sag (#296) & Maglev (#563)
 
 EXAMPLE:
   $ aryo lab hil --duration 60
