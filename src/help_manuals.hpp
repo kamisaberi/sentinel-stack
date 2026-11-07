@@ -402,6 +402,7 @@ ACTIONS:
   cbf [-c cfg]                  Control Barrier Function reachability verifier
   federated [-c cfg]            Federated AI Byzantine poisoning evaluator
   patch-regression [-c cfg]     Exploit neutralization scorecard evaluator
+  sensor-audit [--attack <type>] Audit Silicon PMU (#001-#007), PCB (#008-#014) & LVDT (#046)
 
 EXAMPLE:
   $ aryo lab hil --duration 60
