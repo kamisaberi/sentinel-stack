@@ -422,6 +422,9 @@ EXAMPLE:
   $ aryo lab fluid-shock
   $ aryo lab fluid-shock --attack water-hammer
   $ aryo lab fluid-shock --attack nuclear-dnb
+  $ aryo lab space-avionics
+  $ aryo lab space-avionics --attack aoa-spoof
+  $ aryo lab space-avionics --attack tvc-lock
 ================================================================================
 )";
 }
