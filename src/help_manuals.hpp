@@ -442,7 +442,9 @@ EXAMPLE:
   $ aryo lab fab-extreme
   $ aryo lab fab-extreme --attack euv-laser-miss
   $ aryo lab fab-extreme --attack 3d-print-void
-  
+  $ aryo lab marine-subsea
+  $ aryo lab marine-subsea --attack ballast-spill
+  $ aryo lab marine-subsea --attack stealth-compromise
 ================================================================================
 )";
 }
