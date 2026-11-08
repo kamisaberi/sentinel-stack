@@ -410,6 +410,7 @@ ACTIONS:
   quantum-metrology [--attack <t>] Audit Qubits (#121), Atom Gravimeters (#326) & Tokamaks (#421)
   power-grid [--attack <type>]   Audit THD (#206), ROCOF (#212), DLR Sag (#296) & Maglev (#563)
   chemical-gas [--attack <type>] Audit Water pH (#061), H2S (#229), H2 Crossover (#556) & CBRN
+  fab-extreme [--attack <type>]  Audit EUV Droplets (#371), 3D Melt-Pool (#213) & RGA (#106)
 
 EXAMPLE:
   $ aryo lab hil --duration 60
