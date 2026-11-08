@@ -434,6 +434,9 @@ EXAMPLE:
   $ aryo lab power-grid
   $ aryo lab power-grid --attack rocof-collapse
   $ aryo lab power-grid --attack line-sag
+  $ aryo lab chemical-gas
+  $ aryo lab chemical-gas --attack water-poisoning
+  $ aryo lab chemical-gas --attack h2-crossover
 ================================================================================
 )";
 }
