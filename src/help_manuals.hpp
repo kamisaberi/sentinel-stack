@@ -438,6 +438,9 @@ EXAMPLE:
   $ aryo lab chemical-gas
   $ aryo lab chemical-gas --attack water-poisoning
   $ aryo lab chemical-gas --attack h2-crossover
+  $ aryo lab fab-extreme
+  $ aryo lab fab-extreme --attack euv-laser-miss
+  $ aryo lab fab-extreme --attack 3d-print-void
 ================================================================================
 )";
 }
