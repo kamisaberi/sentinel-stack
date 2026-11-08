@@ -124,6 +124,8 @@ nav:
       - Dynamic Library Extraction (ldd): bridge-to-sentinel-matrix/dynamic-library-extraction-ldd.md
       - Proto & Web Asset Handover: bridge-to-sentinel-matrix/proto-and-web-asset-handover.md
       - VMware / Docker Handshake: bridge-to-sentinel-matrix/vmware-docker-mesh-handshake.md
+  - Tutorials & Integrated Master Guide:
+      - MASTER INTEGRATED TUTORIAL: tutorials/master-integrated-tutorial.md
   - Configuration & Customization:
       - stack.yaml Specification: configuration-and-customization/stack-yaml-specification.md
       - Customizing Install Paths: configuration-and-customization/customizing-install-paths.md
