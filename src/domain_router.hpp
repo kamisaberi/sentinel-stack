@@ -146,6 +146,26 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         }
     }
 
+
+// -------------------------------------------------------------------------
+    // [04c. Industrial 550+ Sensor Catalog & Chaos Controller]
+    // -------------------------------------------------------------------------
+    if (domain == "sensor")
+    {
+        if (wants_help)
+        {
+            print_help_sensor();
+            return 0;
+        }
+
+        std::string py_args = "";
+        for (size_t i = 0; i < args.size(); ++i)
+        {
+            py_args += " " + args[i];
+        }
+        return run_shell("python3 /home/kami/sentinel-matrix/tools/sensor_ctl.py" + py_args);
+    }
+
     if (domain == "publish")
     {
         std::vector<std::string> pub_args = {"publish"};
