@@ -14,6 +14,7 @@ Domains:
 [02. Appliance]        aryo status | appliance (sync, check, launch, install, pull) | hardware (status, enroll)
 [03. Stack & Service]  aryo stack (install, build, verify, uninstall, purge, env) | service (start, stop, logs...)
 [04. Hub Discovery]    aryo hub (search, list, info, broadcast, new, yank) | visibility <type> <slug> [mode] | publish <file>
+[04b. Sensors]         aryo sensor (list, inspect, fault) [550+ Industrial Profiles]
 [05. Asset Lifecycles] aryo package | model | dataset | pcap | scenario (pack, pull, inspect, list)
 [06. Artifact Tool]    aryo artifact (new, keygen, pack, inspect, verify, test, synthesize-vaccine)
 [07. Fleet & Threat]   aryo fleet (list, vaccine-audit) | threat (drop, vaccine-share, vaccine-feed) | ota (status, stage, advance) | report
