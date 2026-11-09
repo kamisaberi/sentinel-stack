@@ -747,3 +747,34 @@ REAL-WORLD EXAMPLES:
 ================================================================================
 )";
 }
+inline void print_help_sensor()
+{
+    std::cout << R"(================================================================================
+ARYORITHM 550+ INDUSTRIAL SENSOR CATALOG & CHAOS CONTROLLER
+================================================================================
+Engines:  6 Generalized Physics Kernels (RK4 Vibration, Thermal Lag, Fluid, Grid)
+Hooks:    Live REST Chaos Injection (:8088), Multi-endpoint Modbus TCP (:15501+)
+
+USAGE:
+  aryo sensor <action> [arguments]
+
+ACTIONS:
+  list                                Display all cataloged sensor profiles & models
+  inspect <sensor_id>                 Inspect register maps, ODE parameters & fault hooks
+  fault <sensor_id> <action> [value]  Inject real-time physical chaos into running twin
+
+REAL-WORLD EXAMPLES:
+  1. List all 550+ industrial sensors and physics engines:
+     $ aryo sensor list
+
+  2. Inspect Siemens pressure transmitter registers & hooks:
+     $ aryo sensor inspect siemens_sitrans_p320
+
+  3. Inject live water-hammer cavitation spike into pressure sensor:
+     $ aryo sensor fault siemens_sitrans_p320 step_increase 8.5
+
+  4. Inject outer-race bearing failure frequency into vibration sensor:
+     $ aryo sensor fault fluke_3563_vibe harmonic_multiplier 6.5
+================================================================================
+)" << std::endl;
+}
