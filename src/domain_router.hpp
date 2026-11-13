@@ -146,8 +146,7 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         }
     }
 
-
-// -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // [04c. Industrial 550+ Sensor Catalog & Chaos Controller]
     // -------------------------------------------------------------------------
     if (domain == "sensor")
@@ -608,7 +607,13 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
         bp_args.insert(bp_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", bp_args);
     }
-
+    // -------------------------------------------------------------------------
+    // [DYNAMIC EXTENSION DISPATCH: Subcommands owned by other repositories]
+    // -------------------------------------------------------------------------
+    if (find_and_exec_plugin(domain, args))
+    {
+        return 0;
+    }
     std::cerr << "[-] Error: Unknown domain 'aryo " << domain << "'. Run 'aryo --help'.\n";
     return 1;
 }
