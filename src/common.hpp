@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <set>
+#include <memory>
+#include <array>
 
 namespace fs = std::filesystem;
 
@@ -99,4 +102,71 @@ inline fs::path resolve_harness(const std::string &script_name)
     }
     // Return system default if not yet found
     return fs::path("/opt/sentinel-stack/harnesses") / script_name;
+}
+
+// -----------------------------------------------------------------------------
+// DYNAMIC ECOSYSTEM PLUGIN DISCOVERY & DISPATCH
+// -----------------------------------------------------------------------------
+inline std::vector<std::pair<std::string, std::string>> discover_aryo_plugins()
+{
+    std::vector<std::pair<std::string, std::string>> plugins;
+    std::set<std::string> seen_domains;
+    const std::vector<std::string> search_dirs = {"/usr/local/bin", "/usr/bin", "/etc/sentinel/plugins"};
+
+    for (const auto &dir : search_dirs)
+    {
+        std::error_code ec;
+        if (!fs::exists(dir, ec) || !fs::is_directory(dir, ec))
+            continue;
+
+        for (const auto &entry : fs::directory_iterator(dir, ec))
+        {
+            if (!entry.is_regular_file(ec))
+                continue;
+
+            const std::string filename = entry.path().filename().string();
+            if (filename.rfind("aryo-", 0) == 0 && filename.length() > 5)
+            {
+                const std::string domain = filename.substr(5);
+                if (seen_domains.contains(domain))
+                    continue;
+
+                seen_domains.insert(domain);
+
+                // Query plugin description via --plugin-desc
+                std::string desc = "External ecosystem extension";
+                const std::string cmd = entry.path().string() + " --plugin-desc 2>/dev/null";
+                std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+                if (pipe)
+                {
+                    std::array<char, 256> buffer;
+                    if (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+                    {
+                        desc = buffer.data();
+                        while (!desc.empty() && (desc.back() == '\n' || desc.back() == '\r'))
+                            desc.pop_back();
+                    }
+                }
+                plugins.emplace_back(domain, desc);
+            }
+        }
+    }
+    return plugins;
+}
+
+inline bool find_and_exec_plugin(const std::string &domain, const std::vector<std::string> &args)
+{
+    const std::string bin_name = "aryo-" + domain;
+    const std::vector<std::string> search_dirs = {"/usr/local/bin", "/usr/bin", "/etc/sentinel/plugins"};
+
+    for (const auto &dir : search_dirs)
+    {
+        const fs::path p = fs::path(dir) / bin_name;
+        std::error_code ec;
+        if (fs::exists(p, ec) && (access(p.c_str(), X_OK) == 0))
+        {
+            forward_exec(p.string(), args);
+        }
+    }
+    return false;
 }
