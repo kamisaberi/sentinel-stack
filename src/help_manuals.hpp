@@ -30,9 +30,19 @@ Domains:
 [17. Space/Orbital]    aryo space (status, ccsds, blast-sim)
 [18. AI TRiSM Guard]   aryo trism (status, inspect, test-jailbreak, policy [pull|push|show])
 [19. Blueprints]       aryo blueprint (new, add, pack, inspect, deploy, rollback, list, pull, publish, raw-dag)
-)" << std::endl;
-}
+)";
 
+  const auto plugins = discover_aryo_plugins();
+  if (!plugins.empty())
+  {
+    std::cout << "\nExtensions (Installed Ecosystem Plugins):\n";
+    for (const auto &[domain, desc] : plugins)
+    {
+      std::cout << "  " << desc << "\n";
+    }
+  }
+  std::cout << std::endl;
+}
 inline void print_help_model()
 {
   std::cout << R"(================================================================================
@@ -695,7 +705,7 @@ REAL-WORLD EXAMPLES:
 
 inline void print_help_blueprint()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM PRODUCTION SITE BLUEPRINTS (.blueprint)
 ================================================================================
 Target:   Physical Edge Appliances, Bare-Metal IPCs, Substation Servers
@@ -750,7 +760,7 @@ REAL-WORLD EXAMPLES:
 }
 inline void print_help_sensor()
 {
-    std::cout << R"(================================================================================
+  std::cout << R"(================================================================================
 ARYORITHM 550+ INDUSTRIAL SENSOR CATALOG & CHAOS CONTROLLER
 ================================================================================
 Engines:  6 Generalized Physics Kernels (RK4 Vibration, Thermal Lag, Fluid, Grid)
