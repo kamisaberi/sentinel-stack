@@ -10,6 +10,7 @@
 #include <set>
 #include <memory>
 #include <array>
+#include <algorithm>
 
 namespace fs = std::filesystem;
 
