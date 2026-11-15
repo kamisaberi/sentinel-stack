@@ -387,6 +387,10 @@ REAL-WORLD EXAMPLES:
 )";
 }
 
+
+
+// In file: /home/kami/sentinel-stack/src/help_manuals.hpp
+
 inline void print_help_lab()
 {
   std::cout << R"(================================================================================
@@ -397,7 +401,7 @@ Standards: CERN/Zenodo DOI (10.5281/zenodo.23598779), SLAB Protocol (0x534C4142)
 USAGE:
   aryo lab <action> [arguments]
 
-ACTIONS:
+CORE ACTIONS:
   daemon [options]              Launch C++20 research evaluation daemon
   inspect-matrix                Real-time live tap & audit of running matrix grid
   blast [-i iface] [-r eps]     Wire-speed raw socket frame blaster
@@ -424,41 +428,38 @@ ACTIONS:
   fab-extreme [--attack <type>]  Audit EUV Droplets (#371), 3D Melt-Pool (#213) & RGA (#106)
   marine-subsea [--attack <type>] Audit Ballast (#263), Subsea Sonar (#105) & Anechoic (#363)
 
-EXAMPLE:
+EXAMPLES:
   $ aryo lab hil --duration 60
   $ aryo lab inspect-matrix --nexus 127.0.0.1 --plc 127.0.0.1
-  $ aryo lab sensor-audit
   $ aryo lab sensor-audit --attack rowhammer
-  $ aryo lab rf-sdr
   $ aryo lab rf-sdr --attack gnss-spoof
-  $ aryo lab rf-sdr --attack hpm-surge
-  $ aryo lab acoustic-tdoa
-  $ aryo lab acoustic-tdoa --attack airgap-leak
-  $ aryo lab acoustic-tdoa --attack bearing-fail
-  $ aryo lab fluid-shock
-  $ aryo lab fluid-shock --attack water-hammer
-  $ aryo lab fluid-shock --attack nuclear-dnb
-  $ aryo lab space-avionics
   $ aryo lab space-avionics --attack aoa-spoof
-  $ aryo lab space-avionics --attack tvc-lock
-  $ aryo lab quantum-metrology
-  $ aryo lab quantum-metrology --attack rf-dephase
-  $ aryo lab quantum-metrology --attack tokamak-disrupt
-  $ aryo lab power-grid
   $ aryo lab power-grid --attack rocof-collapse
-  $ aryo lab power-grid --attack line-sag
-  $ aryo lab chemical-gas
   $ aryo lab chemical-gas --attack water-poisoning
-  $ aryo lab chemical-gas --attack h2-crossover
-  $ aryo lab fab-extreme
-  $ aryo lab fab-extreme --attack euv-laser-miss
-  $ aryo lab fab-extreme --attack 3d-print-void
-  $ aryo lab marine-subsea
-  $ aryo lab marine-subsea --attack ballast-spill
-  $ aryo lab marine-subsea --attack stealth-compromise
-================================================================================
 )";
+
+  // Dynamically inspect and list installed research plugins/harnesses
+  const auto extra_harnesses = discover_lab_harnesses();
+  if (!extra_harnesses.empty())
+  {
+      std::cout << "\nINSTALLED EXTENSION RESEARCH HARNESSES (PLUGINS):\n";
+      for (const auto &[act, desc] : extra_harnesses)
+      {
+          std::cout << "  " << act << " [--attack <type>] \t" << desc << "\n";
+      }
+
+      std::cout << "\nEXTENSION EXAMPLES:\n";
+      for (const auto &[act, desc] : extra_harnesses)
+      {
+          std::cout << "  $ aryo lab " << act << "\n"
+                    << "  $ aryo lab " << act << " --attack stanag-replay\n"
+                    << "  $ aryo lab " << act << " --attack gps-teleport\n";
+      }
+  }
+
+  std::cout << "================================================================================\n" << std::endl;
 }
+
 
 inline void print_help_package()
 {
