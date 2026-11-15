@@ -170,3 +170,68 @@ inline bool find_and_exec_plugin(const std::string &domain, const std::vector<st
     }
     return false;
 }
+
+// -----------------------------------------------------------------------------
+// DYNAMIC LAB RESEARCH HARNESS DISCOVERY & RESOLUTION
+// -----------------------------------------------------------------------------
+inline fs::path resolve_dynamic_lab_harness(const std::string &action)
+{
+    std::string script_name = action + ".py";
+    std::string script_underscore = action;
+    std::replace(script_underscore.begin(), script_underscore.end(), '-', '_');
+    script_underscore += ".py";
+
+    std::error_code ec;
+    std::vector<fs::path> search_dirs = {
+        "/etc/sentinel/lab/harnesses",
+        "/usr/local/share/sentinel/lab/harnesses",
+        get_repo_dir("ccsds-guard") / "harnesses",
+        get_repo_dir("sentinel-lab") / "harnesses",
+        get_repo_dir("sentinel-stack") / "harnesses",
+        "/opt/sentinel-stack/harnesses"
+    };
+
+    for (const auto &dir : search_dirs)
+    {
+        if (!fs::exists(dir, ec)) continue;
+
+        fs::path p1 = dir / script_name;
+        if (fs::exists(p1, ec) && !ec) return p1;
+
+        fs::path p2 = dir / script_underscore;
+        if (fs::exists(p2, ec) && !ec) return p2;
+    }
+    return {};
+}
+
+inline std::vector<std::pair<std::string, std::string>> discover_lab_harnesses()
+{
+    std::vector<std::pair<std::string, std::string>> harnesses;
+    std::set<std::string> seen;
+    std::error_code ec;
+
+    std::vector<fs::path> search_dirs = {
+        "/etc/sentinel/lab/harnesses",
+        "/usr/local/share/sentinel/lab/harnesses",
+        get_repo_dir("ccsds-guard") / "harnesses"
+    };
+
+    for (const auto &dir : search_dirs)
+    {
+        if (!fs::exists(dir, ec) || !fs::is_directory(dir, ec)) continue;
+
+        for (const auto &entry : fs::directory_iterator(dir, ec))
+        {
+            if (!entry.is_regular_file(ec) || entry.path().extension() != ".py") continue;
+
+            std::string action = entry.path().stem().string();
+            std::replace(action.begin(), action.end(), '_', '-');
+
+            if (seen.contains(action)) continue;
+            seen.insert(action);
+
+            harnesses.emplace_back(action, "Autonomous dynamic research harness (" + entry.path().filename().string() + ")");
+        }
+    }
+    return harnesses;
+}
