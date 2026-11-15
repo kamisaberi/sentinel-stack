@@ -386,13 +386,19 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             return run_shell(venv_py + " " + resolve_harness("chemical_gas.py").string() + flag_str);
         else if (act == "fab-extreme")
             return run_shell(venv_py + " " + resolve_harness("fab_extreme.py").string() + flag_str);
-        else if (act == "marine-subsea")
-            return run_shell(venv_py + " " + resolve_harness("marine_subsea.py").string() + flag_str);
-        else
+else
         {
+            // Dynamic Lab Harness fallback (Discovers sub-project research modules)
+            fs::path dynamic_harness = resolve_dynamic_lab_harness(act);
+            if (!dynamic_harness.empty() && fs::exists(dynamic_harness))
+            {
+                return run_shell(venv_py + " " + dynamic_harness.string() + flag_str);
+            }
+
             std::cerr << "[-] Error: Unknown lab action '" << act << "'. Run 'aryo lab --help'.\n";
             return 1;
         }
+
     }
 
     // -------------------------------------------------------------------------
