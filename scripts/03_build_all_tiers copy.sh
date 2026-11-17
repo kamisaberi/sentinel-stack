@@ -140,7 +140,7 @@ echo -e "\n\033[36m[*] Setting up Tier 4: xinfer-forge CLI & runtime...\033[0m"
 VENV_DIR="/opt/sentinel-stack/venv"
 FORGE_DIR=$(find_repo_dir "xinfer-forge" || echo "/home/kami/xinfer-forge")
 
-"${VENV_DIR}/bin/pip" install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+"${VENV_DIR}/bin/pip" install torch --index-url https://download.pytorch.org/whl/cpu
 
 cat << EOF > /usr/local/bin/forge-cli
 #!/usr/bin/env bash

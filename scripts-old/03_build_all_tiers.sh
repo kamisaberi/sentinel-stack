@@ -113,7 +113,7 @@ if [ ! -d "${FORGE_DIR}" ] && [ -d "/home/kami/xinfer-forge" ]; then
     FORGE_DIR="/home/kami/xinfer-forge"
 fi
 
-"${VENV_DIR}/bin/pip" install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+"${VENV_DIR}/bin/pip" install torch --index-url https://download.pytorch.org/whl/cpu
 
 cat << EOF > /usr/local/bin/forge-cli
 #!/usr/bin/env bash

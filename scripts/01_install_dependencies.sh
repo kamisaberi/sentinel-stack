@@ -65,7 +65,7 @@ fi
 "${VENV_DIR}/bin/pip" install --upgrade pip setuptools wheel
 
 # Install required Python packages for Forge, Research Harnesses, Protobuf, and TUI
-"${VENV_DIR}/bin/pip" install --no-cache-dir \
+"${VENV_DIR}/bin/pip" install \
     numpy \
     scipy \
     pyyaml \
