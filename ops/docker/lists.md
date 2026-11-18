@@ -1,3 +1,21 @@
+# 1. Query raw Modbus TCP holding registers from the Power Meter
+/home/kami/sentinel-stack/ops/read_modbus_sensor.sh 15501 127.0.0.1
+
+# 2. Inject an isolated fault on Substation Grid Frequency sensor
+/home/kami/sentinel-stack/ops/inject_sensor_fault.sh s044_frequency 2.5
+
+# 3. Reset the sensor fault back to baseline
+/home/kami/sentinel-stack/ops/reset_sensor_fault.sh s044_frequency
+
+# 4. Audit Live-SBOM W^X memory integrity
+/home/kami/sentinel-stack/ops/check_sbom_drift.sh
+
+# 5. Execute an AI TRiSM prompt jailbreak test drill
+/home/kami/sentinel-stack/ops/test_trism_jailbreak.sh
+
+# 6. Issue an emergency all-stop stabilization command
+/home/kami/sentinel-stack/ops/emergency_all_stop.sh
+
 # 1. List all 10 scripts in ops/docker
 ls -la /home/kami/sentinel-stack/ops/docker/
 
