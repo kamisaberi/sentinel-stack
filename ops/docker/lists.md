@@ -1,3 +1,21 @@
+# 1. Get ONLY the attack list for Substation
+/home/kami/sentinel-stack/ops/get_node_attacks.sh substation
+
+# 2. Get ONLY the attack list for Refinery in JSON format
+/home/kami/sentinel-stack/ops/get_node_attacks.sh refinery --json
+
+# 3. Get ONLY the connected sensor channels for Hospital
+/home/kami/sentinel-stack/ops/get_node_sensors.sh hospital
+
+# 4. Get ONLY hardware & in-kernel metrics across all nodes
+/home/kami/sentinel-stack/ops/get_node_metrics.sh
+
+# 5. Get ONLY the primary physical instrument for Substation
+/home/kami/sentinel-stack/ops/get_node_instrument.sh substation
+
+# 6. Get ONLY the formal mathematical invariants for Refinery
+/home/kami/sentinel-stack/ops/get_node_invariants.sh refinery
+
 # 1. Query raw Modbus TCP holding registers from the Power Meter
 /home/kami/sentinel-stack/ops/read_modbus_sensor.sh 15501 127.0.0.1
 
