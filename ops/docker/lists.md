@@ -1,3 +1,12 @@
+# 1. List all 10 scripts in ops/docker
+ls -la /home/kami/sentinel-stack/ops/docker/
+
+# 2. Test listing container IPs
+/home/kami/sentinel-stack/ops/docker/list_container_ips.sh
+
+# 3. Test pruning unused networks
+/home/kami/sentinel-stack/ops/docker/prune_networks.sh
+
 # 1. List all 20 scripts in ops/docker
 ls -la /home/kami/sentinel-stack/ops/docker/
 
