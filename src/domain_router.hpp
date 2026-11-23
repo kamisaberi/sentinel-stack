@@ -256,6 +256,29 @@ inline int dispatch_domain(const std::string &domain, const std::vector<std::str
             print_help_scenario();
             return 0;
         }
+                if (!args.empty() && args[0] == "list-recipes")
+        {
+            fs::path stack_dir = get_repo_dir("sentinel-stack");
+            return run_shell("ls -1 " + (stack_dir / "scenarios" / "scripts").string() + "/*.sh 2>/dev/null | xargs -n1 basename");
+        }
+        if (!args.empty() && args[0] == "provision" && args.size() >= 2)
+        {
+            fs::path stack_dir = get_repo_dir("sentinel-stack");
+            std::string target = args[1];
+            std::string extra = (args.size() > 2) ? (" " + args[2]) : "";
+            return run_shell("SCRIPT=$(ls " + (stack_dir / "scenarios" / "scripts").string() + "/*" + target + "*.sh 2>/dev/null | head -n1); "
+                             "if [ -z \"$SCRIPT\" ]; then echo '[-] Recipe not found'; exit 1; fi; "
+                             "bash \"$SCRIPT\"" + extra);
+        }
+        if (!args.empty() && (args[0] == "up" || args[0] == "down") && args.size() >= 2)
+        {
+            fs::path matrix_dir = get_repo_dir("sentinel-matrix");
+            std::string slug = args[1];
+            if (args[0] == "up")
+                return run_shell("python3 " + (matrix_dir / "tools" / "scenario_engine.py").string() + " load " + slug);
+            return run_shell("python3 " + (matrix_dir / "tools" / "scenario_engine.py").string() + " down --name " + slug);
+        }
+
         std::vector<std::string> sc_args = {"scenario"};
         sc_args.insert(sc_args.end(), args.begin(), args.end());
         forward_exec("sentinel-ctl", sc_args);
