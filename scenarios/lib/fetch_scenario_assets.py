@@ -2,10 +2,7 @@
 # File: /home/kami/sentinel-stack/scenarios/lib/fetch_scenario_assets.py
 # ==============================================================================
 # ARYORITHM SENTINEL-STACK: GLOBAL ONNX & PCAP PROVISIONING DOWNLOADER
-# - Resolves GitHub Git LFS binary pointers automatically
-# - Downloads real public ONNX models & PCAP captures with caching
-# - Exports calibrated domain ONNX autoencoders when specialized telemetry
-#   models are needed, and validates every ONNX graph with OpenVINO/ONNX
+# Tier 4 Toolchain Engine integrated with Tier 0 sentinel_fs Content-Addressable Storage
 # ==============================================================================
 
 import argparse
@@ -19,6 +16,9 @@ import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
+
+# Tier 0 Sovereign Sentinel Filesystem Integration
+from sentinel_fs import SentinelPathResolver, ObjectClass, CasStore
 
 
 def resolve_git_lfs_pointer(lfs_text: bytes, repo_url: str, ctx: ssl.SSLContext):
@@ -87,7 +87,7 @@ def is_valid_onnx_file(path: Path) -> bool:
     except ImportError:
         return True
     except Exception as exc:
-        print(f"    [!] OpenVINO model check warning for {path.name}: {exc}")
+        print(f"    [!] OpenVINO model validation warning for {path.name}: {exc}")
         return True
 
 
@@ -100,7 +100,7 @@ def download_url(url: str, dest: Path, repo_hint: str = "") -> bool:
 
         if data.startswith(b"version https://git-lfs.github.com/spec/v1"):
             repo = repo_hint or infer_github_repo(url)
-            print(f"    [*] Resolving Git LFS binary for {dest.name} ({repo})...")
+            print(f"    [*] Resolving Git LFS pointer for {dest.name} ({repo})...")
             real_url = resolve_git_lfs_pointer(data, repo, ctx)
             if not real_url:
                 return False
@@ -151,7 +151,7 @@ def synthesize_domain_pcap(dest: Path, proto_port: int, ethertype: int = 0x0800)
 
 
 def train_and_export_domain_ae(dest: Path, dim: int = 32, pcap_dir: Path = None):
-    """Trains/exports a real calibrated PyTorch Autoencoder ONNX model using downloaded PCAP baseline bytes."""
+    """Trains and exports a calibrated PyTorch Autoencoder ONNX model directly into SSFS."""
     import torch
     import torch.nn as nn
 
@@ -208,10 +208,21 @@ def train_and_export_domain_ae(dest: Path, dim: int = 32, pcap_dir: Path = None)
     print(f"[+] Exported calibrated domain ONNX AE: {dest.name} (dim={dim}, trained on {len(samples)} vectors)")
 
 
+def link_or_copy(source: Path, target: Path):
+    """Creates a hardlink to avoid disk duplication, falling back to a standard copy if crossing filesystems."""
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists():
+        target.unlink()
+    try:
+        os.link(source, target)
+    except OSError:
+        shutil.copy2(source, target)
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Sentinel-Stack Scenario Global Asset Fetcher")
+    parser = argparse.ArgumentParser(description="Sentinel-Stack Global Asset Fetcher (SSFS Connected)")
     parser.add_argument("--scenario-dir", required=True)
-    parser.add_argument("--cache-dir", required=True)
+    parser.add_argument("--cache-dir", default=None)
     parser.add_argument("--onnx", action="append", default=[], help="filename=url")
     parser.add_argument("--pcap", action="append", default=[], help="filename=url[|repo]")
     parser.add_argument("--domain-ae", default="domain_calibrated_ae.onnx")
@@ -220,62 +231,68 @@ def main():
     parser.add_argument("--ethertype", default="0x0800")
     args = parser.parse_args()
 
-    sdir = Path(args.scenario_dir)
-    cdir = Path(args.cache_dir)
+    sdir = Path(args.scenario_dir).resolve()
     models_dir = sdir / "models"
     pcaps_dir = sdir / "pcaps"
     models_dir.mkdir(parents=True, exist_ok=True)
     pcaps_dir.mkdir(parents=True, exist_ok=True)
-    (cdir / "models").mkdir(parents=True, exist_ok=True)
-    (cdir / "pcaps").mkdir(parents=True, exist_ok=True)
 
-    # 1. Fetch & verify global PCAP captures
+    # Resolve SSFS Cache and CAS Stores
+    cas = CasStore()
+    download_cache = Path(args.cache_dir) if args.cache_dir else SentinelPathResolver.resolve_dir(ObjectClass.ARTIFACT_DOWNLOAD)
+    (download_cache / "models").mkdir(parents=True, exist_ok=True)
+    (download_cache / "pcaps").mkdir(parents=True, exist_ok=True)
+
+    # 1. Fetch & stage global PCAPs with CAS Deduplication
     for entry in args.pcap:
         if "=" not in entry:
             continue
         fname, rest = entry.split("=", 1)
         url, repo = (rest.split("|", 1) + [""])[:2]
-        cached = cdir / "pcaps" / fname
-        target = pcaps_dir / fname
+        cached_pcap = download_cache / "pcaps" / fname
+        target_pcap = pcaps_dir / fname
 
-        if not is_valid_pcap_binary(cached):
+        if not is_valid_pcap_binary(cached_pcap):
             print(f"[*] Fetching internet PCAP: {fname} <- {url}")
-            if not download_url(url, cached, repo) or not is_valid_pcap_binary(cached):
-                print(f"    [!] Remote PCAP unavailable/invalid; generating compliant binary PCAP fallback for {fname}")
-                synthesize_domain_pcap(cached, args.proto_port, int(args.ethertype, 16))
+            if not download_url(url, cached_pcap, repo) or not is_valid_pcap_binary(cached_pcap):
+                print(f"    [!] Remote PCAP unavailable; generating fallback for {fname}")
+                synthesize_domain_pcap(cached_pcap, args.proto_port, int(args.ethertype, 16))
 
-        shutil.copy2(cached, target)
-        print(f"[+] Staged PCAP: {target.name} ({target.stat().st_size:,} bytes)")
+        cas_obj = cas.store_file(cached_pcap, ObjectClass.ARTIFACT_PCAP)
+        link_or_copy(cas_obj.path, target_pcap)
+        print(f"[+] Staged PCAP (CAS Deduplicated): {target_pcap.name} ({target_pcap.stat().st_size:,} bytes, sha256:{cas_obj.sha256[:12]}...)")
 
     if not any(pcaps_dir.glob("*.pcap")):
         synth = pcaps_dir / "scenario_baseline.pcap"
         synthesize_domain_pcap(synth, args.proto_port, int(args.ethertype, 16))
+        cas.store_file(synth, ObjectClass.ARTIFACT_PCAP)
         print(f"[+] Staged baseline PCAP: {synth.name}")
 
-    # 2. Fetch & verify global ONNX models (ONNX Model Zoo / HuggingFace / OpenVINO)
+    # 2. Fetch & stage global ONNX models with CAS Deduplication
     for entry in args.onnx:
         if "=" not in entry:
             continue
         fname, url = entry.split("=", 1)
-        cached = cdir / "models" / fname
-        target = models_dir / fname
+        cached_onnx = download_cache / "models" / fname
+        target_onnx = models_dir / fname
 
-        if not is_valid_onnx_file(cached):
+        if not is_valid_onnx_file(cached_onnx):
             print(f"[*] Fetching internet ONNX model: {fname} <- {url}")
-            download_url(url, cached)
+            download_url(url, cached_onnx)
 
-        if is_valid_onnx_file(cached):
-            shutil.copy2(cached, target)
-            sha = hashlib.sha256(target.read_bytes()).hexdigest()[:16]
-            print(f"[+] Staged ONNX: {target.name} ({target.stat().st_size:,} bytes, sha256:{sha}...)")
+        if is_valid_onnx_file(cached_onnx):
+            cas_obj = cas.store_file(cached_onnx, ObjectClass.MODEL_REGISTRY)
+            link_or_copy(cas_obj.path, target_onnx)
+            print(f"[+] Staged ONNX (CAS Deduplicated): {target_onnx.name} ({target_onnx.stat().st_size:,} bytes, sha256:{cas_obj.sha256[:12]}...)")
         else:
             print(f"    [!] Remote ONNX fetch failed for {fname}; calibrating local domain AE instead.")
 
-    # 3. Ensure calibrated domain ONNX autoencoder exists & compiles via OpenVINO
+    # 3. Export and calibrate domain ONNX Autoencoder into SSFS
     if args.domain_ae:
         ae_target = models_dir / args.domain_ae
         if not is_valid_onnx_file(ae_target):
             train_and_export_domain_ae(ae_target, dim=args.ae_dim, pcap_dir=pcaps_dir)
+            cas.store_file(ae_target, ObjectClass.MODEL_CALIBRATED)
 
 
 if __name__ == "__main__":
