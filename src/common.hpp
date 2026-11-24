@@ -105,6 +105,27 @@ inline fs::path resolve_harness(const std::string &script_name)
     return fs::path("/opt/sentinel-stack/harnesses") / script_name;
 }
 
+
+inline fs::path resolve_scenarios_scripts_dir()
+{
+    std::error_code ec;
+    std::vector<fs::path> candidates;
+    if (const char *home_env = std::getenv("HOME"))
+        candidates.push_back(fs::path(home_env) / "sentinel-stack" / "scenarios" / "scripts");
+    candidates.push_back("/opt/sentinel-stack/scenarios/scripts");
+    candidates.push_back("/home/kami/sentinel-stack/scenarios/scripts");
+
+    for (const auto &p : candidates)
+    {
+        if (fs::exists(p, ec) && fs::is_directory(p, ec) && !ec)
+            return p;
+    }
+    return "/home/kami/sentinel-stack/scenarios/scripts";
+}
+
+
+
+
 // -----------------------------------------------------------------------------
 // DYNAMIC ECOSYSTEM PLUGIN DISCOVERY & DISPATCH
 // -----------------------------------------------------------------------------
