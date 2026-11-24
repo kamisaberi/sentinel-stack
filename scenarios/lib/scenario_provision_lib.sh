@@ -2,28 +2,44 @@
 # File: /home/kami/sentinel-stack/scenarios/lib/scenario_provision_lib.sh
 # ==============================================================================
 # ARYORITHM SENTINEL-STACK: SHARED REAL-WORLD MULTI-NODE SCENARIO PROVISIONER
-# - Stores scenarios permanently in /var/lib/sentinel/scenarios (root)
-#   or $HOME/.sentinel/scenarios (user) — never inside cartridge git repos
-# - Downloads & verifies real internet ONNX models + PCAPs
-# - Generates multi-node configs, lab plugins, and pack:// mounted scenario.yaml
+# Tier 4 Orchestrator fully integrated with Tier 0 Sovereign Sentinel Filesystem
 # ==============================================================================
 
 set -euo pipefail
 
 STACK_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MATRIX_ROOT="/home/kami/sentinel-matrix"
 
-if [ "${EUID}" -eq 0 ]; then
+# Resolve authoritative SSFS root anchor
+if [[ -n "${SENTINEL_ROOT:-}" ]]; then
+    SENTINEL_HOME_DIR="$(readlink -f "${SENTINEL_ROOT}")"
+elif [[ "${EUID}" -eq 0 ]]; then
     SENTINEL_HOME_DIR="/var/lib/sentinel"
 else
     SENTINEL_HOME_DIR="${HOME}/.sentinel"
 fi
 
-SCENARIOS_ROOT="${SENTINEL_HOME_DIR}/scenarios"
-DOWNLOAD_CACHE_DIR="${SENTINEL_HOME_DIR}/downloads"
+SCENARIOS_CATALOG="${SENTINEL_HOME_DIR}/scenarios/catalog"
+DOWNLOAD_CACHE_DIR="${SENTINEL_HOME_DIR}/artifacts/downloads"
+
+# Dynamically locate scenario_engine.py without hardcoded paths
+locate_scenario_engine() {
+    local candidates=(
+        "${MATRIX_ROOT:-}/tools/scenario_engine.py"
+        "${HOME}/sentinel-matrix/tools/scenario_engine.py"
+        "/opt/sentinel-matrix/tools/scenario_engine.py"
+        "/usr/local/bin/scenario_engine.py"
+    )
+    for c in "${candidates[@]}"; do
+        if [[ -f "${c}" ]]; then
+            echo "${c}"
+            return 0
+        fi
+    done
+    echo ""
+}
 
 resolve_python_bin() {
-    if [ -x "/opt/sentinel-stack/venv/bin/python3" ]; then
+    if [[ -x "/opt/sentinel-stack/venv/bin/python3" ]]; then
         echo "/opt/sentinel-stack/venv/bin/python3"
     else
         echo "python3"
@@ -51,10 +67,17 @@ provision_and_stage_scenario() {
         esac
     done
 
-    local SCENARIO_DIR="${SCENARIOS_ROOT}/${SCENARIO_SLUG}"
+    local SCENARIO_DIR="${SCENARIOS_CATALOG}/${SCENARIO_SLUG}"
+    local ENGINE_BIN
+    ENGINE_BIN="$(locate_scenario_engine)"
 
-    if [ "$DO_DOWN" = "true" ]; then
-        python3 "${MATRIX_ROOT}/tools/scenario_engine.py" down --name "${SCENARIO_SLUG}"
+    if [[ "$DO_DOWN" == "true" ]]; then
+        if [[ -n "${ENGINE_BIN}" ]]; then
+            python3 "${ENGINE_BIN}" down --name "${SCENARIO_SLUG}"
+        else
+            echo "[-] Error: Unable to locate scenario_engine.py for teardown." >&2
+            return 1
+        fi
         return 0
     fi
 
@@ -62,12 +85,12 @@ provision_and_stage_scenario() {
     echo -e "\033[1;37m  PROVISIONING REAL-WORLD SCENARIO: ${SCENARIO_TITLE}\033[0m"
     echo -e "\033[1;36m================================================================================\033[0m"
     echo -e "  Slug / Cartridge : ${SCENARIO_SLUG} [${CARTRIDGE}]"
-    echo -e "  Permanent Path   : ${SCENARIO_DIR}"
+    echo -e "  SSFS Catalog Path: ${SCENARIO_DIR}"
     echo -e "  Subnet           : ${SUBNET_PREFIX}.0/24\n"
 
     mkdir -p "${SCENARIO_DIR}"/{configs/nodes,configs/lab_plugins,models,pcaps}
 
-    # 1. Fetch global ONNX models & PCAPs + export calibrated domain AE
+    # 1. Fetch assets into SSFS CAS & link into scenario workspace
     local PY_BIN
     PY_BIN="$(resolve_python_bin)"
     local FETCH_ARGS=(
@@ -79,17 +102,18 @@ provision_and_stage_scenario() {
         "--ethertype" "${PRIMARY_ETHERTYPE:-0x0800}"
     )
     for m in "${ONNX_SOURCES[@]}"; do
-        [ -n "$m" ] && FETCH_ARGS+=("--onnx" "$m")
+        [[ -n "$m" ]] && FETCH_ARGS+=("--onnx" "$m")
     done
     for p in "${PCAP_SOURCES[@]}"; do
-        [ -n "$p" ] && FETCH_ARGS+=("--pcap" "$p")
+        [[ -n "$p" ]] && FETCH_ARGS+=("--pcap" "$p")
     done
 
     "${PY_BIN}" "${STACK_LIB_DIR}/fetch_scenario_assets.py" "${FETCH_ARGS[@]}"
 
     # Copy base attack matrix catalog if available
-    if [ -f "${MATRIX_ROOT}/configs/sensor_attack_matrix.json" ]; then
-        cp -u "${MATRIX_ROOT}/configs/sensor_attack_matrix.json" "${SCENARIO_DIR}/configs/"
+    local SENSOR_MATRIX="${SENTINEL_HOME_DIR}/config/sensor_attack_matrix.json"
+    if [[ -f "${SENSOR_MATRIX}" ]]; then
+        cp -u "${SENSOR_MATRIX}" "${SCENARIO_DIR}/configs/"
     fi
 
     # 2. Generate manifest.json
@@ -140,7 +164,7 @@ EOF
 }
 EOF
 
-    # 4. Generate Real-World Multi-Node YAMLs & scenario.yaml
+    # 4. Generate scenario.yaml using pack:// URIs
     IFS=':' read -r CART_LIB CART_PLUGIN SUBSYS <<< "$(cartridge_lib_and_plugin "${CARTRIDGE}")"
 
     cat > "${SCENARIO_DIR}/scenario.yaml" <<EOF
@@ -239,10 +263,10 @@ EOF
 
         local EXTRA_IPC=""
         local EXTRA_ENV=""
-        if [ "${TRANS}" = "shm_ring" ]; then
+        if [[ "${TRANS}" == "shm_ring" ]]; then
             EXTRA_IPC=$'    ipc: shareable\n    shm_size: "256mb"'
             EXTRA_ENV=$'\n      - SENTINEL_SHM_RING=/sentinel_motion_ring'
-        elif [ "${TRANS}" = "can" ]; then
+        elif [[ "${TRANS}" == "can" ]]; then
             EXTRA_ENV=$'\n      - SENTINEL_CAN_UNIX_SOCK=/var/run/sentinel-bus/can.sock'
         fi
 
@@ -289,11 +313,11 @@ EOF
         IDX=$((IDX + 1))
     done
 
-    # 5. Wire Real-World Apparatus & Dual-PCAP Container
+    # 5. Wire Apparatus Runtime & PCAP Container
     local FIRST_PCAP
     FIRST_PCAP="$(ls "${SCENARIO_DIR}/pcaps/"*.pcap 2>/dev/null | head -n 1 | xargs -r basename || echo "")"
     local APP_CMD_EXTRA=""
-    [ -n "${FIRST_PCAP}" ] && APP_CMD_EXTRA="\"--nominal-pcap\", \"/app/pcaps/${FIRST_PCAP}\","
+    [[ -n "${FIRST_PCAP}" ]] && APP_CMD_EXTRA="\"--nominal-pcap\", \"/app/pcaps/${FIRST_PCAP}\","
 
     cat >> "${SCENARIO_DIR}/scenario.yaml" <<EOF
 
@@ -311,10 +335,16 @@ EOF
     command: ["--type", "${APPARATUS_TYPE:-synchrophasor}", "--name", "${SCENARIO_TITLE}", ${APP_CMD_EXTRA} "--target-ip", "${FIRST_NODE_IP}", "--target-port", "${PRIMARY_PROTO_PORT:-502}", "--api-port", "8090"]
 EOF
 
-    echo -e "\033[1;32m[+] Scenario '${SCENARIO_SLUG}' provisioned at ${SCENARIO_DIR}\033[0m"
+    echo -e "\033[1;32m[+] Scenario '${SCENARIO_SLUG}' successfully provisioned into SSFS catalog at:\033[0m"
+    echo -e "    ${SCENARIO_DIR}\n"
     echo -e "    Launch anytime with: \033[1;36maryo scenario up ${SCENARIO_SLUG}\033[0m\n"
 
-    if [ "$DO_UP" = "true" ]; then
-        python3 "${MATRIX_ROOT}/tools/scenario_engine.py" load "${SCENARIO_DIR}"
+    if [[ "$DO_UP" == "true" ]]; then
+        if [[ -n "${ENGINE_BIN}" ]]; then
+            python3 "${ENGINE_BIN}" load "${SCENARIO_SLUG}"
+        else
+            echo "[-] Error: Unable to locate scenario_engine.py for execution." >&2
+            return 1
+        fi
     fi
 }
