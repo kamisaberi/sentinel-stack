@@ -1,57 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== [PHASE 2] Synchronizing Ecosystem Repositories ==="
+echo "=== [PHASE 2] Synchronizing All 14 Ecosystem Repositories ==="
 
-WORKSPACE_DIR="/home/kami"
-TARGET_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/src"
-mkdir -p "${TARGET_DIR}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+STACK_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+WORKSPACE_DIR="${SENTINEL_WORKSPACE:-$(cd "${STACK_ROOT}/.." && pwd)}"
 
 declare -A REPOS=(
-    ["xinfer-essential"]="https://github.com/kamisaberi/xinfer.git"
-    ["blackbox-essential"]="https://github.com/kamisaberi/blackbox.git"
+    ["sentinel-fs"]="https://github.com/kamisaberi/sentinel-fs.git"
+    ["xinfer-essential"]="https://github.com/kamisaberi/xinfer-essential.git"
+    ["blackbox-essential"]="https://github.com/kamisaberi/blackbox-essential.git"
     ["blackbox-sentinel"]="https://github.com/kamisaberi/blackbox-sentinel.git"
+    ["xinfer-forge"]="https://github.com/kamisaberi/xinfer-forge.git"
+    ["ics-guard"]="https://github.com/kamisaberi/ics-guard.git"
+    ["ccsds-guard"]="https://github.com/kamisaberi/ccsds-guard.git"
+    ["net-guard"]="https://github.com/kamisaberi/net-guard.git"
+    ["motion-guard"]="https://github.com/kamisaberi/motion-guard.git"
+    ["vision-guard"]="https://github.com/kamisaberi/vision-guard.git"
+    ["sentinel-matrix"]="https://github.com/kamisaberi/sentinel-matrix.git"
     ["sentinel-lab"]="https://github.com/kamisaberi/sentinel-lab.git"
     ["sentinel-nexus"]="https://github.com/kamisaberi/sentinel-nexus.git"
-    ["sentinel-hub"]="https://github.com/kamisaberi/sentinel-hub.git"
 )
 
 for NAME in "${!REPOS[@]}"; do
     URL="${REPOS[$NAME]}"
-    HOST_PATH="${WORKSPACE_DIR}/${NAME}"
-    DEST_PATH="${TARGET_DIR}/${NAME}"
-
-    echo "[*] Synchronizing: ${NAME}"
-
-    # Priority 1: If repository already exists in /home/kami/, sync directly from local tree
-    if [ -d "${HOST_PATH}" ]; then
-        echo "    -> Found local workspace at ${HOST_PATH}. Synchronizing..."
-        rsync -a --delete --exclude 'build' --exclude '.git' "${HOST_PATH}/" "${DEST_PATH}/"
-    # Priority 2: Clone from GitHub
-    elif [ ! -d "${DEST_PATH}" ]; then
-        echo "    -> Cloning from ${URL}..."
-        git clone --depth 1 "${URL}" "${DEST_PATH}" || {
-            echo "[!] Warning: Git clone failed. Creating local build stub for ${NAME}..."
-            mkdir -p "${DEST_PATH}"
-        }
+    DEST="${WORKSPACE_DIR}/${NAME}"
+    if [[ -d "${DEST}" ]]; then
+        echo "  ✓ Present in workspace : ${DEST}"
     else
-        echo "    -> Up-to-date in ${DEST_PATH}."
+        echo "  → Cloning ${NAME} into ${DEST}..."
+        git clone --depth 1 "${URL}" "${DEST}" || echo "  [!] Warning: Could not clone ${URL}"
     fi
 done
 
-# Sync xinfer-forge directory into workspace (Checks root /home/kami/ first)
-if [ -d "${WORKSPACE_DIR}/xinfer-forge" ]; then
-    echo "[*] Synchronizing: xinfer-forge from ${WORKSPACE_DIR}/xinfer-forge..."
-    mkdir -p "${TARGET_DIR}/xinfer-forge"
-    rsync -a --delete --exclude '/checkpoints' "${WORKSPACE_DIR}/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
-elif [ -d "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge" ]; then
-    echo "[*] Synchronizing: xinfer-forge from ${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge..."
-    mkdir -p "${TARGET_DIR}/xinfer-forge"
-    rsync -a --delete --exclude 'models' --exclude 'checkpoints' "${WORKSPACE_DIR}/blackbox-sentinel/xinfer-forge/" "${TARGET_DIR}/xinfer-forge/"
-elif [ ! -d "${TARGET_DIR}/xinfer-forge" ]; then
-    echo "[*] Cloning xinfer-forge from GitHub..."
-    git clone --depth 1 "https://github.com/kamisaberi/xinfer-forge.git" "${TARGET_DIR}/xinfer-forge" || true
-fi
-
-
-echo "[+] Phase 2 synchronization complete."
+echo "[+] Phase 2 repository synchronization complete (Workspace: ${WORKSPACE_DIR})."

@@ -1,28 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "=== [PHASE 4] Deploying Linux Systemd Daemons & Filesystem Links ==="
+echo "=== [PHASE 4] Deploying Linux Systemd Daemons & SSFS Initialization ==="
 
-# 1. Ensure Filesystem Invariants and Permissions
-mkdir -p /var/cache/sentinel/packages /var/cache/sentinel/configs /etc/sentinel/configs /opt/sentinel-nexus/web
-chmod -R 777 /var/cache/sentinel 2>/dev/null || true
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_DIR="${SENTINEL_WORKSPACE:-$(cd "${SCRIPT_DIR}/../.." && pwd)}"
 
-# 2. Ensure Web Assets are linked to /opt/sentinel-nexus/web
-if [ ! -f "/opt/sentinel-nexus/web/index.html" ]; then
-    NEXUS_WEB=$(find /home/kami/sentinel-nexus -type d -name "web" 2>/dev/null | head -n 1 || true)
-    if [ -n "${NEXUS_WEB}" ] && [ -d "${NEXUS_WEB}" ]; then
-        cp -r "${NEXUS_WEB}"/* /opt/sentinel-nexus/web/ 2>/dev/null || true
-    fi
-    # If still missing, touch minimal index stub
-    if [ ! -f "/opt/sentinel-nexus/web/index.html" ]; then
-        touch /opt/sentinel-nexus/web/index.html
+mkdir -p /etc/sentinel/configs /opt/sentinel-nexus/web /opt/sentinel-nexus/configs
+
+# Initialize System SSFS (/var/lib/sentinel) and User SSFS (if invoked via sudo)
+if command -v sfs >/dev/null 2>&1; then
+    SENTINEL_ROOT="/var/lib/sentinel" sfs init
+    if [[ -n "${SUDO_USER:-}" && "${SUDO_USER}" != "root" ]]; then
+        sudo -u "${SUDO_USER}" sfs init || true
     fi
 fi
 
-# 3. Sentinel Nexus Service Unit
-cat << 'EOF' > /etc/systemd/system/sentinel-nexus.service
+if [[ ! -f "/opt/sentinel-nexus/web/index.html" && -d "${WORKSPACE_DIR}/sentinel-nexus/web" ]]; then
+    cp -ru "${WORKSPACE_DIR}/sentinel-nexus/web/"* /opt/sentinel-nexus/web/ 2>/dev/null || true
+fi
+
+cat << 'UNIT' > /etc/systemd/system/sentinel-nexus.service
 [Unit]
-Description=Sentinel Nexus - Collective Fleet Command Plane (Tier 6)
+Description=Sentinel Nexus - Sovereign Fleet C2 Plane (Tier 4)
 After=network.target network-online.target
 Wants=network-online.target
 
@@ -38,12 +38,11 @@ TasksMax=4096
 
 [Install]
 WantedBy=multi-user.target
-EOF
+UNIT
 
-# 4. Blackbox Sentinel Edge Daemon Unit (With eBPF & AF_XDP Real-Time Scheduling)
-cat << 'EOF' > /etc/systemd/system/blackbox-sentinel.service
+cat << 'UNIT' > /etc/systemd/system/blackbox-sentinel.service
 [Unit]
-Description=Blackbox Sentinel - Autonomous Edge XDR Engine (Tier 3)
+Description=Blackbox Sentinel - Universal Multi-Bus Defense Node (Tier 1)
 After=network.target sentinel-nexus.service
 Wants=network.target
 
@@ -63,11 +62,10 @@ AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN CAP_BPF CAP_SYS_RESOURCE CAP_NET
 
 [Install]
 WantedBy=multi-user.target
-EOF
+UNIT
 
-# Reload and enable services
 systemctl daemon-reload
 systemctl enable sentinel-nexus.service
-systemctl restart sentinel-nexus.service
+systemctl restart sentinel-nexus.service || true
 
-echo "[+] Deployed and started sentinel-nexus.service."
+echo "[+] Phase 4 systemd deployment complete."
