@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 source "/home/kami/sentinel-stack/tests/cli_individual/lib_individual_test.sh"
+parse_common_flags "$@"
 init_sandbox "ics_grid_status"
 
-test_command \
+ensure_scenario_loaded "01_substation_busbar_trip" "ics_guard_dissector_plugin.so"
+
+test_command_assert \
     "aryo ics grid-status" \
-    "Inspect running Production Master Grid digital twin containers (10.240.0.0/24)." \
+    "Inspect live container status of the ICS digital twin mesh while 01_substation_busbar_trip is running." \
     0 \
+    "matrix|NAMES|Up|STATUS|01_substation" \
     "aryo ics grid-status"
