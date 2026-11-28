@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 source "/home/kami/sentinel-stack/tests/cli_individual/lib_individual_test.sh"
+parse_common_flags "$@"
 init_sandbox "ics_grid_down"
 
-if [[ "${1:-}" != "--live" ]]; then
-    skip_command \
-        "aryo ics grid-down" \
-        "Teardown the Production Master Grid Docker simulation mesh." \
-        "Pass --live to dismantle live Docker containers."
-    exit 0
-fi
+aryo ics grid-up >/dev/null 2>&1 || true
 
-test_command \
+test_command_assert \
     "aryo ics grid-down" \
-    "Teardown the Production Master Grid Docker simulation mesh." \
+    "Cleanly dismantle the Production Master Grid digital twin mesh and release all subnets." \
     0 \
+    "Removed|dismantled|down|Stopped|Teardown|matrix|OK" \
     "aryo ics grid-down"
